@@ -1,0 +1,8 @@
+sendConfig(313, -1);// Emotes
+sendConfig(465, 7);// Goblin emotes
+sendConfig(802, -1);// Stronghold of security.
+sendConfig(1085, 249852);// Zombie hand emote
+sendConfig(1160,-1); //summoning orb
+
+music 
+https://rune-server.org/threads/530-music-configuration.601718/

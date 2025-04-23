@@ -1,0 +1,22 @@
+//plugins {
+////    id 'java'
+//    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
+//}
+////
+//group = 'net.scapeemulator'
+//version = '1.0-SNAPSHOT'
+//
+//repositories {
+//    mavenCentral()
+//}
+//
+//dependencies {
+//
+////    testImplementation "junit:junit:4.11"
+//}
+plugins {
+    id 'buildlogic.java-conventions'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
+}
+
+description = 'ScapeEmulator Cache Library'

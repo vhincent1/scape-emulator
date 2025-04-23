@@ -1,0 +1,9 @@
+rootProject.name = 'scapeemulator'
+
+println(':cache')
+//include 'cache'
+include('cache')
+project(':cache').projectDir = file('cache')
+//include('util')
+//project(':util').projectDir = file('util')
+include 'login','game', 'util', 'flooder'
