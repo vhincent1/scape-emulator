@@ -14,9 +14,12 @@
 //
 ////    testImplementation "junit:junit:4.11"
 //}
+//plugins {
+//    id 'buildlogic.java-conventions'
+//    id 'org.jetbrains.kotlin.jvm'
+//}
 plugins {
-    id 'buildlogic.java-conventions'
-    id 'org.jetbrains.kotlin.jvm'
+    kotlin("jvm")
 }
 
-description = 'ScapeEmulator Cache Library'
+description = "ScapeEmulator Cache Library"
