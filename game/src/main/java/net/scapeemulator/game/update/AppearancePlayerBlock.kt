@@ -9,24 +9,15 @@ import net.scapeemulator.game.net.game.GameFrameBuilder
 import net.scapeemulator.util.Base37Utils
 
 class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
-    private val username: String?
-    private val appearance: Appearance?
-    private val equipment: Inventory
-    private val stance: Int
-    private val combat: Int
-    private val skill: Int
-
-    init {
-        this.username = player.username
-        this.appearance = player.appearance
-        this.equipment = Inventory(player.equipment)
-        this.stance = player.stance
-        this.combat = player.skillSet.combatLevel
-        this.skill = player.skillSet.totalLevel
-    }
+    private val username: String = player.username
+    private val appearance: Appearance = player.appearance
+    private val equipment: Inventory = Inventory(player.equipment)
+    private val stance: Int = player.stance
+    private val combat: Int = player.skillSet.combatLevel
+    private val skill: Int = player.skillSet.totalLevel
 
     public override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
-        val gender = appearance!!.gender
+        val gender = appearance.gender
 
         val propertiesBuilder = GameFrameBuilder(builder.allocator)
 
@@ -75,7 +66,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         if (item != null) {
             propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(2))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[2])
         }
 
         item = equipment.get(Equipment.SHIELD)
@@ -90,7 +81,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         if (item != null) fullBody = forId(item.id)!!.isFullBody()
 
         if (!fullBody) {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(3))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[3])
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
@@ -99,7 +90,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         if (item != null) {
             propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(5))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[5])
         }
 
         var fullHelm = false
@@ -110,7 +101,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
             fullMask = forId(item.id)!!.isFullMask()
         }
         if (!fullHelm && !fullMask) {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(0))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[0])
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
@@ -119,25 +110,25 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         if (item != null) {
             propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(4))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[4])
         }
 
         item = equipment.get(Equipment.FEET)
         if (item != null) {
             propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(6))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[6])
         }
 
         item = equipment.get(Equipment.HEAD) // TODO check
         if (gender == Gender.MALE && !fullMask && !fullHelm) {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getStyle(1))
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[1])
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         for (i in 0..4) {
-            propertiesBuilder.put(DataType.BYTE, appearance.getColor(i))
+            propertiesBuilder.put(DataType.BYTE, appearance.colors[i])
         }
 
         propertiesBuilder.put(DataType.SHORT, stance)

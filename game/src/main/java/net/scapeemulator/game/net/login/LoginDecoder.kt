@@ -20,7 +20,7 @@ class LoginDecoder : ByteToMessageDecoder() {
     private var state = State.READ_HEADER
 
     @Throws(IOException::class)
-    public override fun decode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MessageBuf<Any?>) {
+    public override fun decode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MessageBuf<Any>) {
         if (state == State.READ_HEADER) {
             if (buf.readableBytes() < 4) return
 
@@ -35,6 +35,7 @@ class LoginDecoder : ByteToMessageDecoder() {
             if (buf.readableBytes() < size) return
 
             val version = buf.readInt()
+
             buf.readUnsignedByte()
             buf.readUnsignedByte()
             buf.readUnsignedByte()
@@ -44,43 +45,41 @@ class LoginDecoder : ByteToMessageDecoder() {
             val width = buf.readUnsignedShort()
             val height = buf.readUnsignedShort()
 
-            buf.readUnsignedByte()
-
-            val uid = ByteArray(24)
+            val uid = ByteArray(25)//24
             for (i in uid.indices) uid[i] = buf.readByte()
 
             val settings = ByteBufUtils.readString(buf)
+            println(settings)
 
             val affiliate = buf.readInt()
             val flags = buf.readInt()
 
-            buf.readShort()
+            buf.readShort() //interface packet counter
 
             val crc = IntArray(29) //28
             for (i in crc.indices)
                 crc[i] = buf.readInt()
 
-            //			int encryptedSize = buf.readUnsignedByte();
-            val secureBuffer = ByteBufUtils.rsa(buf, RsaKeySet.MODULUS, RsaKeySet.PRIVATE_KEY)
+            val encryptedSize = buf.readUnsignedByte().toInt()
+//           val secureBuffer = ByteBufUtils.rsa(buf,
+            val secureBuffer = ByteBufUtils.rsa(
+                buf.readBytes(encryptedSize),
+                RsaKeySet.MODULUS, RsaKeySet.PRIVATE_KEY
+            )
 
             val encryptedType = secureBuffer.readUnsignedByte().toInt()
-            println("encryptedType: " + encryptedType)
-            if (encryptedType != 10)
-                throw IOException("Invalid encrypted block type.")
-
+            if (encryptedType != 10) throw IOException("Invalid encrypted block type.")
 
             val clientSessionKey = secureBuffer.readLong()
             val serverSessionKey = secureBuffer.readLong()
-
 
             val encodedUsername = secureBuffer.readLong()
             val username = Base37Utils.decodeBase37(encodedUsername)
             val password = ByteBufUtils.readString(secureBuffer)
 
-            println("username: " + username)
-            println("password: " + password)
-            if (((encodedUsername shr 16) and 31L) != hash.toLong())
-                throw IOException("Username hash mismatch.")
+//            println("username: " + username)
+//            println("password: " + password)
+            if (((encodedUsername shr 16) and 31L) != hash.toLong()) throw IOException("Username hash mismatch.")
 
             //			int[] seed = new int[4];
 //			for (int i = 0; i < 4; i++) {
@@ -93,17 +92,13 @@ class LoginDecoder : ByteToMessageDecoder() {
 //					(int) serverSessionKey
 //			};
             val reconnecting = type == 16
-            out.add(
-                LoginRequest(
+            out.add(LoginRequest(
                     reconnecting,
                     username, password,
-                    clientSessionKey,
-                    serverSessionKey,
-                    version, crc, displayMode
-                )
-            )
+                    clientSessionKey, serverSessionKey,
+                    version, crc, displayMode ) )
 
-            println("reconnecting: " + reconnecting)
+//            println("reconnecting: " + reconnecting)
             ctx.pipeline().remove(this)
         }
     }

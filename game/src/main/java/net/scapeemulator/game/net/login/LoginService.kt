@@ -3,6 +3,7 @@ package net.scapeemulator.game.net.login
 import net.scapeemulator.game.io.PlayerSerializer
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.World
+import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingDeque
@@ -14,7 +15,7 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
 
     private class LoginJob(private val session: LoginSession, private val request: LoginRequest) : Job() {
         override fun perform(service: LoginService) {
-            val result = service.serializer.load(request.username!!, request.password!!)
+            val result = service.serializer.load(request.username, request.password)
             val status = result.status
 
             if (status != LoginResponse.STATUS_OK) {
@@ -35,11 +36,13 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
         }
     }
 
-    private class SessionPlayerPair( val session: LoginSession,  val player: Player)
+    private class SessionPlayerPair(val session: LoginSession, val player: Player)
 
     private val jobs: BlockingQueue<Job> = LinkedBlockingDeque<Job>()
     private val newPlayers: Queue<SessionPlayerPair> = ArrayDeque<SessionPlayerPair>()
     private val oldPlayers: Queue<Player> = ArrayDeque<Player>()
+
+    private val connectionList = arrayListOf<String>()
 
     fun addLoginRequest(session: LoginSession, request: LoginRequest) {
         jobs.add(LoginJob(session, request))
@@ -51,22 +54,41 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
         }
     }
 
+
     fun registerNewPlayers(world: World) {
         val players = world.players
 
         synchronized(oldPlayers) {
-            var player: Player?
+            var player: Player?//todo check
             while ((oldPlayers.poll().also { player = it }) != null) {
-                if(player == null) return
+                if (player == null) return
                 players.remove(player)//check
+
+//                connectionList.remove((player.session.channel.remoteAddress() as InetSocketAddress).address.toString())
+
                 jobs.add(LogoutJob(player))
             }
         }
 
         synchronized(newPlayers) {
-            var pair: SessionPlayerPair?
+            var pair: SessionPlayerPair?//todo check
             while ((newPlayers.poll().also { pair = it }) != null) {
-                if(pair==null) return//check
+                if (pair == null) return//check
+                // todo: ip address check
+                println("new player " + pair.player.username)
+
+
+                println("ADDRESS: ${pair.session.channel.remoteAddress()}")
+                val ip = pair.session.channel.remoteAddress() as InetSocketAddress
+                val ipAddress = ip.address.toString()
+                println(ipAddress)
+                if (connectionList.contains(ipAddress)) {
+                    pair.session.sendLoginFailure(LoginResponse.STATUS_LOGIN_LIMIT_EXCEEDED)
+                    return
+                } else {
+                    connectionList.add(ipAddress)
+                }
+
                 if (world.getPlayerByName(pair.player.username) != null) {
                     /* player is already online */
                     pair.session.sendLoginFailure(LoginResponse.STATUS_ALREADY_ONLINE)
@@ -76,6 +98,7 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
                 } else {
                     /* send success packet & switch to GameSession */
                     pair.session.sendLoginSuccess(LoginResponse.STATUS_OK, pair.player)
+
                 }
             }
         }

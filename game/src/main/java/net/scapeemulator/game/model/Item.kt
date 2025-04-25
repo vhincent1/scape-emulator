@@ -20,13 +20,13 @@ class Item (id: Int, amount: Int) {
         return result
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (this === obj) return true
-        if (obj == null) return false
-        if (javaClass != obj.javaClass) return false
-        val other = obj as Item
-        if (amount != other.amount) return false
-        if (id != other.id) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (javaClass != other.javaClass) return false
+        val other1 = other as Item
+        if (amount != other1.amount) return false
+        if (id != other1.id) return false
         return true
     }
 

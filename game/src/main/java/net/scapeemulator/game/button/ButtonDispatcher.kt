@@ -4,7 +4,7 @@ import net.scapeemulator.game.model.Interface
 import net.scapeemulator.game.model.Player
 
 class ButtonDispatcher {
-    private val handlers: MutableMap<Int?, ButtonHandler?> = HashMap<Int?, ButtonHandler?>()
+    private val handlers = HashMap<Int, ButtonHandler>()
 
     init {
         bind(FixedButtonHandler())
@@ -35,7 +35,7 @@ class ButtonDispatcher {
         bind(WorldMapButtonHandler())
     }
 
-    private fun bind(handler: ButtonHandler) {
+    fun bind(handler: ButtonHandler) {
         handlers.put(handler.id, handler)
     }
 

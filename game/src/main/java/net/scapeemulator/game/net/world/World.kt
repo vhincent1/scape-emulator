@@ -1,6 +1,6 @@
 package net.scapeemulator.game.net.world
 
-class World( val id: Int,  val flags: Int,  val country: Int,  val activity: String,  val ip: String) {
+class World(val id: Int, val flags: Int, val country: Int, val activity: String, val ip: String) {
     companion object {
         const val FLAG_MEMBERS: Int = 0x1
         const val FLAG_QUICK_CHAT: Int = 0x2

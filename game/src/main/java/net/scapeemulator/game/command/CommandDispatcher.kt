@@ -1,6 +1,7 @@
 package net.scapeemulator.game.command
 
 import net.scapeemulator.game.model.Player
+import net.scapeemulator.game.model.World
 
 class CommandDispatcher {
     private val handlers: MutableMap<String, CommandHandler> = HashMap()
@@ -12,9 +13,16 @@ class CommandDispatcher {
         bind(EmptyCommandHandler())
         bind(PositionCommandHandler())
         bind(MasterCommandHandler())
+        bind(object : CommandHandler("p"){
+            override fun handle(player: Player, arguments: Array<String>) {
+
+                player.sendMessage(""+World.world.players.size)
+            }
+
+        })
     }
 
-    private fun bind(handler: CommandHandler) {
+    fun bind(handler: CommandHandler) {
         handlers[handler.name] = handler
     }
 
@@ -22,11 +30,11 @@ class CommandDispatcher {
         val parts = command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
         val name = parts[0]
-        val arguments = arrayOfNulls<String>(parts.size - 1)
+        val arguments = arrayOfNulls<String>(parts.size - 1) as Array<String>
 
         System.arraycopy(parts, 1, arguments, 0, arguments.size)
 
         val handler = handlers[name]
-        handler?.handle(player, arguments)
+        handler?.handle(player, arguments )
     }
 }

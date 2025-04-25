@@ -37,7 +37,7 @@ class RegisterDecoder(private val service: Int) : ByteToMessageDecoder() {
             out.add(RegisterUsernameRequest(username))
         } else if (service == HandshakeMessage.SERVICE_REGISTER_COMMIT) {
             if (state == State.READ_SIZE) {
-                if (!buf.isReadable()) return
+                if (!buf.isReadable) return
 
                 state = State.READ_PAYLOAD
                 size = buf.readUnsignedByte().toInt()

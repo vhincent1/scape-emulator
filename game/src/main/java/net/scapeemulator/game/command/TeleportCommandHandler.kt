@@ -4,7 +4,7 @@ import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.Position
 
 class TeleportCommandHandler : CommandHandler("tele") {
-    override fun handle(player: Player, arguments: Array<String?>) {
+    override fun handle(player: Player, arguments: Array<String>) {
         if (player.rights < 2) return
 
         if (arguments.size != 2 && arguments.size != 3) {
@@ -12,11 +12,11 @@ class TeleportCommandHandler : CommandHandler("tele") {
             return
         }
 
-        val x = arguments[0]!!.toInt()
-        val y = arguments[1]!!.toInt()
+        val x = arguments[0].toInt()
+        val y = arguments[1].toInt()
         var height = player.position.height
 
-        if (arguments.size == 3) height = arguments[2]!!.toInt()
+        if (arguments.size == 3) height = arguments[2].toInt()
 
         player.teleport(Position(x, y, height))
     }

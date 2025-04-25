@@ -16,7 +16,7 @@ class FileProvider(private val codeOnly: Boolean) {
         if (codeOnly && !path.matches("^/(jogl_\\d_\\d\\.lib|(loader|loader_gl|runescape)\\.jar|(jogl|runescape|runescape_gl)\\.pack200|unpackclass.pack)$".toRegex())) return null
 
         val f = File(root, path)
-        if (!f.getAbsolutePath().startsWith(root.getAbsolutePath())) return null
+        if (!f.absolutePath.startsWith(root.absolutePath)) return null
 
         if (!f.exists() || !f.isFile()) return null
 

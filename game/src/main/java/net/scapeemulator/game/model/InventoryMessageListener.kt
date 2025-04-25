@@ -11,9 +11,7 @@ class InventoryMessageListener(
     private val type: Int
 ) : InventoryListener {
     override fun itemChanged(inventory: Inventory, slot: Int, item: Item?) {
-        val items: Array<SlottedItem> = arrayOf<SlottedItem>(
-            SlottedItem(slot, item)
-        )
+        val items: Array<SlottedItem> = arrayOf(SlottedItem(slot, item))
         player.send(InterfaceSlottedItemsMessage(id, this.slot, type, items))
     }
 

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.net.world
 
-class Country( val flag: Int,  val name: String) {
+class Country(val flag: Int, val name: String) {
     companion object {
         const val FLAG_UK: Int = 77
         const val FLAG_USA: Int = 225

@@ -1,7 +1,7 @@
 package net.scapeemulator.game.task
 
 class TaskScheduler {
-    private val tasks: MutableList<Task> = ArrayList<Task>()
+    private val tasks: MutableList<Task> = ArrayList()
 
     fun schedule(task: Task) {
         tasks.add(task)

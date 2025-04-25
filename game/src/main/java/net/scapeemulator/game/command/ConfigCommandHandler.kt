@@ -4,7 +4,7 @@ import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.ConfigMessage
 
 class ConfigCommandHandler : CommandHandler("config") {
-    override fun handle(player: Player, arguments: Array<String?>) {
+    override fun handle(player: Player, arguments: Array<String>) {
         if (player.rights < 2) return
 
         if (arguments.size != 2) {

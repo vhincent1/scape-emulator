@@ -1,44 +1,7 @@
-//plugins {
-////    id 'buildlogic.java-conventions'
-//    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
-//}
-//
-//group = 'net.scapeemulator'
-//version = '1.0-SNAPSHOT'
-//
-//print(project(':cache').name)
-//repositories {
-//    mavenCentral()
-//}
-//dependencies {
-//    //todo: fix
-//    api project(':cache')
-//    api project(':util')
-////    testImplementation "junit:junit:4.11"
-//
-//
-////    implementation "org.slf4j:slf4j-api:1.7.5"
-////    implementation "org.slf4j:slf4j-jdk14:1.7.5"
-//
-////    api libs.io.netty.netty.transport
-////    api libs.io.netty.netty.handler
-////    api libs.io.netty.netty.codec.http
-////    api libs.mysql.mysql.connector.java
-////    api libs.org.mindrot.jbcrypt
-//
-//
-//    implementation "mysql:mysql-connector-java:5.1.25"
-//    implementation "org.mindrot:jbcrypt:0.3m"
-//
-//    implementation "io.netty:netty-transport:4.0.0.CR3"
-//    implementation "io.netty:netty-buffer:4.0.0.CR3"
-//    implementation "io.netty:netty-codec-http:4.0.0.CR3"
-//
-//}
 plugins {
     id 'buildlogic.java-conventions'
-
-    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'application'
 }
 
 dependencies {
@@ -49,6 +12,12 @@ dependencies {
     api libs.io.netty.netty.codec.http
     api libs.mysql.mysql.connector.java
     api libs.org.mindrot.jbcrypt
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0-rc2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.0'
 }
 
 description = 'ScapeEmulator Game Server'
+
+application {
+    mainClassName = "net.scapeemulator.game.GameServer" // Replace with your main class
+}

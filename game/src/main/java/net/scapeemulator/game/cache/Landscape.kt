@@ -6,7 +6,7 @@ import net.scapeemulator.game.model.Position
 import java.nio.ByteBuffer
 
 class Landscape private constructor(val x: Int, val y: Int) {
-    val objects: MutableList<GroundObject> = ArrayList<GroundObject>()
+    val objects = ArrayList<GroundObject>()
 
     companion object {
         @JvmStatic

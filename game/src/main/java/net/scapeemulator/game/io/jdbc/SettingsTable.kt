@@ -27,13 +27,13 @@ class SettingsTable(connection: Connection) : Table() {
                 val value = set.getInt("value")
 
                 when (setting) {
-                    "attack_style" -> settings.setAttackStyle(value)
-                    "auto_retaliating" -> settings.setAutoRetaliating(value != 0)
-                    "two_button_mouse" -> settings.setTwoButtonMouse(value != 0)
-                    "chat_fancy" -> settings.setChatFancy(value != 0)
-                    "private_chat_split" -> settings.setPrivateChatSplit(value != 0)
-                    "accepting_aid" -> settings.setAcceptingAid(value != 0)
-                    else -> throw IOException("unknown setting: " + setting)
+                    "attack_style" -> settings.attackStyle = value
+                    "auto_retaliating" -> settings.autoRetaliating = value != 0
+                    "two_button_mouse" -> settings.twoButtonMouse = value != 0
+                    "chat_fancy" -> settings.chatFancy = value != 0
+                    "private_chat_split" -> settings.privateChatSplit = value != 0
+                    "accepting_aid" -> settings.acceptingAid =value != 0
+                    else -> throw IOException("unknown setting: $setting")
                 }
             }
         }
@@ -45,27 +45,27 @@ class SettingsTable(connection: Connection) : Table() {
 
         val settings = player.settings
         saveStatement.setString(2, "attack_style")
-        saveStatement.setInt(3, settings.getAttackStyle())
+        saveStatement.setInt(3, settings.attackStyle)
         saveStatement.addBatch()
 
         saveStatement.setString(2, "auto_retaliating")
-        saveStatement.setInt(3, if (settings.isAutoRetaliating()) 1 else 0)
+        saveStatement.setInt(3, if (settings.autoRetaliating) 1 else 0)
         saveStatement.addBatch()
 
         saveStatement.setString(2, "two_button_mouse")
-        saveStatement.setInt(3, if (settings.isTwoButtonMouse()) 1 else 0)
+        saveStatement.setInt(3, if (settings.twoButtonMouse) 1 else 0)
         saveStatement.addBatch()
 
         saveStatement.setString(2, "chat_fancy")
-        saveStatement.setInt(3, if (settings.isChatFancy()) 1 else 0)
+        saveStatement.setInt(3, if (settings.chatFancy) 1 else 0)
         saveStatement.addBatch()
 
         saveStatement.setString(2, "private_chat_split")
-        saveStatement.setInt(3, if (settings.isPrivateChatSplit()) 1 else 0)
+        saveStatement.setInt(3, if (settings.privateChatSplit) 1 else 0)
         saveStatement.addBatch()
 
         saveStatement.setString(2, "accepting_aid")
-        saveStatement.setInt(3, if (settings.isAcceptingAid()) 1 else 0)
+        saveStatement.setInt(3, if (settings.acceptingAid) 1 else 0)
         saveStatement.addBatch()
 
         saveStatement.executeBatch()

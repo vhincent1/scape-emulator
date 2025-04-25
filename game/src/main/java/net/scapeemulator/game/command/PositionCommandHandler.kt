@@ -3,7 +3,7 @@ package net.scapeemulator.game.command
 import net.scapeemulator.game.model.Player
 
 class PositionCommandHandler : CommandHandler("pos") {
-    override fun handle(player: Player, arguments: Array<String?>) {
+    override fun handle(player: Player, arguments: Array<String>) {
         if (player.rights < 2) return
 
         if (arguments.size != 0) {

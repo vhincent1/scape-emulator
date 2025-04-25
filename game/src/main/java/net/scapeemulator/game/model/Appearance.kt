@@ -1,13 +1,13 @@
 package net.scapeemulator.game.model
 
-class Appearance(@JvmField val gender: Gender, private val style: IntArray, private val colors: IntArray) {
-    fun getStyle(index: Int): Int {
-        return style[index]
-    }
-
-    fun getColor(index: Int): Int {
-        return colors[index]
-    }
+class Appearance(val gender: Gender, val style: IntArray, val colors: IntArray) {
+//    fun getStyle(index: Int): Int {
+//        return style[index]
+//    }
+//
+//    fun getColor(index: Int): Int {
+//        return colors[index]
+//    }
 
     companion object {
         @JvmField

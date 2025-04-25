@@ -99,7 +99,7 @@ object Equipment {
 
     private fun weaponChanged(player: Player) {
         // TODO try to keep the same attack style if possible?
-        player.settings.setAttackStyle(0)
+        player.settings.attackStyle = 0
         openAttackTab(player)
     }
 

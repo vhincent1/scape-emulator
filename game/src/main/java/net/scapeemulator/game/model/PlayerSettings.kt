@@ -4,106 +4,135 @@ import net.scapeemulator.game.msg.ConfigMessage
 import net.scapeemulator.game.msg.ScriptMessage
 
 class PlayerSettings(val player: Player) {
-    private var attackStyle = 0
-    private var autoRetaliating = true
-    private var running = false /* TODO move to Player as it isn't saved */
-    private var twoButtonMouse = true
-    private var chatFancy = true
-    private var privateChatSplit = false
-    private var acceptingAid = false
+    var attackStyle = 0
+        set(value) {
+            field = value
+            refreshAttackStyle()
+        }
 
-    fun setRunning(running: Boolean) {
-        this.running = running
-        refreshRunning()
-    }
+    var autoRetaliating = true
+        set(value) {
+            field = value
+            refreshAutoRetaliating()
+        }
+     var twoButtonMouse = true
+        set(value) {
+            field = value
+            refreshTwoButtonMouse()
+        }
+     var chatFancy = true
+        set(value) {
+            field = value
+            refreshChatFancy()
+        }
+    var privateChatSplit = false
+        set(value) {
+            field = value
+            refreshPrivateChatSplit()
+        }
+    var acceptingAid = false
+        set(value) {
+            field = value
+            refreshAcceptingAid()
+        }
+    var running = false /* TODO move to Player as it isn't saved */
+        set(value) {
+            field = value
+            refreshRunning()
+        }
 
-    fun isRunning(): Boolean {
-        return running
-    }
-
+//    fun setRunning(running: Boolean) {
+//        this.running = running
+//        refreshRunning()
+//    }
+//
+//    fun isRunning(): Boolean {
+//        return running
+//    }
+//
     fun toggleRunning() {
         running = !running
         refreshRunning()
     }
-
-    fun setAttackStyle(attackStyle: Int) {
-        this.attackStyle = attackStyle
-        refreshAttackStyle()
-    }
-
-    fun getAttackStyle(): Int {
-        return attackStyle
-    }
-
+//
+//    fun setAttackStyle(attackStyle: Int) {
+//        this.attackStyle = attackStyle
+//        refreshAttackStyle()
+//    }
+//
+//    fun getAttackStyle(): Int {
+//        return attackStyle
+//    }
+//
     fun toggleAutoRetaliating() {
         autoRetaliating = !autoRetaliating
         refreshAutoRetaliating()
     }
-
-    fun setAutoRetaliating(autoRetaliating: Boolean) {
-        this.autoRetaliating = autoRetaliating
-        refreshAutoRetaliating()
-    }
-
-    fun isAutoRetaliating(): Boolean {
-        return autoRetaliating
-    }
-
-    fun setTwoButtonMouse(twoButtonMouse: Boolean) {
-        this.twoButtonMouse = twoButtonMouse
-        refreshTwoButtonMouse()
-    }
-
+//
+//    fun setAutoRetaliating(autoRetaliating: Boolean) {
+//        this.autoRetaliating = autoRetaliating
+//        refreshAutoRetaliating()
+//    }
+//
+//    fun isAutoRetaliating(): Boolean {
+//        return autoRetaliating
+//    }
+//
+//    fun setTwoButtonMouse(twoButtonMouse: Boolean) {
+//        this.twoButtonMouse = twoButtonMouse
+//        refreshTwoButtonMouse()
+//    }
+//
     fun toggleTwoButtonMouse() {
         twoButtonMouse = !twoButtonMouse
         refreshTwoButtonMouse()
     }
-
-    fun isTwoButtonMouse(): Boolean {
-        return twoButtonMouse
-    }
-
-    fun setChatFancy(chatFancy: Boolean) {
-        this.chatFancy = chatFancy
-        refreshChatFancy()
-    }
-
+//
+//    fun isTwoButtonMouse(): Boolean {
+//        return twoButtonMouse
+//    }
+//
+//    fun setChatFancy(chatFancy: Boolean) {
+//        this.chatFancy = chatFancy
+//        refreshChatFancy()
+//    }
+//
     fun toggleChatFancy() {
         chatFancy = !chatFancy
         refreshChatFancy()
     }
-
-    fun isChatFancy(): Boolean {
-        return chatFancy
-    }
-
-    fun setPrivateChatSplit(privateChatSplit: Boolean) {
-        this.privateChatSplit = privateChatSplit
-        refreshPrivateChatSplit()
-    }
-
+//
+//    fun isChatFancy(): Boolean {
+//        return chatFancy
+//    }
+//
+//    fun setPrivateChatSplit(privateChatSplit: Boolean) {
+//        this.privateChatSplit = privateChatSplit
+//        refreshPrivateChatSplit()
+//    }
+//
     fun togglePrivateChatSplit() {
         privateChatSplit = !privateChatSplit
         refreshPrivateChatSplit()
     }
-
-    fun isPrivateChatSplit(): Boolean {
-        return privateChatSplit
-    }
-
-    fun setAcceptingAid(acceptingAid: Boolean) {
-        this.acceptingAid = acceptingAid
-        refreshAcceptingAid()
-    }
-
+//
+//    fun isPrivateChatSplit(): Boolean {
+//        return privateChatSplit
+//    }
+//
+//    fun setAcceptingAid(acceptingAid: Boolean) {
+//        this.acceptingAid = acceptingAid
+//        refreshAcceptingAid()
+//    }
+//
     fun toggleAcceptingAid() {
         acceptingAid = !acceptingAid
         refreshAcceptingAid()
     }
-
-    fun isAcceptingAid(): Boolean {
-        return acceptingAid
-    }
+//
+//    fun isAcceptingAid(): Boolean {
+//        return acceptingAid
+//    }
 
     fun refresh() {
         refreshRunning()

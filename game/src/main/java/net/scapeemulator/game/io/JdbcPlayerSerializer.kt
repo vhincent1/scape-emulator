@@ -68,10 +68,10 @@ class JdbcPlayerSerializer(url: String, username: String, password: String) : Pl
                 return SerializeResult(LoginResponse.STATUS_INVALID_PASSWORD)
             }
         } catch (ex: SQLException) {
-            logger.warn("Loading player " + username + " failed.", ex)
+            logger.warn("Loading player $username failed.", ex)
             return SerializeResult(LoginResponse.STATUS_COULD_NOT_COMPLETE)
         } catch (ex: IOException) {
-            logger.warn("Loading player " + username + " failed.", ex)
+            logger.warn("Loading player $username failed.", ex)
             return SerializeResult(LoginResponse.STATUS_COULD_NOT_COMPLETE)
         }
     }

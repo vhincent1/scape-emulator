@@ -20,8 +20,9 @@ class Flooder {
     init {
         cache = Cache(open("../game/data/cache/"))
         val table = cache.createChecksumTable()
-        val crc = IntArray(28)
-        for (i in crc.indices) crc[i] = table.getEntry(i).crc
+        val crc = IntArray(29)
+        for (i in crc.indices)
+            crc[i] = table.getEntry(i).crc
 
         bootstrap.remoteAddress(InetSocketAddress(InetAddress.getLoopbackAddress(), NetworkConstants.GAME_PORT))
         bootstrap.channel(NioSocketChannel::class.java)
@@ -31,7 +32,9 @@ class Flooder {
 
     @Throws(InterruptedException::class)
     fun start() {
-        for (i in 0..1999) bootstrap.connect()
+//        for (i in 0..1999)
+//        for(i in 0..20)
+        for (i in 0..10) bootstrap.connect()
     }
 
     companion object {

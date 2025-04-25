@@ -1,4 +1,4 @@
-package net.scapeemulator.game.net
+package net.scapeemulator.game.net.http
 
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.socket.SocketChannel

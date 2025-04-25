@@ -27,7 +27,7 @@ class LoginResponse {
         const val STATUS_GAME_UPDATED: Int = 6
         const val STATUS_WORLD_FULL: Int = 7
         const val STATUS_LOGIN_SERVER_OFFLINE: Int = 8
-        const val STTAUS_LOGIN_LIMIT_EXCEEDED: Int = 9
+        const val STATUS_LOGIN_LIMIT_EXCEEDED: Int = 9
         const val STATUS_BAD_SESSION_ID: Int = 10
         const val STATUS_FORCE_CHANGE_PASSWORD: Int = 11
         const val STATUS_WORLD_MEMBERS: Int = 12

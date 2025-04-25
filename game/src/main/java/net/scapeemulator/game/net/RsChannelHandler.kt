@@ -23,7 +23,6 @@ class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHa
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
         if (session != null) session!!.channelClosed()
-
         logger.info("Channel disconnected: " + ctx.channel().remoteAddress() + ".")
     }
 
@@ -53,7 +52,7 @@ class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHa
         }
     }
 
-    fun setSession(session: Session?) {
+    fun setSession(session: Session) {
         this.session = session
     }
 

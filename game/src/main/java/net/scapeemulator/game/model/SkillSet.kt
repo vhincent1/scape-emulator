@@ -8,7 +8,7 @@ import kotlin.math.pow
 class SkillSet {
     private val level = IntArray(24)
     private val exp = DoubleArray(level.size)
-    private val listeners: MutableList<SkillListener> = ArrayList<SkillListener>()
+    private val listeners: MutableList<SkillListener> = ArrayList()
 
     init {
         for (i in level.indices) {
@@ -20,11 +20,11 @@ class SkillSet {
         exp[Skill.HITPOINTS] = 1184.0
     }
 
-    fun addListener(listener: SkillListener?) {
-        listeners.add(listener!!)
+    fun addListener(listener: SkillListener) {
+        listeners.add(listener)
     }
 
-    fun removeListener(listener: SkillListener?) {
+    fun removeListener(listener: SkillListener) {
         listeners.remove(listener)
     }
 
@@ -81,13 +81,11 @@ class SkillSet {
             val ranged = getMaximumLevel(Skill.RANGED)
             val summoning = getMaximumLevel(Skill.SUMMONING) // TODO set to zero on an F2P world
 
-            val base =
-                1.3 * max(max((attack + strength).toDouble(), 1.5 * magic), 1.5 * ranged)
+            val base = 1.3 * max(max((attack + strength).toDouble(), 1.5 * magic), 1.5 * ranged)
 
             return floor(
-                (defence + hitpoints + floor(prayer / 2.0) + floor(
-                    summoning / 2.0
-                ) + base) / 4.0
+                (defence + hitpoints + floor(prayer / 2.0) +
+                        floor(summoning / 2.0) + base) / 4.0
             ).toInt()
         }
 
@@ -103,7 +101,7 @@ class SkillSet {
 
         private fun getLevelFromExperience(xp: Double): Int {
             var points = 0
-            var output = 0
+            var output: Int
 
             for (level in 1..99) {
                 points = (points + floor(level + 300.0 * 2.0.pow(level / 7.0))).toInt()

@@ -8,8 +8,8 @@ import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
 abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
-    private val blocks: MutableMap<Class<out PlayerBlock?>?, PlayerBlock> =
-        HashMap<Class<out PlayerBlock?>?, PlayerBlock>()
+    private val blocks: MutableMap<Class<out PlayerBlock>, PlayerBlock> =
+        HashMap<Class<out PlayerBlock>, PlayerBlock>()
 
     init {
         if (player.isActive) {

@@ -13,7 +13,7 @@ import java.util.*
 
 class GameSession(server: GameServer, channel: Channel, private val player: Player) : Session(server, channel) {
     private val dispatcher: MessageDispatcher
-    private val messages: Queue<Message?> = ArrayDeque<Message?>()
+    private val messages: Queue<Message> = ArrayDeque<Message>()
 
     init {
         this.dispatcher = server.messageDispatcher
@@ -29,7 +29,7 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
 
         /* set up the game interface */
         player.interfaceSet.init()
-        player.sendMessage("Welcome to RuneScape.")
+        player.sendMessage("Welcome to HustlaScape.")
 
         /* refresh skills, inventory, energy, etc. */
         player.inventory.refresh()
@@ -41,24 +41,25 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
     }
 
     @Throws(IOException::class)
-    public override fun messageReceived(message: Any) {
+    override fun messageReceived(message: Any) {
         synchronized(messages) {
             messages.add(message as Message?)
         }
     }
 
-    public override fun channelClosed() {
+    override fun channelClosed() {
         server.loginService.addLogoutRequest(player)
     }
 
-    fun send(message: Message?): ChannelFuture? {
+    fun send(message: Message): ChannelFuture {
         return channel.write(message)
     }
 
     fun processMessageQueue() {
         synchronized(messages) {
-            var message: Message?
-            while ((messages.poll().also { message = it }) != null) dispatcher.dispatch(player, message!!)
+            var message: Message? //todo check
+            while (messages.poll().also { message = it } != null)
+                if (message != null) dispatcher.dispatch(player, message)
         }
     }
 }

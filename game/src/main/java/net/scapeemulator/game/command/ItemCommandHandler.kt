@@ -4,7 +4,7 @@ import net.scapeemulator.game.model.Item
 import net.scapeemulator.game.model.Player
 
 class ItemCommandHandler : CommandHandler("item") {
-    override fun handle(player: Player, arguments: Array<String?>) {
+    override fun handle(player: Player, arguments: Array<String>) {
         if (player.rights < 2) return
 
         if (arguments.size != 1 && arguments.size != 2) {

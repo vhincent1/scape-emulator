@@ -22,7 +22,7 @@ object ItemDefinitions {
         val table = ReferenceTable.decode(tableContainer.getData())
 
         val files = table.capacity()
-        definitions = arrayOfNulls<ItemDefinition>(files * 256)
+        definitions = arrayOfNulls(files * 256)
 
         for (file in 0..<files) {
             val entry = table.getEntry(file)

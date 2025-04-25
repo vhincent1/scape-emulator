@@ -20,7 +20,7 @@ class AutoLoginDecoder : ByteToMessageDecoder() {
     @Throws(IOException::class)
     public override fun decode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MessageBuf<Any>) {
         if (state == State.READ_SIZE) {
-            if (!buf.isReadable()) return
+            if (!buf.isReadable) return
 
             state = State.READ_PAYLOAD
             size = buf.readUnsignedByte().toInt()

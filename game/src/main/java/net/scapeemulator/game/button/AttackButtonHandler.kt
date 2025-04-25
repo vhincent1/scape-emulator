@@ -4,9 +4,7 @@ import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.Tab
 
 class AttackButtonHandler(private val tab: Int, private val styles: IntArray, private val autoRetaliate: Int) :
-    ButtonHandler(
-        tab
-    ) {
+    ButtonHandler(  tab) {
     override fun handle(player: Player, slot: Int, parameter: Int) {
         if (player.interfaceSet.getTab(Tab.ATTACK) != tab) return
 
@@ -14,7 +12,8 @@ class AttackButtonHandler(private val tab: Int, private val styles: IntArray, pr
 
         for (style in styles.indices) {
             if (styles[style] == slot) {
-                settings.setAttackStyle(style)
+//                settings.setAttackStyle(style)
+                settings.attackStyle = style
                 return
             }
         }

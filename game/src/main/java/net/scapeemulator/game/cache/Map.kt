@@ -29,8 +29,8 @@ class Map(val x: Int, val y: Int, private val tiles: Array<Array<Array<Tile>>>) 
     companion object {
         @JvmStatic
         fun decode(x: Int, y: Int, buffer: ByteBuffer): Map {
-            val tiles = Array<Array<Array<Tile>>>(64) {
-                Array<Array<Tile>>(64) {
+            val tiles = Array(64) {
+                Array(64) {
                     @Suppress("UNCHECKED_CAST")
                     arrayOfNulls<Tile>(4) as Array<Tile>
                 }

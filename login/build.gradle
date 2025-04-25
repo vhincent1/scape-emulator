@@ -1,56 +1,19 @@
-//plugins {
-//    id 'org.jetbrains.kotlin.jvm' version '2.1.20' apply true
-//}
-//
-//
-////group = 'org.example'
-////version = '1.0-SNAPSHOT'
-//
-//    repositories {
-//        mavenCentral()
-//    }
-//
-//
-//
-//
-//dependencies {
-//
-//    implementation project(':util')
-//
-//    implementation "org.slf4j:slf4j-api:1.7.5"
-//    implementation "org.slf4j:slf4j-jdk14:1.7.5"
-//
-////    implementation "io.netty:netty-handler:4.0.0.CR3"
-////    implementation "io.netty:netty-transport-hh:4.0.0.CR3"
-//
-////    implementation "io.netty:netty-transport:4.0.0.CR3"
-////    implementation "io.netty:netty-handler:4.0.0.CR3"
-//
-////    implementation "io.netty:netty-buffer:4.0.0.CR3"
-//
-////    implementation "io.netty:netty-codec:4.0.0.CR3"
-//    implementation "io.netty:netty-codec-http:4.0.0.CR3"
-//
-//    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-//}
-//
-//test {
-//    useJUnitPlatform()
-//}
-//kotlin {
-//    jvmToolchain(23)
-//}
-//
-//
-
 plugins {
     id 'buildlogic.java-conventions'
+    id 'org.jetbrains.kotlin.jvm' apply true
 }
-
+println("Login")
 dependencies {
     api project(':util')
     api libs.io.netty.netty.transport
     api libs.io.netty.netty.handler
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 description = 'ScapeEmulator Login Server'
+repositories {
+    mavenCentral()
+}
+kotlin {
+    jvmToolchain(23)
+}

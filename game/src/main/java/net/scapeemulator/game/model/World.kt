@@ -1,21 +1,21 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.net.world.WorldListSession
 import net.scapeemulator.game.task.TaskScheduler
 import net.scapeemulator.game.update.PlayerUpdater
 
 class World private constructor() {
+
     @JvmField
-    val players: MobList<Player> = MobList<Player>(MAX_PLAYERS)
+    val players: MobList<Player> = MobList(MAX_PLAYERS)
     @JvmField
-    val npcs: MobList<Npc> = MobList<Npc>(32000)
+    val npcs: MobList<Npc> = MobList(32000)
     val taskScheduler: TaskScheduler = TaskScheduler()
     private val updater = PlayerUpdater(this)
 
     fun tick() {
         for (player in players) {
             val session = player.session
-            session?.processMessageQueue()
+            session.processMessageQueue()
         }
 
         taskScheduler.tick()

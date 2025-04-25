@@ -52,10 +52,10 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
         val pipeline = channel.pipeline()
 
         val session = GameSession(server, channel, player)
-        val handler = pipeline.get<RsChannelHandler>(RsChannelHandler::class.java)
+        val handler = pipeline.get(RsChannelHandler::class.java)
         handler.setSession(session)
 
-        pipeline.remove<ReadTimeoutHandler?>(ReadTimeoutHandler::class.java) // TODO a different timeout mechanism is used in-game
+        pipeline.remove(ReadTimeoutHandler::class.java) // TODO a different timeout mechanism is used in-game
 
         val response = LoginResponse(status, buf)
         channel.write(response)

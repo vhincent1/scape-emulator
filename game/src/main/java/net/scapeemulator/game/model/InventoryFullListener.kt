@@ -10,6 +10,6 @@ class InventoryFullListener(private val player: Player, private val name: String
     }
 
     override fun capacityExceeded(inventory: Inventory) {
-        player.sendMessage("Not enough " + name + " space.")
+        player.sendMessage("Not enough $name space.")
     }
 }

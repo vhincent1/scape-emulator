@@ -19,8 +19,8 @@ class Player : Mob() {
             this.isRegionChanging = true
         }
     val localPlayers: MutableList<Player> = ArrayList<Player>()
-    val localNpcs: MutableList<Npc> = ArrayList<Npc>()
-    var appearance: Appearance? = Appearance.DEFAULT_APPEARANCE
+    val localNpcs: MutableList<Npc> = ArrayList()
+    var appearance: Appearance = Appearance.DEFAULT_APPEARANCE
         set(appearance) {
             field = appearance
             this.appearanceTicket = nextAppearanceTicket()
@@ -59,7 +59,7 @@ class Player : Mob() {
         equipment.addListener(InventoryAppearanceListener(this))
     }
 
-    fun send(message: Message): ChannelFuture? = session.send(message)
+    fun send(message: Message): ChannelFuture = session.send(message)
     fun sendMessage(text: String) = send(ServerMessage(text))
 
     val isChatUpdated: Boolean
@@ -74,7 +74,7 @@ class Player : Mob() {
     fun logout() {
         // TODO this seems fragile
         val future = send(LogoutMessage())
-        future?.addListener(ChannelFutureListener.CLOSE)
+        future.addListener(ChannelFutureListener.CLOSE)
     }
 
     override fun reset() {
@@ -84,7 +84,7 @@ class Player : Mob() {
     }
 
     override val isRunning: Boolean
-        get() = settings.isRunning()
+        get() = settings.running
 
     companion object {
         private var appearanceTicketCounter = 0

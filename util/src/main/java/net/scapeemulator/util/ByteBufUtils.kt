@@ -7,9 +7,8 @@ import java.nio.charset.StandardCharsets
 
 object ByteBufUtils {
     fun rsa(buf: ByteBuf, modulus: String, exponent: String): ByteBuf {
-//        val bytes = ByteArray(buf.readableBytes())
-
-        val bytes = ByteArray(buf.readByte().toInt())
+//        val bytes = ByteArray(buf.readByte().toInt())
+        val bytes = ByteArray(buf.readableBytes())
         buf.readBytes(bytes)
 
         val cipherText = BigInteger(bytes)

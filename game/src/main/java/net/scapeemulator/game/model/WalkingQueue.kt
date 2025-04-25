@@ -23,7 +23,7 @@ class WalkingQueue(private val mob: Mob) {
     }
 
     fun addStep(position: Position) {
-        addStepImpl(position, points.peekLast())//todo check
+        addStepImpl(position, points.peekLast())
     }
 
     private fun addStepImpl(position: Position, last: Position) {

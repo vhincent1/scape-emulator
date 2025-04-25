@@ -24,11 +24,11 @@ import java.nio.charset.StandardCharsets
 class HandshakeDecoder : ChannelInboundByteHandlerAdapter() {
     @Throws(IOException::class)
     public override fun inboundBufferUpdated(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        if (!buf.isReadable()) return
+        if (!buf.isReadable) return
 
         val service = buf.readUnsignedByte().toInt()
         var additionalBuf: ByteBuf? = null
-        if (buf.isReadable()) {
+        if (buf.isReadable) {
             additionalBuf = buf.readBytes(buf.readableBytes())
         }
 

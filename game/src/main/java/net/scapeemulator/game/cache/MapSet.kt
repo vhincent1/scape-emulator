@@ -2,7 +2,6 @@ package net.scapeemulator.game.cache
 
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.Container
-import net.scapeemulator.cache.Container.Companion.decode
 import net.scapeemulator.cache.ReferenceTable
 import net.scapeemulator.cache.util.StringUtils
 import net.scapeemulator.game.util.LandscapeKeyTable
@@ -47,7 +46,7 @@ object MapSet {
         var buffer = cache.store.read(5, id)
 
         val key = keyTable.getKeys(x, y)
-        buffer = decode(buffer, key).getData()
+        buffer = Container.decode(buffer, key).getData()
 
         val landscape = Landscape.decode(x, y, buffer)
     }

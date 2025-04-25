@@ -46,7 +46,7 @@ class WorldListEncoder : MessageToByteEncoder<WorldListMessage>() {
         buf.writeInt(list.sessionId)
 
         val players = list.players
-        for (i in worlds.indices) {//todo fix
+        for (i in worlds.indices) {
             val world = worlds[i]
             ByteBufUtils.writeSmart(buf, world.id - minId)
             buf.writeShort(players[i])

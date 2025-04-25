@@ -9,14 +9,8 @@ import java.sql.PreparedStatement
 import java.sql.SQLException
 
 class PlayersTable(connection: Connection) : Table() {
-    private val loadStatement: PreparedStatement
-    private val saveStatement: PreparedStatement
-
-    init {
-        this.loadStatement = connection.prepareStatement("SELECT * FROM players WHERE id = ?")
-        this.saveStatement =
-            connection.prepareStatement("REPLACE INTO players (id, username, password, rights, x, y, height) VALUES (?, ?, ?, ?, ?, ?, ?);")
-    }
+    private val loadStatement: PreparedStatement = connection.prepareStatement("SELECT * FROM players WHERE id = ?")
+    private val saveStatement: PreparedStatement = connection.prepareStatement("REPLACE INTO players (id, username, password, rights, x, y, height) VALUES (?, ?, ?, ?, ?, ?, ?);")
 
     @Throws(SQLException::class, IOException::class)
     override fun load(player: Player) {

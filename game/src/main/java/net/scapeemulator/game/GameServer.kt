@@ -17,7 +17,7 @@ import net.scapeemulator.game.model.ItemDefinitions
 import net.scapeemulator.game.model.World
 import net.scapeemulator.game.msg.codec.CodecRepository
 import net.scapeemulator.game.msg.handler.MessageDispatcher
-import net.scapeemulator.game.net.HttpChannelInitializer
+import net.scapeemulator.game.net.http.HttpChannelInitializer
 import net.scapeemulator.game.net.RsChannelInitializer
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
@@ -53,6 +53,8 @@ class GameServer(loginAddress: SocketAddress) {
     init {
         logger.info("Starting ScapeEmulator game server...")
 
+        // todo: world list and game settings
+
         /* load landscape keys */
         landscapeKeyTable = LandscapeKeyTable.open("data/landscape-keys")
 
@@ -62,7 +64,7 @@ class GameServer(loginAddress: SocketAddress) {
         ItemDefinitions.init(cache)
         EquipmentDefinition.init()
 
-        //MapSet.init(cache, landscapeKeyTable);
+//        MapSet.init(cache, landscapeKeyTable);
 
         /* load message codecs and dispatcher */
         codecRepository = CodecRepository(landscapeKeyTable)

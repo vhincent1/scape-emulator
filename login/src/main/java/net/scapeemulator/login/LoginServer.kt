@@ -23,8 +23,8 @@ class LoginServer {
     }
 
     @Throws(InterruptedException::class)
-    fun bind(address: SocketAddress?) {
-        logger.info("Binding to address: " + address + "...")
+    fun bind(address: SocketAddress) {
+        logger.info("Binding to address: $address...")
         bootstrap.localAddress(address).bind().sync()
     }
 

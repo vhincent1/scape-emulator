@@ -6,8 +6,6 @@ import io.netty.channel.ChannelInboundByteHandlerAdapter
 import net.burtleburtle.bob.rand.IsaacRandom
 import net.scapeemulator.util.Base37Utils
 import net.scapeemulator.util.ByteBufUtils
-import net.scapeemulator.util.ByteBufUtils.rsa
-import net.scapeemulator.util.ByteBufUtils.writeString
 import net.scapeemulator.util.crypto.RsaKeySet
 import net.scapeemulator.util.crypto.StreamCipher
 import java.io.IOException
@@ -34,9 +32,10 @@ class FlooderChannelHandler(private val crc: IntArray) : ChannelInboundByteHandl
     override fun channelActive(ctx: ChannelHandlerContext) {
         val channel = ctx.channel()
 
-        username = "bot" + (channel.localAddress() as InetSocketAddress).getPort()
+        username = "bot" + (channel.localAddress() as InetSocketAddress).port
+        //username = "bot"
         password = "password"
-        encodedUsername = Base37Utils.encodeBase37(username!!)
+        encodedUsername = Base37Utils.encodeBase37(username)
 
         val packet = ctx.alloc().buffer()
         packet.writeByte(14)
@@ -62,20 +61,22 @@ class FlooderChannelHandler(private val crc: IntArray) : ChannelInboundByteHandl
                 payload.writeByte(0)
 
                 payload.writeByte(0)
+
                 payload.writeShort(765)
                 payload.writeShort(503)
 
                 payload.writeByte(0)
 
-                for (i in 0..23) payload.writeByte(0)
+//                val uid = ByteArray(24)
+                for (i in 0..22) payload.writeByte(-1)
 
-                writeString(payload, "kKmok3kJqOeN6D3mDdihco3oPeYN2KFy6W5--vZUbNA")
+                ByteBufUtils.writeString(payload, "kKmok3kJqOeN6D3mDdihco3oPeYN2KFy6W5--vZUbNA")
 
                 payload.writeInt(0)
                 payload.writeInt(0)
                 payload.writeShort(0)
 
-                for (i in 0..27) {
+                for (i in 0..28) {
                     payload.writeInt(crc[i])
                 }
 
@@ -86,13 +87,13 @@ class FlooderChannelHandler(private val crc: IntArray) : ChannelInboundByteHandl
                 secure.writeLong(encodedUsername)
                 ByteBufUtils.writeString(secure, password!!)
 
-                secure = rsa(secure, RsaKeySet.MODULUS, RsaKeySet.PUBLIC_KEY)
+                secure = ByteBufUtils.rsa(secure, RsaKeySet.MODULUS, RsaKeySet.PUBLIC_KEY)
 
                 payload.writeByte(secure.readableBytes())
                 payload.writeBytes(secure)
 
                 val packet = ctx.alloc().buffer()
-                packet.writeByte(18)
+                packet.writeByte(18)//reconnecting
                 packet.writeShort(payload.readableBytes())
                 packet.writeBytes(payload)
 
