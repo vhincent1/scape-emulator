@@ -6,3 +6,8 @@ pluginManagement {
 }
 
 include(listOf("cache", "login", "game", "util", "flooder"))
+//include("web")
+//include("application")
+
+//v1
+//include(listOf("game", "cache", "util"))

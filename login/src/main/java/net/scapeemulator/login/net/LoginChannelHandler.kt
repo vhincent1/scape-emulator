@@ -7,7 +7,7 @@ import net.scapeemulator.util.net.LoginFrame
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class LoginChannelHandler(private val server: LoginServer) : ChannelInboundMessageHandlerAdapter<LoginFrame?>() {
+class LoginChannelHandler(private val server: LoginServer) : ChannelInboundMessageHandlerAdapter<LoginFrame>() {
     override fun channelActive(ctx: ChannelHandlerContext) {
         logger.info("Channel connected: " + ctx.channel().remoteAddress() + ".")
     }
@@ -16,7 +16,7 @@ class LoginChannelHandler(private val server: LoginServer) : ChannelInboundMessa
         logger.info("Channel disconnected: " + ctx.channel().remoteAddress() + ".")
     }
 
-    override fun messageReceived(ctx: ChannelHandlerContext?, msg: LoginFrame?) {
+    override fun messageReceived(ctx: ChannelHandlerContext, msg: LoginFrame) {
     }
 
     companion object {

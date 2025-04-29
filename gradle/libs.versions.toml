@@ -7,6 +7,7 @@ io-netty-netty-codec = "4.0.0.CR3"
 io-netty-netty-codec-http = "4.0.0.CR3"
 io-netty-netty-handler = "4.0.0.CR3"
 io-netty-netty-transport = "4.0.0.CR3"
+
 mysql-mysql-connector-java = "5.1.25"
 org-javassist-javassist = "3.17.1-GA"
 org-mindrot-jbcrypt = "0.3m"
@@ -20,6 +21,7 @@ io-netty-netty-codec = { module = "io.netty:netty-codec", version.ref = "io-nett
 io-netty-netty-codec-http = { module = "io.netty:netty-codec-http", version.ref = "io-netty-netty-codec-http" }
 io-netty-netty-handler = { module = "io.netty:netty-handler", version.ref = "io-netty-netty-handler" }
 io-netty-netty-transport = { module = "io.netty:netty-transport", version.ref = "io-netty-netty-transport" }
+
 mysql-mysql-connector-java = { module = "mysql:mysql-connector-java", version.ref = "mysql-mysql-connector-java" }
 org-javassist-javassist = { module = "org.javassist:javassist", version.ref = "org-javassist-javassist" }
 org-mindrot-jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "org-mindrot-jbcrypt" }
