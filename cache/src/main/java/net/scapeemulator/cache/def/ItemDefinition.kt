@@ -1,6 +1,5 @@
 package net.scapeemulator.cache.def
 
-import net.scapeemulator.cache.util.ByteBufferUtils
 import net.scapeemulator.cache.util.ByteBufferUtils.getJagexString
 import net.scapeemulator.cache.util.ByteBufferUtils.getTriByte
 import java.nio.ByteBuffer
@@ -14,11 +13,8 @@ import java.nio.ByteBuffer
  * TODO Finish some of the opcodes.
  */
 class ItemDefinition {
-    var equipId: Int = 0
     var name: String? = null
         private set
-
-//    var equipId: Int = 0
 
     var inventoryModelId: Int = 0
         private set
@@ -82,8 +78,6 @@ class ItemDefinition {
         private set
 
     companion object {
-
-
         /**
          *
          * @param buffer
@@ -226,5 +220,4 @@ class ItemDefinition {
             return def
         }
     }
-
 }

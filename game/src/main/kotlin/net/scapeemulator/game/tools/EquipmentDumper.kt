@@ -1,17 +1,9 @@
 package net.scapeemulator.game.tools
 
 import com.github.michaelbull.logging.InlineLogger
-import net.scapeemulator.cache.Cache
-import net.scapeemulator.cache.FileStore
 import net.scapeemulator.cache.def.ItemDefinition
 import net.scapeemulator.game.model.Equipment
-import net.scapeemulator.game.model.EquipmentDefinition
 import net.scapeemulator.game.model.EquipmentDefinition.WeaponClass
-import net.scapeemulator.game.model.ItemDefinitions.count
-import net.scapeemulator.game.model.ItemDefinitions.forId
-import net.scapeemulator.game.model.ItemDefinitions.init
-import java.io.DataOutputStream
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 
@@ -19,40 +11,40 @@ object EquipmentDumper {
     private val logger = InlineLogger(EquipmentDumper::class)
     @Throws(IOException::class)
     @JvmStatic
-    fun main(args: Array<String>) {
-        logger.info { "Dumping equipment data..." }
-
-        val cache = Cache(FileStore.open("data/cache"))
-        init(cache)
-
-        DataOutputStream(FileOutputStream("data/equipment.dat")).use { output ->
-           println("COUNT :"+count())
-            for (id in 0..<count()) {
-                val def = forId(id)
-                if (def != null) {
-                    if (isEquipment(def)) {
-                        output.writeShort(id)
-                        var flags = 0
-                        val slot = getSlot(def)
-                        if (isTwoHanded(def)) flags = flags or EquipmentDefinition.FLAG_TWO_HANDED
-                        if (isFullHelm(def)) flags = flags or EquipmentDefinition.FLAG_FULL_HELM
-                        if (isFullMask(def)) flags = flags or EquipmentDefinition.FLAG_FULL_MASK
-                        if (isFullBody(def)) flags = flags or EquipmentDefinition.FLAG_FULL_BODY
-                        output.writeByte(flags)
-                        output.writeByte(slot)
-
-                        if (slot == Equipment.WEAPON) {
-                            output.writeShort(getStance(id, def))
-                            output.writeByte(getWeaponClass(def).ordinal)
-                        }
-
-                    }
-                }
-            }
-            output.writeShort(-1)
-        }
-        logger.info { "Successfully dumped equipment data. " }
-    }
+//    fun main(args: Array<String>) {
+//        logger.info { "Dumping equipment data..." }
+//
+//        val cache = Cache(FileStore.open("data/cache"))
+////        init(cache)
+//
+//        DataOutputStream(FileOutputStream("data/equipment.dat")).use { output ->
+//           println("COUNT :"+count())
+//            for (id in 0..<count()) {
+//                val def = forId(id)
+//                if (def != null) {
+//                    if (isEquipment(def)) {
+//                        output.writeShort(id)
+//                        var flags = 0
+//                        val slot = getSlot(def)
+//                        if (isTwoHanded(def)) flags = flags or EquipmentDefinition.FLAG_TWO_HANDED
+//                        if (isFullHelm(def)) flags = flags or EquipmentDefinition.FLAG_FULL_HELM
+//                        if (isFullMask(def)) flags = flags or EquipmentDefinition.FLAG_FULL_MASK
+//                        if (isFullBody(def)) flags = flags or EquipmentDefinition.FLAG_FULL_BODY
+//                        output.writeByte(flags)
+//                        output.writeByte(slot)
+//
+//                        if (slot == Equipment.WEAPON) {
+//                            output.writeShort(getStance(id, def))
+//                            output.writeByte(getWeaponClass(def).ordinal)
+//                        }
+//
+//                    }
+//                }
+//            }
+//            output.writeShort(-1)
+//        }
+//        logger.info { "Successfully dumped equipment data. " }
+//    }
 
     //todo fix
     private fun isEquipment(definition: ItemDefinition): Boolean {

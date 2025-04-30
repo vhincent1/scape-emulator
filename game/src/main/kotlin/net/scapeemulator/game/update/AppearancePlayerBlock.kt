@@ -1,7 +1,6 @@
 package net.scapeemulator.game.update
 
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.model.EquipmentDefinition.Companion.forId
 import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
@@ -71,10 +70,6 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
 
         item = equipment.get(Equipment.SHIELD)
         if (item != null) {
-            println("Shield ${item.id}")
-            println("EquipId ${item.definition?.equipId}")
-//            println("EquipmentId ${item.equipmentDefinition?.equipmentId}")
-
             propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
@@ -104,7 +99,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         if (item != null) {
             //TODO fix proper values
             fullHelm = forId(item.id)!!.isFullHelm()
-            fullMask =  forId(item.id)!!.isFullMask()
+            fullMask = forId(item.id)!!.isFullMask()
         }
         if (!fullHelm && !fullMask) {
             propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[0])
@@ -151,5 +146,9 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         /* if the above byte is non-zero, four unknown shorts are written */
         builder.put(DataType.BYTE, DataTransformation.ADD, propertiesBuilder.length)
         builder.putRawBuilder(propertiesBuilder)
+    }
+
+    fun forId(id: Int): ItemDefinition? {
+        return ItemDefinitions.forId(id)
     }
 }

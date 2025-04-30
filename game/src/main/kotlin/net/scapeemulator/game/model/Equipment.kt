@@ -47,9 +47,9 @@ object Equipment {
         val unequipShield = def.slot == WEAPON && def.isTwoHanded() && equipment.get(SHIELD) != null
         val unequipWeapon =
             targetSlot == SHIELD && equipment.get(WEAPON) != null && equipment.get(WEAPON)!!.equipmentDefinition!!.isTwoHanded()
-        val topUpStack = item.definition!!.isStackable && item.id == equipment.get(targetSlot)!!.id
+        val topUpStack = item.definition!!.stackable && item.id == equipment.get(targetSlot)!!.id
         val drainStack =
-            equipment.get(targetSlot) != null && equipment.get(targetSlot)!!.definition!!.isStackable && inventory.contains(
+            equipment.get(targetSlot) != null && equipment.get(targetSlot)!!.definition!!.stackable && inventory.contains(
                 equipment.get(targetSlot)!!.id
             )
 

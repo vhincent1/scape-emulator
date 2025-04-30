@@ -16,6 +16,7 @@ import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
 import net.scapeemulator.game.util.LandscapeKeyTable
 import net.scapeemulator.util.NetworkConstants
+import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -61,7 +62,7 @@ class GameServer(loginAddress: SocketAddress) {
         /* load game cache */
         cache = Cache(FileStore.open("data/cache"))
         checksumTable = cache.createChecksumTable()
-        ItemDefinitions.init(cache)
+        ItemDefinitions.init(File("./data/itemDefinitions.json"))
         EquipmentDefinition.init()
 
 //        MapSet.init(cache, landscapeKeyTable);

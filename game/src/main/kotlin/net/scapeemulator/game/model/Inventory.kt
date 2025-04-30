@@ -264,7 +264,7 @@ class Inventory {
     private fun isStackable(item: Item): Boolean {
         if (stackMode == StackMode.ALWAYS) return true
 
-        return item.definition!!.isStackable //TODO check
+        return item.definition!!.stackable //TODO check
     }
 
     private fun checkSlot(slot: Int) {
