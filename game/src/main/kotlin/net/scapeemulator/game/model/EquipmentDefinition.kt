@@ -1,6 +1,7 @@
 package net.scapeemulator.game.model
 
 import com.github.michaelbull.logging.InlineLogger
+import net.scapeemulator.cache.def.ItemDefinition
 import java.io.DataInputStream
 import java.io.FileInputStream
 import java.io.IOException
@@ -31,7 +32,6 @@ class EquipmentDefinition {
     var id: Int = 0
         private set
     var equipmentId: Int = 0
-        private set
     var slot: Int = 0
         private set
 
@@ -98,7 +98,19 @@ class EquipmentDefinition {
 
                     val equipment = EquipmentDefinition()
                     equipment.id = id
+                    //todo fix
+//                    val e = ItemDefinitions.forId(id)
+//                    if (e != null && (e.maleWearModel1 >= 0 || e.maleWearModel2 >= 0)) {
                     equipment.equipmentId = nextEquipmentId++
+//                    }
+                    if (id == 13734) {
+                        println("Equipment id: " + equipment.equipmentId)
+                        //   equipment.equipmentId = 3181
+                    }
+                    if(id == 4736){
+
+                        println("Equipment id: " + equipment.equipmentId)
+                    }
                     equipment.slot = slot
                     equipment.twoHanded = (flags and FLAG_TWO_HANDED) != 0
                     equipment.fullHelm = (flags and FLAG_FULL_HELM) != 0
@@ -112,6 +124,7 @@ class EquipmentDefinition {
                     definitions[id] = equipment
                 }
                 logger.info { "Loaded " + definitions.size + " equipment definitions." }
+
             }
         }
 

@@ -71,6 +71,10 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
 
         item = equipment.get(Equipment.SHIELD)
         if (item != null) {
+            println("Shield ${item.id}")
+            println("EquipId ${item.definition?.equipId}")
+//            println("EquipmentId ${item.equipmentDefinition?.equipmentId}")
+
             propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
@@ -78,7 +82,8 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
 
         var fullBody = false
         item = equipment.get(Equipment.BODY)
-        if (item != null) fullBody = forId(item.id)!!.isFullBody()
+        if (item != null) //TODO fix proper values
+            fullBody = forId(item.id)!!.isFullBody()
 
         if (!fullBody) {
             propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[3])
@@ -97,8 +102,9 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         var fullMask = false
         item = equipment.get(Equipment.HEAD)
         if (item != null) {
+            //TODO fix proper values
             fullHelm = forId(item.id)!!.isFullHelm()
-            fullMask = forId(item.id)!!.isFullMask()
+            fullMask =  forId(item.id)!!.isFullMask()
         }
         if (!fullHelm && !fullMask) {
             propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[0])

@@ -6,7 +6,7 @@ import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.GameSession
 
 class Player : Mob() {
-    lateinit var session: GameSession
+    var session: GameSession? = null
 
     var databaseId: Int = 0
 
@@ -16,6 +16,7 @@ class Player : Mob() {
 
     val localPlayers: MutableList<Player> = ArrayList<Player>()
     val localNpcs: MutableList<Npc> = ArrayList()
+
     val inventory: Inventory = Inventory(28)
     val equipment: Inventory = Inventory(14)
     val bank: Inventory = Inventory(496, Inventory.StackMode.ALWAYS)
@@ -23,6 +24,8 @@ class Player : Mob() {
     val settings: PlayerSettings = PlayerSettings(this)
     val interfaceSet: InterfaceSet = InterfaceSet(this)
     val appearanceTickets: IntArray = IntArray(World.MAX_PLAYERS)
+    var appearanceTicketCounter = 0
+
     var appearanceTicket: Int = nextAppearanceTicket()
         private set
 
@@ -45,7 +48,6 @@ class Player : Mob() {
             field = lastKnownRegion
             this.isRegionChanging = true
         }
-
 
     val stance: Int
         get() {
@@ -71,13 +73,13 @@ class Player : Mob() {
         equipment.addListener(InventoryAppearanceListener(this))
     }
 
-    fun send(message: Message): ChannelFuture = session.send(message)
+    fun send(message: Message): ChannelFuture? = session?.send(message)
     fun sendMessage(text: String) = send(ServerMessage(text))
 
     fun logout() {
         // TODO this seems fragile
         val future = send(LogoutMessage())
-        future.addListener(ChannelFutureListener.CLOSE)
+        future?.addListener(ChannelFutureListener.CLOSE)
     }
 
     override fun reset() {
@@ -89,11 +91,11 @@ class Player : Mob() {
     override val isRunning: Boolean
         get() = settings.running
 
-    companion object {
-        private var appearanceTicketCounter = 0
-        private fun nextAppearanceTicket(): Int {
-            if (++appearanceTicketCounter == 0) appearanceTicketCounter = 1
-            return appearanceTicketCounter
-        }
+    fun nextAppearanceTicket(): Int {
+        if (++appearanceTicketCounter == 0)
+            appearanceTicketCounter = 1
+        return appearanceTicketCounter
     }
+
+
 }

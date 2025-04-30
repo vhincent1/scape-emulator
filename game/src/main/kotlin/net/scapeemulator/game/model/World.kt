@@ -20,7 +20,7 @@ class World(val loginService: LoginService) {
 
         for (player in players) {
             val session = player.session
-            session.processMessageQueue()
+            session?.processMessageQueue()
         }
 
         taskScheduler.tick()
@@ -47,6 +47,7 @@ class World(val loginService: LoginService) {
         npcs.add(Npc(1).apply {
             id = 1
             position = Position(3200, 3200)
+
         })
     }
 

@@ -277,4 +277,5 @@ class Cache
     override fun close() {
         store.close()
     }
+
 }

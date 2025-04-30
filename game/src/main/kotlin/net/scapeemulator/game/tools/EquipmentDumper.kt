@@ -26,6 +26,7 @@ object EquipmentDumper {
         init(cache)
 
         DataOutputStream(FileOutputStream("data/equipment.dat")).use { output ->
+           println("COUNT :"+count())
             for (id in 0..<count()) {
                 val def = forId(id)
                 if (def != null) {
@@ -44,16 +45,18 @@ object EquipmentDumper {
                             output.writeShort(getStance(id, def))
                             output.writeByte(getWeaponClass(def).ordinal)
                         }
+
                     }
                 }
             }
             output.writeShort(-1)
         }
-        logger.info { "Successfully dumped equipment data." }
+        logger.info { "Successfully dumped equipment data. " }
     }
 
+    //todo fix
     private fun isEquipment(definition: ItemDefinition): Boolean {
-        return definition.maleWearModel1 >= 0
+        return definition.maleWearModel1 >= 0 //|| definition.maleWearModel2 >= 0
     }
 
     private fun getSlot(definition: ItemDefinition): Int {

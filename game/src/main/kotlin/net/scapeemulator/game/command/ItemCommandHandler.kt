@@ -12,12 +12,27 @@ class ItemCommandHandler : CommandHandler("item") {
             return
         }
 
-        val id = arguments[0]!!.toInt()
+        val id = arguments[0].toInt()
         var amount = 1
         if (arguments.size == 2) {
-            amount = arguments[1]!!.toInt()
+            amount = arguments[1].toInt()
         }
 
-        player.inventory.add(Item(id, amount))
+        val item = Item(id, amount)
+        player.inventory.add(item)
+        val def = item.definition
+        if (def != null) {
+            println(def.name)
+//            println(def.isUnnoted)
+//            def.inventoryOptions.forEach { println(it) }
+        }
+
+        val def2 = item.equipmentDefinition
+        if (def2 != null) {
+//            println(def2.isFullHelm())
+//            println(def2.isFullBody())
+            println(def2.slot)
+        }
+
     }
 }

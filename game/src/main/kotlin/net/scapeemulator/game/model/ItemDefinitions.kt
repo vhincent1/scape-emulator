@@ -8,6 +8,7 @@ import net.scapeemulator.cache.ReferenceTable
 import net.scapeemulator.cache.def.ItemDefinition
 import java.io.IOException
 
+
 object ItemDefinitions {
     private val logger = InlineLogger(ItemDefinitions::class)
     private lateinit var definitions: Array<ItemDefinition?>
@@ -35,6 +36,24 @@ object ItemDefinitions {
 
                 val id = file * 256 + member
                 val definition = ItemDefinition.decode(archive.getEntry(nonSparseMember++)!!)
+
+//                if (definition.notedTemplateId != -1) {
+//                    val a = forId(definition.notedId)
+//                    val b = forId(definition.notedTemplateId)
+//                    if (a != null && b != null)
+//                        definition.transferNoteDefinition(a, b)
+//                }
+
+//                if (definition.lendTemplateId != -1) {
+//                    val masterDef: ItemDefinition? = forId(definition.notedId)
+//                    if (masterDef != null) {
+//                        definition.maleWearModel1 = masterDef.maleWearModel1
+//                        definition.maleWearModel2 = masterDef.maleWearModel2
+//                        definition.isMembersOnly = masterDef.isMembersOnly
+//                    }
+//                    // TODO: Inventory options, etc
+//                }
+
                 definitions[id] = definition
                 count++
             }
@@ -42,6 +61,7 @@ object ItemDefinitions {
 
         logger.info { "Loaded $count item definitions." }
     }
+
 
     fun count(): Int {
         return definitions.size

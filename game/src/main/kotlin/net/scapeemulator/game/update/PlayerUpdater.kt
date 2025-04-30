@@ -51,7 +51,7 @@ class PlayerUpdater(private val world: World) {
         if (player.isTeleporting) selfDescriptor = TeleportPlayerDescriptor(player, tickets)
         else selfDescriptor = create(player, tickets)
 
-        val descriptors: MutableList<PlayerDescriptor> = ArrayList<PlayerDescriptor>()
+        val descriptors: MutableList<PlayerDescriptor> = ArrayList()
         val localPlayers = player.localPlayers
         val localPlayerCount = localPlayers.size
 
@@ -74,7 +74,7 @@ class PlayerUpdater(private val world: World) {
                 descriptors.add(AddPlayerDescriptor(p, tickets))
             }
         }
-
+//todo check
         player.send(PlayerUpdateMessage(lastKnownRegion!!, position, localPlayerCount, selfDescriptor, descriptors))
     }
 
