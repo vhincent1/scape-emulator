@@ -1,6 +1,6 @@
 package net.scapeemulator.game.util
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -16,7 +16,7 @@ class LandscapeKeyTable {
     }
 
     companion object {
-        private val logger = InlineLogger(LandscapeKeyTable::class)
+        private val logger = KotlinLogging.logger{ }
         private val EMPTY_KEY_ARRAY = IntArray(4)
 
         @Throws(IOException::class)

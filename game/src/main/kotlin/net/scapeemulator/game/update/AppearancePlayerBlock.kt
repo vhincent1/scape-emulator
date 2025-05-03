@@ -132,10 +132,12 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
             propertiesBuilder.put(DataType.BYTE, appearance.colors[i])
         }
 
-        propertiesBuilder.put(DataType.SHORT, stance)
-        propertiesBuilder.put(DataType.LONG, Base37Utils.encodeBase37(username!!))
-        propertiesBuilder.put(DataType.BYTE, combat)
+        propertiesBuilder.put(DataType.SHORT, stance) // todo: weapon stance
+
+        propertiesBuilder.put(DataType.LONG, Base37Utils.encodeBase37(username))
+        propertiesBuilder.put(DataType.BYTE, combat) //combat level
         if ((flags and 0x4) != 0) {
+            println("Skill $skill")
             propertiesBuilder.put(DataType.SHORT, skill)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)

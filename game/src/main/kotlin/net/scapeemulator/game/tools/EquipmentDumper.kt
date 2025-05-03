@@ -1,14 +1,14 @@
 package net.scapeemulator.game.tools
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.def.ItemDefinition
 import net.scapeemulator.game.model.Equipment
-import net.scapeemulator.game.model.EquipmentDefinition.WeaponClass
+import net.scapeemulator.game.model.WeaponClass
 import java.io.IOException
 import java.util.*
 
 object EquipmentDumper {
-    private val logger = InlineLogger(EquipmentDumper::class)
+    private val logger =KotlinLogging.logger{ }
     @Throws(IOException::class)
     @JvmStatic
 //    fun main(args: Array<String>) {
@@ -149,31 +149,30 @@ object EquipmentDumper {
         return false
     }
 
-    private fun getWeaponClass(def: ItemDefinition): WeaponClass {
-        if (def.name == null) return WeaponClass.SWORD
-
-        val name = def.name!!.lowercase(Locale.getDefault())
-        if (name.contains("scythe")) return WeaponClass.SCYTHE
-        if (name.contains("pickaxe")) return WeaponClass.PICKAXE
-        if (name.contains("axe")) return WeaponClass.AXE
-        if (name.contains("godsword")) return WeaponClass.GODSWORD
-        if (name.contains("claws")) return WeaponClass.CLAWS
-        if (name.contains("longsword")) return WeaponClass.SWORD
-        if (name.contains("scimitar")) return WeaponClass.SWORD
-        if (name.contains("2h sword")) return WeaponClass.SWORD
-        if (name.contains("sword")) return WeaponClass.DAGGER
-        if (name.contains("dagger")) return WeaponClass.DAGGER
-        if (name.contains("mace")) return WeaponClass.MACE
-        if (name.contains("maul")) return WeaponClass.MAUL
-        if (name.contains("whip")) return WeaponClass.WHIP
-        if (name.contains("longbow")) return WeaponClass.LONGBOW
-        if (name.contains("bow")) return WeaponClass.BOW
-        if (name.contains("staff")) return WeaponClass.STAFF
-        if (name.contains("spear")) return WeaponClass.SPEAR
-        if (name.contains("dart")) return WeaponClass.THROWN
-
-        return WeaponClass.SWORD
-    }
+//    private fun getWeaponClass(def: ItemDefinition): WeaponClass {
+//        if (def.name == null) return WeaponClass.SWORD
+//
+//        val name = def.name!!.lowercase(Locale.getDefault())
+//        if (name.contains("scythe")) return WeaponClass.SCYTHE
+//        if (name.contains("pickaxe")) return WeaponClass.PICKAXE
+//        if (name.contains("axe")) return WeaponClass.AXE
+//        if (name.contains("godsword")) return WeaponClass.GODSWORD
+//        if (name.contains("claws")) return WeaponClass.CLAWS
+//        if (name.contains("longsword")) return WeaponClass.SWORD
+//        if (name.contains("scimitar")) return WeaponClass.SWORD
+//        if (name.contains("2h sword")) return WeaponClass.SWORD
+//        if (name.contains("sword")) return WeaponClass.DAGGER
+//        if (name.contains("dagger")) return WeaponClass.DAGGER
+//        if (name.contains("mace")) return WeaponClass.MACE
+//        if (name.contains("maul")) return WeaponClass.MAUL
+//        if (name.contains("whip")) return WeaponClass.WHIP
+//        if (name.contains("longbow")) return WeaponClass.LONGBOW
+//        if (name.contains("bow")) return WeaponClass.BOW
+//        if (name.contains("staff")) return WeaponClass.STAFF
+//        if (name.contains("spear")) return WeaponClass.SPEAR
+//        if (name.contains("dart")) return WeaponClass.THROWN
+//        return WeaponClass.SWORD
+//    }
 
     private fun getStance(id: Int, def: ItemDefinition): Int {
         if (def.name == null) return 1426

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.net.game
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.netty.buffer.MessageBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToMessageDecoder
@@ -23,6 +23,6 @@ class GameMessageDecoder(private val codecs: CodecRepository) : MessageToMessage
     }
 
     companion object {
-        private val logger = InlineLogger(GameMessageDecoder::class)
+        private val logger = KotlinLogging.logger{ }
     }
 }

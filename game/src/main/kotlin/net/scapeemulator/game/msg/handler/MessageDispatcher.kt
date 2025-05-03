@@ -1,24 +1,31 @@
 package net.scapeemulator.game.msg.handler
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.game.button.ButtonDispatcher
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.*
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import kotlin.reflect.KClass
 
 class MessageDispatcher {
 
     private val handlers: MutableMap<KClass<*>, MessageHandler<*>> = HashMap()
-    private val buttonDispatcher = ButtonDispatcher()
+     val buttonDispatcher = ButtonDispatcher()
+     val commandDispatcher = CommandMessageHandler()
 
     init {
-        handlers[PingMessage::class] = PingMessageHandler()
-        handlers[IdleLogoutMessage::class] = IdleLogoutMessageHandler()
+        /* action buttons */
         handlers[ButtonMessage::class] = ButtonMessageHandler(buttonDispatcher)
         handlers[ExtendedButtonMessage::class] = ExtendedButtonMessageHandler(buttonDispatcher)
+
+        handlers[PingMessage::class] = PingMessageHandler()
+        handlers[IdleLogoutMessage::class] = IdleLogoutMessageHandler()
         handlers[WalkMessage::class] = WalkMessageHandler()
         handlers[ChatMessage::class] = ChatMessageHandler()
-        handlers[CommandMessage::class] = CommandMessageHandler()
+
+        /* command handler */
+        handlers[CommandMessage::class] = commandDispatcher
+
         handlers[SwapItemsMessage::class] = SwapItemsMessageHandler()
         handlers[EquipItemMessage::class] = EquipItemMessageHandler()
         handlers[DisplayMessage::class] = DisplayMessageHandler()
@@ -60,6 +67,6 @@ class MessageDispatcher {
     }
 
     companion object {
-        private val logger = InlineLogger(MessageDispatcher::class)
+        private val logger = KotlinLogging.logger{ }
     }
 }

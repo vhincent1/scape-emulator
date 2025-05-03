@@ -52,7 +52,9 @@ class Player : Mob() {
     val stance: Int
         get() {
             val weapon = equipment.get(Equipment.WEAPON)
-            return weapon?.equipmentDefinition?.getStance() ?: 1426
+
+//            val def = weapon.definition
+            return weapon?.definition?.getStance() ?: 1426
         }
 
     init {
@@ -71,10 +73,34 @@ class Player : Mob() {
         equipment.addListener(InventoryMessageListener(this, 387, 28, 94))
         equipment.addListener(InventoryFullListener(this, "equipment"))
         equipment.addListener(InventoryAppearanceListener(this))
+        // add equip listener
+        equipment.addListener(object : InventoryListener {
+            override fun itemChanged(
+                inventory: Inventory,
+                slot: Int,
+                item: Item?
+            ) {
+                println("equip listener: " + item.toString())
+            }
+
+            override fun itemsChanged(inventory: Inventory) {
+                println("Item: " + inventory.toString())
+            }
+
+            override fun capacityExceeded(inventory: Inventory) {
+                println("Item: " + inventory.toString())
+            }
+
+        })
     }
 
-    fun send(message: Message): ChannelFuture? = session?.send(message)
-    fun sendMessage(text: String) = send(ServerMessage(text))
+    fun send(message: Message): ChannelFuture? {
+        return session?.send(message)
+    }
+
+    fun sendMessage(text: String) {
+        send(ServerMessage(text))
+    }
 
     fun logout() {
         // TODO this seems fragile
@@ -96,6 +122,5 @@ class Player : Mob() {
             appearanceTicketCounter = 1
         return appearanceTicketCounter
     }
-
 
 }

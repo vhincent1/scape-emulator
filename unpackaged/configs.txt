@@ -6,3 +6,9 @@ sendConfig(1160,-1); //summoning orb
 
 music 
 https://rune-server.org/threads/530-music-configuration.601718/
+
+
+spec bar
+
+} else if (weapon.equals("Barrelchest anchor")) {
+p.getActionSender().setInterfaceConfig(p, 88, 12, false);

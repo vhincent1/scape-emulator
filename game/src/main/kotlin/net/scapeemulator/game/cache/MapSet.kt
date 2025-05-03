@@ -1,6 +1,6 @@
 package net.scapeemulator.game.cache
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.Container
 import net.scapeemulator.cache.ReferenceTable
@@ -9,7 +9,7 @@ import net.scapeemulator.game.util.LandscapeKeyTable
 import java.io.IOException
 
 object MapSet {
-    private val logger = InlineLogger(MapSet::class)
+    private val logger = KotlinLogging.logger {}
     @Throws(IOException::class)
     fun init(cache: Cache, keyTable: LandscapeKeyTable) {
         logger.info { "Reading map and landscape files..." }

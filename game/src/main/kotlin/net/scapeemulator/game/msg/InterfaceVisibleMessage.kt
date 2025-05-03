@@ -1,3 +1,3 @@
 package net.scapeemulator.game.msg
 
-class InterfaceVisibleMessage(@JvmField val id: Int, @JvmField val slot: Int, val isVisible: Boolean) : Message()
+class InterfaceVisibleMessage( val id: Int,  val slot: Int, val isVisible: Boolean) : Message()

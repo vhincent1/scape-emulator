@@ -1,6 +1,6 @@
 package net.scapeemulator.game.net.update
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.channel.Channel
@@ -101,6 +101,6 @@ class UpdateSession(server: GameServer, channel: Channel) : Session(server, chan
     }
 
     companion object {
-        private val logger = InlineLogger(UpdateSession::class)
+        private val logger = KotlinLogging.logger{ }
     }
 }

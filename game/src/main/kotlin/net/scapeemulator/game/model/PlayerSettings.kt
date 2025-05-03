@@ -10,17 +10,19 @@ class PlayerSettings(val player: Player) {
             refreshAttackStyle()
         }
 
+    var specialToggled = false
+    var specialEnergy = 0
     var autoRetaliating = true
         set(value) {
             field = value
             refreshAutoRetaliating()
         }
-     var twoButtonMouse = true
+    var twoButtonMouse = true
         set(value) {
             field = value
             refreshTwoButtonMouse()
         }
-     var chatFancy = true
+    var chatFancy = true
         set(value) {
             field = value
             refreshChatFancy()
@@ -41,7 +43,7 @@ class PlayerSettings(val player: Player) {
             refreshRunning()
         }
 
-//    fun setRunning(running: Boolean) {
+    //    fun setRunning(running: Boolean) {
 //        this.running = running
 //        refreshRunning()
 //    }
@@ -54,7 +56,8 @@ class PlayerSettings(val player: Player) {
         running = !running
         refreshRunning()
     }
-//
+
+    //
 //    fun setAttackStyle(attackStyle: Int) {
 //        this.attackStyle = attackStyle
 //        refreshAttackStyle()
@@ -68,7 +71,8 @@ class PlayerSettings(val player: Player) {
         autoRetaliating = !autoRetaliating
         refreshAutoRetaliating()
     }
-//
+
+    //
 //    fun setAutoRetaliating(autoRetaliating: Boolean) {
 //        this.autoRetaliating = autoRetaliating
 //        refreshAutoRetaliating()
@@ -87,7 +91,8 @@ class PlayerSettings(val player: Player) {
         twoButtonMouse = !twoButtonMouse
         refreshTwoButtonMouse()
     }
-//
+
+    //
 //    fun isTwoButtonMouse(): Boolean {
 //        return twoButtonMouse
 //    }
@@ -101,7 +106,8 @@ class PlayerSettings(val player: Player) {
         chatFancy = !chatFancy
         refreshChatFancy()
     }
-//
+
+    //
 //    fun isChatFancy(): Boolean {
 //        return chatFancy
 //    }
@@ -115,7 +121,8 @@ class PlayerSettings(val player: Player) {
         privateChatSplit = !privateChatSplit
         refreshPrivateChatSplit()
     }
-//
+
+    //
 //    fun isPrivateChatSplit(): Boolean {
 //        return privateChatSplit
 //    }
@@ -175,4 +182,14 @@ class PlayerSettings(val player: Player) {
     private fun refreshAcceptingAid() {
         player.send(ConfigMessage(427, if (acceptingAid) 1 else 0))
     }
+
+    fun setSpec(specialEnergy: Int) {
+        player.send(ConfigMessage(300, specialEnergy * 10))
+    }
+
+    fun setSpecToggle() {
+        specialToggled = !specialToggled
+        player.send(ConfigMessage(301, if (specialToggled) 1 else 0))
+    }
+
 }

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.net.http
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
@@ -118,7 +118,7 @@ class HttpChannelHandler : ChannelInboundMessageHandlerAdapter<HttpRequest>() {
     }
 
     companion object {
-        private val logger = InlineLogger(HttpChannelHandler::class)
+        private val logger = KotlinLogging.logger{ }
         private const val NOT_FOUND_HTML =
             "<html><head><title>404 - Page not found</title></head><body style=\"color: black; background: white; font-family: Arial, Verdana, Helvetica;\"><div style=\"font-weight: bold; color: #666666; font-size: large\">404 - Page not found</div><hr width=\"300\" align=\"left\" /><p>Sorry, the page you were looking for was not found.</p><!--Padding for IEPadding Padding for IEPadding Padding for IEPadding Padding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IEPadding for IE--></body></html>"
         private val provider = FileProvider(false)

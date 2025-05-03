@@ -7,5 +7,5 @@ import java.io.IOException
 
 abstract class MessageEncoder<T : Message>(@JvmField val clazz: Class<T>) {
     @Throws(IOException::class)
-    abstract fun encode(alloc: ByteBufAllocator, message: T): GameFrame?
+    abstract fun encode(alloc: ByteBufAllocator, message: T): GameFrame
 }

@@ -8,7 +8,6 @@ abstract class Task(delay: Int, immediate: Boolean) {
 
     init {
         require(delay >= 1)
-
         this.delay = delay
         this.countdown = if (immediate) 1 else delay
     }

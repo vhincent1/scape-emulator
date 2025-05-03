@@ -14,16 +14,28 @@ dependencies {
     api(libs.mysql.mysql.connector.java)
     api(libs.org.mindrot.jbcrypt)
 
+    // logger
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.13") // or another SLF4J implementation
+
+    // json
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
-    implementation("org.javassist:javassist:3.30.2-GA")
+
+    // script engine
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 }
 description = "ScapeEmulator Game Server"
 
 application {
     mainClass.set("net.scapeemulator.game.GameServer")
+    applicationDefaultJvmArgs = listOf("-Xms1024m", "-Xmx1048m")
 }
+
+tasks.run.get().workingDir = File("src/main/resources")
 
 tasks.jar {
     println("shadowJar")
-    manifest.attributes["Main-Class"] ="net.scapeemulator.game.GameServer"
+    manifest.attributes["Main-Class"] = "net.scapeemulator.game.GameServer"
 }

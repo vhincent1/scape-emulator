@@ -39,9 +39,9 @@ class CodecRepository(table: LandscapeKeyTable) {
         /* encoders */
         bind(RegionChangeMessageEncoder(table))
         bind(InterfaceRootMessageEncoder())
-        bind(InterfaceOpenMessageEncoder())//155
+        bind(InterfaceOpenMessageEncoder())// 155 sendInterface
         bind(InterfaceCloseMessageEncoder())
-        bind(InterfaceVisibleMessageEncoder())
+        bind(InterfaceVisibleMessageEncoder()) //21, interfaceConfig
         bind(InterfaceTextMessageEncoder())
         bind(ServerMessageEncoder())
         bind(LogoutMessageEncoder())

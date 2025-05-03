@@ -1,6 +1,6 @@
 package net.scapeemulator.game
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
@@ -14,6 +14,7 @@ import net.scapeemulator.game.msg.codec.CodecRepository
 import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
+import net.scapeemulator.game.plugin.PluginManager
 import net.scapeemulator.game.util.LandscapeKeyTable
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -30,17 +31,19 @@ import kotlin.system.measureTimeMillis
 
 class GameServer(loginAddress: SocketAddress) {
 
-    //server socket
+    // server socket
     private val executor: ExecutorService = Executors.newCachedThreadPool()
+    // io
+    private val executorIo: ExecutorService = Executors.newSingleThreadExecutor()
 
-    //game thread
+    // game thread
     private val gameExecutor = Executors.newSingleThreadScheduledExecutor()
 
     val loginService: LoginService
     val updateService: UpdateService
 
-    //
-    var world: World
+    // world
+    val world: World
     val version: Int = 530
     val cache: Cache
     val checksumTable: ChecksumTable
@@ -52,11 +55,13 @@ class GameServer(loginAddress: SocketAddress) {
     val network: Network
 
     init {
+
         logger.info { "Starting ScapeEmulator game server..." }
 
         // todo: world list and game settings
 
         /* load landscape keys */
+//        println("Directory: "+System.getProperty("user.dir"))
         landscapeKeyTable = LandscapeKeyTable.open("data/landscape-keys")
 
         /* load game cache */
@@ -77,24 +82,37 @@ class GameServer(loginAddress: SocketAddress) {
         loginService = LoginService(serializer)
         updateService = UpdateService()
 
-        // load world
+        /* load world */
         world = World(loginService)
 
         /* start netty */
         network = Network(this)
         network.start()
-
-        // start server
-        start()
     }
 
-    fun start() {
-        logger.info { "Ready for connections." }
+//    private fun readResource(resource: String, charset: Charset = Charsets.UTF_8) : String {
+//        val resourceUrl = javaClass.classLoader?.getResource(resource)
+//        return resourceUrl!!.readText(charset)
+//    }
+// only works inside a class
+//val lines = this::class.java.getResourceAsStream("file.txt")?.bufferedReader()?.readLines()
+//
+//    // works otherwise
+//    val lines = object {}.javaClass.getResourceAsStream("file.txt")?.bufferedReader()?.readLines()
+
+    private fun start() {
         world.isOnline = true
 
         /* start login and update services */
         executor.submit(loginService)
         executor.submit(updateService)
+
+        /* i/o services */
+        executorIo.submit {
+            /* load plugins */
+            val plugins = PluginManager()
+            plugins.load(File("./data/scripts/"))
+        }
 
         /* main game tick loop */
         gameExecutor.scheduleAtFixedRate(
@@ -124,7 +142,7 @@ class GameServer(loginAddress: SocketAddress) {
         )
     }
 
-    fun shutdown() {
+    private fun shutdown() {
         world.isOnline = false
         println("bye")
         //network.shutdown() //world.online=false
@@ -153,17 +171,19 @@ class GameServer(loginAddress: SocketAddress) {
     }
 
     companion object {
-        private val logger = InlineLogger(GameServer::class)
-        lateinit var world: World
+        private val logger = KotlinLogging.logger {}
+
+        val INSTANCE: GameServer = GameServer(InetSocketAddress(NetworkConstants.LOGIN_PORT))
 
         @JvmStatic
         fun main(args: Array<String>) = try {
-            val server = GameServer(InetSocketAddress(NetworkConstants.LOGIN_PORT))
-            /* shutdown hook */
-            Runtime.getRuntime().addShutdownHook(Thread { server.shutdown() })
 
-            //server.start()
-            world = server.world
+            /* start server */
+            INSTANCE.start()
+
+            /* shutdown hook */
+            Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
+
         } catch (t: Throwable) {
             logger.error(t) { "Failed to start server." }
         }

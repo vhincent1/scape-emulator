@@ -1,7 +1,7 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.model.EquipmentDefinition.WeaponClass
 import net.scapeemulator.game.msg.InterfaceTextMessage
+import net.scapeemulator.game.msg.InterfaceVisibleMessage
 
 object Equipment {
     const val HEAD: Int = 0
@@ -39,17 +39,23 @@ object Equipment {
         val item = inventory.get(slot)
         if (item == null) return
 
-        val def = item.equipmentDefinition
+        val def = item.definition
         if (def == null) return
 
-        val targetSlot = def.slot
+        val targetSlot = def.equipmentSlot
 
-        val unequipShield = def.slot == WEAPON && def.isTwoHanded() && equipment.get(SHIELD) != null
+        val unequipShield = def.equipmentSlot == WEAPON
+                && def.isTwoHand
+                && equipment.get(SHIELD) != null
         val unequipWeapon =
-            targetSlot == SHIELD && equipment.get(WEAPON) != null && equipment.get(WEAPON)!!.equipmentDefinition!!.isTwoHanded()
-        val topUpStack = item.definition!!.stackable && item.id == equipment.get(targetSlot)!!.id
+            targetSlot == SHIELD && equipment.get(WEAPON) != null
+                    && equipment.get(WEAPON)!!.definition!!.isTwoHand
+        val topUpStack = item.definition!!.stackable
+                && item.id == equipment.get(targetSlot)!!.id
         val drainStack =
-            equipment.get(targetSlot) != null && equipment.get(targetSlot)!!.definition!!.stackable && inventory.contains(
+            equipment.get(targetSlot) != null
+                    && equipment.get(targetSlot)!!.definition!!.stackable
+                    && inventory.contains(
                 equipment.get(targetSlot)!!.id
             )
 
@@ -62,6 +68,7 @@ object Equipment {
             val remaining = equipment.add(item)
             inventory.set(slot, remaining)
         } else {
+
             if (drainStack) {
                 val remaining = inventory.add(equipment.get(targetSlot)!!)
                 equipment.set(targetSlot, remaining)
@@ -88,9 +95,12 @@ object Equipment {
 
         val weapon = equipment.get(WEAPON)
         var weaponChanged = false
-        if (originalWeapon == null && weapon != null) weaponChanged = true
-        else if (weapon == null && originalWeapon != null) weaponChanged = true
-        else if (originalWeapon != null && weapon != null && originalWeapon.id != weapon.id) weaponChanged = true
+        if (originalWeapon == null && weapon != null)
+            weaponChanged = true
+        else if (weapon == null && originalWeapon != null)
+            weaponChanged = true
+        else if (originalWeapon != null && weapon != null && originalWeapon.id != weapon.id)
+            weaponChanged = true
 
         if (weaponChanged) {
             weaponChanged(player)
@@ -105,19 +115,28 @@ object Equipment {
 
     fun openAttackTab(player: Player) {
         val weapon = player.equipment.get(WEAPON)
+        val def = weapon?.definition
 
         val name: String
         val weaponClass: WeaponClass
-        if (weapon != null) {
-            name = weapon.definition!!.name!!
-            weaponClass = weapon.equipmentDefinition!!.getWeaponClass()
+        if (weapon != null && def != null) {
+            name = def.name
+            weaponClass = def.getWeaponClass()
+            val value = if (weaponClass.attackStyle.size > 3) 12 else 10
+
+            //special bar
+            player.send(InterfaceVisibleMessage(weaponClass.tab, value, def.hasSpecial))
+
         } else {
             name = "Unarmed"
             weaponClass = WeaponClass.UNARMED
         }
 
         val tab = weaponClass.tab
+        println("WeaponClass: " + weaponClass.name)
+        println("TAB: " + tab)
         player.interfaceSet.openTab(Tab.ATTACK, tab)
         player.send(InterfaceTextMessage(tab, 0, name))
+
     }
 }

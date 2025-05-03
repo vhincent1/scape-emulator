@@ -36,6 +36,7 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
     }
 
     fun sendLoginSuccess(status: Int, player: Player) {
+
         val buf = channel.alloc().buffer(11)
         buf.writeByte(player.rights)
         buf.writeByte(0)

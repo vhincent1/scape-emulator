@@ -16,7 +16,7 @@ abstract class Mob : Entity() {
     var secondDirection: Direction = Direction.NONE
         protected set
     var mostRecentDirection: Direction = Direction.SOUTH
-        protected set
+//        protected set
 
     @JvmField
     val skillSet: SkillSet = SkillSet()
@@ -39,9 +39,8 @@ abstract class Mob : Entity() {
 
             stopAction()
         }
-
         this.action = action
-        GameServer.world.taskScheduler.schedule(action)
+        GameServer.INSTANCE.world.taskScheduler.schedule(action)
     }
 
     fun stopAction() {

@@ -194,7 +194,7 @@ class GameFrameDecoder(private val cipher: StreamCipher) : ByteToMessageDecoder(
             SIZES[138] = -3
             SIZES[139] = -3
             SIZES[140] = -3
-            SIZES[141] = -3
+            SIZES[141] = -3 // send interface
             SIZES[142] = -3
             SIZES[143] = -3
             SIZES[144] = -3

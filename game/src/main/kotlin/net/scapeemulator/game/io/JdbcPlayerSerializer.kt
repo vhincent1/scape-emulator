@@ -1,6 +1,6 @@
 package net.scapeemulator.game.io
 
-import com.github.michaelbull.logging.InlineLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.game.io.jdbc.ItemsTable
 import net.scapeemulator.game.io.jdbc.PlayersTable
 import net.scapeemulator.game.io.jdbc.SettingsTable
@@ -108,6 +108,6 @@ class JdbcPlayerSerializer(url: String, username: String, password: String) : Pl
     }
 
     companion object {
-        val logger = InlineLogger(JdbcPlayerSerializer::class)
+        val logger = KotlinLogging.logger {}
     }
 }
