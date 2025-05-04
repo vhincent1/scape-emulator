@@ -91,7 +91,6 @@ class LoginDecoder : ByteToMessageDecoder() {
 //			};
                 val reconnecting = type == 16 // reconnect world login
                 // 18 World Login
-                println("Type: $type")
                 out.add(
                     LoginRequest(
                         reconnecting,

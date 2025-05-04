@@ -41,7 +41,6 @@ object Equipment {
 
         val def = item.definition
         if (def == null) return
-
         val targetSlot = def.equipmentSlot
 
         val unequipShield = def.equipmentSlot == WEAPON
@@ -50,8 +49,9 @@ object Equipment {
         val unequipWeapon =
             targetSlot == SHIELD && equipment.get(WEAPON) != null
                     && equipment.get(WEAPON)!!.definition!!.isTwoHand
-        val topUpStack = item.definition!!.stackable
-                && item.id == equipment.get(targetSlot)!!.id
+
+        val topUpStack = def.stackable && item.id == equipment.get(targetSlot)?.id
+
         val drainStack =
             equipment.get(targetSlot) != null
                     && equipment.get(targetSlot)!!.definition!!.stackable
@@ -141,8 +141,8 @@ object Equipment {
         }
 
         val tab = weaponClass.tab
-        println("WeaponClass: " + weaponClass.name)
-        println("TAB: " + tab)
+//        println("WeaponClass: " + weaponClass.name)
+//        println("TAB: " + tab)
         player.interfaceSet.openTab(Tab.ATTACK, tab)
         player.send(InterfaceTextMessage(tab, 0, name))
 

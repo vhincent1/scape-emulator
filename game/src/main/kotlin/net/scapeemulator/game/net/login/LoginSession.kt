@@ -78,7 +78,7 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
     override fun messageReceived(message: Any) {
         val request = message as LoginRequest
         //todo: look at arios isreconnecting
-        println("Reconnecting: "+ request.isReconnecting)
+//        println("Reconnecting: "+ request.isReconnecting)
         if (request.serverSessionKey != serverSessionKey) throw IOException("Server session key mismatch.")
 
         var versionMismatch = false

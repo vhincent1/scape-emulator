@@ -74,24 +74,24 @@ class Player : Mob() {
         equipment.addListener(InventoryFullListener(this, "equipment"))
         equipment.addListener(InventoryAppearanceListener(this))
         // add equip listener
-        equipment.addListener(object : InventoryListener {
-            override fun itemChanged(
-                inventory: Inventory,
-                slot: Int,
-                item: Item?
-            ) {
-                println("equip listener: " + item.toString())
-            }
-
-            override fun itemsChanged(inventory: Inventory) {
-                println("Item: " + inventory.toString())
-            }
-
-            override fun capacityExceeded(inventory: Inventory) {
-                println("Item: " + inventory.toString())
-            }
-
-        })
+//        equipment.addListener(object : InventoryListener {
+//            override fun itemChanged(
+//                inventory: Inventory,
+//                slot: Int,
+//                item: Item?
+//            ) {
+//                println("equip listener: " + item.toString())
+//            }
+//
+//            override fun itemsChanged(inventory: Inventory) {
+//                println("Item: " + inventory.toString())
+//            }
+//
+//            override fun capacityExceeded(inventory: Inventory) {
+//                println("Item: " + inventory.toString())
+//            }
+//
+//        })
     }
 
     fun send(message: Message): ChannelFuture? {
