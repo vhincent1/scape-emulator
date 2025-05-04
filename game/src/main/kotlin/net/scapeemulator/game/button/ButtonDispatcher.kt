@@ -11,6 +11,10 @@ class ButtonDispatcher {
         bind(ResizableButtonHandler())
         bind(LogoutButtonHandler())
         bind(EmoteButtonHandler())
+        bind(EnergyOrbButtonHandler())
+        bind(SettingsButtonHandler())
+        bind(WorldMapButtonHandler())
+
         bind(AttackButtonHandler(Interface.ATTACK_AXE, intArrayOf(2, 5, 4, 3), 26))
         bind(AttackButtonHandler(Interface.ATTACK_MAUL, intArrayOf(2, 4, 3), 24))
         bind(AttackButtonHandler(Interface.ATTACK_BOW, intArrayOf(2, 4, 3), 27))
@@ -28,11 +32,8 @@ class ButtonDispatcher {
         bind(AttackButtonHandler(Interface.ATTACK_DAGGER, intArrayOf(2, 3, 4, 5), 26))
         bind(AttackButtonHandler(Interface.ATTACK_MAGIC_STAFF, intArrayOf(1, 2, 3), 9))
         bind(AttackButtonHandler(Interface.ATTACK_THROWN, intArrayOf(2, 3, 4), 24))
-        bind(AttackButtonHandler(Interface.ATTACK_UNARMED, intArrayOf(2, 3, 4, 5), 24))
+        bind(AttackButtonHandler(Interface.ATTACK_UNARMED, intArrayOf(2, 3, 4), 24))
         bind(AttackButtonHandler(Interface.ATTACK_WHIP, intArrayOf(2, 3, 4), 24))
-        bind(EnergyOrbButtonHandler())
-        bind(SettingsButtonHandler())
-        bind(WorldMapButtonHandler())
     }
 
     fun bind(handler: ButtonHandler) {

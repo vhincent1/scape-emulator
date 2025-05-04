@@ -16,13 +16,29 @@ class Map(val x: Int, val y: Int, private val tiles: Array<Array<Array<Tile>>>) 
         var shapeRotation: Int = 0
         var flags: Int = 0
 
+        //todo member zones see @arios @MapZone @ZoneRestriction
         companion object {
             const val FLAG_CLIP: Int = 0x1
             const val FLAG_BRIDGE: Int = 0x2
+
+            // no followers
+            const val FLAG_FOLLOWERS = 0 shl 1
+
+            // no random events
+            const val FLAG_RANDOM_EVENT = 1 shl 2
+
+            // no fires
+            const val FLAG_FIRES = 1 shl 2
+
+            // members only
+            const val FLAG_MEMBERS = 1 shl 3
+
+            // no cannon
+            const val FLAG_CANNON = 1 shl 4
         }
     }
 
-    fun getTile(x: Int, y: Int, plane: Int): Tile? {
+    fun getTile(x: Int, y: Int, plane: Int): Tile {
         return tiles[x][y][plane]
     }
 
@@ -74,6 +90,11 @@ class Map(val x: Int, val y: Int, private val tiles: Array<Array<Array<Tile>>>) 
                     tile.shapeRotation = (config - 2) % 4
                 } else if (config <= 81) {
                     tile.flags = config - 49
+//                    if (tile.flags == Tile.FLAG_MEMBERS) {
+//                        println("Members: " + tile.flags)
+//                        println("Location: $x $y $plane")
+//                    }
+
                 } else {
                     tile.underlay = config - 81
                 }

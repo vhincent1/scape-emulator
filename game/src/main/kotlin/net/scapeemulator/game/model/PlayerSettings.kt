@@ -11,7 +11,11 @@ class PlayerSettings(val player: Player) {
         }
 
     var specialToggled = false
-    var specialEnergy = 0
+    var specialEnergy = 100
+        set(value) {
+            field = value
+            refreshSpecialBar()
+        }
     var autoRetaliating = true
         set(value) {
             field = value
@@ -149,6 +153,7 @@ class PlayerSettings(val player: Player) {
         refreshChatFancy()
         refreshPrivateChatSplit()
         refreshAcceptingAid()
+        refreshSpecialBar()
     }
 
     private fun refreshRunning() {
@@ -183,13 +188,15 @@ class PlayerSettings(val player: Player) {
         player.send(ConfigMessage(427, if (acceptingAid) 1 else 0))
     }
 
-    fun setSpec(specialEnergy: Int) {
+    fun refreshSpecialBar() {
+        println("Special bar Energy: $specialEnergy")
         player.send(ConfigMessage(300, specialEnergy * 10))
+        player.send(ConfigMessage(301, if (specialToggled) 1 else 0))
     }
 
     fun setSpecToggle() {
         specialToggled = !specialToggled
-        player.send(ConfigMessage(301, if (specialToggled) 1 else 0))
+        refreshSpecialBar()
     }
 
 }

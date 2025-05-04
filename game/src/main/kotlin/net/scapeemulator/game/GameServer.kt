@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
+import net.scapeemulator.game.cache.MapSet
 import net.scapeemulator.game.io.DummyPlayerSerializer
 import net.scapeemulator.game.io.JdbcPlayerSerializer
 import net.scapeemulator.game.io.PlayerSerializer
@@ -33,6 +34,7 @@ class GameServer(loginAddress: SocketAddress) {
 
     // server socket
     private val executor: ExecutorService = Executors.newCachedThreadPool()
+
     // io
     private val executorIo: ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -55,7 +57,6 @@ class GameServer(loginAddress: SocketAddress) {
     val network: Network
 
     init {
-
         logger.info { "Starting ScapeEmulator game server..." }
 
         // todo: world list and game settings
@@ -67,10 +68,11 @@ class GameServer(loginAddress: SocketAddress) {
         /* load game cache */
         cache = Cache(FileStore.open("data/cache"))
         checksumTable = cache.createChecksumTable()
+//        MapSet.init(cache, landscapeKeyTable)
+
+        /* load item definitions */
         ItemDefinitions.init(File("./data/itemDefinitions.json"))
         EquipmentDefinition.init()
-
-//        MapSet.init(cache, landscapeKeyTable);
 
         /* load message codecs and dispatcher */
         codecRepository = CodecRepository(landscapeKeyTable)

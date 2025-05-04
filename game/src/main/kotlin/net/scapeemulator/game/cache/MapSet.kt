@@ -47,11 +47,15 @@ object MapSet {
         buffer = Container.decode(buffer, key).getData()
 
         val landscape = Landscape.decode(x, y, buffer)
+
     }
 
     @Throws(IOException::class)
     private fun readMap(cache: Cache, x: Int, y: Int, id: Int) {
         val buffer = cache.read(5, id).getData()
         val map = Map.decode(x, y, buffer)
+
+//        println("Map:") //ape toll
+//        println(map.getTile(2801, 2704, 0).flags)
     }
 }

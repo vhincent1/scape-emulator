@@ -109,7 +109,9 @@ object Equipment {
 
     private fun weaponChanged(player: Player) {
         // TODO try to keep the same attack style if possible?
-        player.settings.attackStyle = 0
+        // attackStyle should b named to attackSlot**
+        println("WeaponChanged ATK STYLE: " + player.settings.attackStyle)
+//        player.settings.attackStyle = 0
         openAttackTab(player)
     }
 
@@ -122,10 +124,16 @@ object Equipment {
         if (weapon != null && def != null) {
             name = def.name
             weaponClass = def.getWeaponClass()
-            val value = if (weaponClass.attackStyle.size > 3) 12 else 10
 
             //special bar
-            player.send(InterfaceVisibleMessage(weaponClass.tab, value, def.hasSpecial))
+//            player.settings.refreshSpecialBar()
+            player.send(
+                InterfaceVisibleMessage(
+                    weaponClass.tab,
+                    if (weaponClass.attackStyles.size > 3) 12 else 10,
+                    def.hasSpecial
+                )
+            )
 
         } else {
             name = "Unarmed"
