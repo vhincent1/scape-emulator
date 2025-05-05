@@ -35,23 +35,22 @@ object Equipment {
         val inventory = player.inventory
         val equipment = player.equipment
         val originalWeapon = equipment.get(WEAPON)
+        val lastSlot = slot
 
         val item = inventory.get(slot)
         if (item == null) return
-
         val def = item.definition
         if (def == null) return
-        val targetSlot = def.equipmentSlot
 
+        val targetSlot = def.equipmentSlot
         val unequipShield = def.equipmentSlot == WEAPON
-                && def.isTwoHand
-                && equipment.get(SHIELD) != null
+                && def.isTwoHand && equipment.get(SHIELD) != null
         val unequipWeapon =
             targetSlot == SHIELD && equipment.get(WEAPON) != null
                     && equipment.get(WEAPON)!!.definition!!.isTwoHand
 
+        /* ammo */
         val topUpStack = def.stackable && item.id == equipment.get(targetSlot)?.id
-
         val drainStack =
             equipment.get(targetSlot) != null
                     && equipment.get(targetSlot)!!.definition!!.stackable
@@ -64,24 +63,22 @@ object Equipment {
             return
         }
 
+        /* ammo */
         if (topUpStack) {
             val remaining = equipment.add(item)
             inventory.set(slot, remaining)
         } else {
-
+            /* ammo */
             if (drainStack) {
                 val remaining = inventory.add(equipment.get(targetSlot)!!)
                 equipment.set(targetSlot, remaining)
                 if (remaining != null) return
             }
-
             inventory.remove(item, slot)
-
             val other = equipment.get(targetSlot)
             if (other != null) {
-                inventory.add(other)
+                inventory.add(other, lastSlot)
             }
-
             equipment.set(targetSlot, item)
         }
 
@@ -110,7 +107,7 @@ object Equipment {
     private fun weaponChanged(player: Player) {
         // TODO try to keep the same attack style if possible?
         // attackStyle should b named to attackSlot**
-        println("WeaponChanged ATK STYLE: " + player.settings.attackStyle)
+//        println("WeaponChanged ATK STYLE: " + player.settings.attackStyle)
 //        player.settings.attackStyle = 0
         openAttackTab(player)
     }
