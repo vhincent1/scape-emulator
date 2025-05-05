@@ -8,6 +8,7 @@ import net.scapeemulator.game.msg.Message
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.Session
+import net.scapeemulator.game.plugin.LoginEvent
 import java.io.IOException
 import java.util.*
 
@@ -34,6 +35,9 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
         player.settings.refresh()
         player.skillSet.refresh()
         player.energy = player.energy // TODO: nicer way than this?
+
+        /* plugin event */
+        server.pluginManager.handle(LoginEvent(player))
     }
 
     @Throws(IOException::class)

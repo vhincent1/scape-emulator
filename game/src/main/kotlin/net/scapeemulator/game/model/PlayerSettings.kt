@@ -189,7 +189,6 @@ class PlayerSettings(val player: Player) {
     }
 
     fun refreshSpecialBar() {
-        println("Special bar Energy: $specialEnergy")
         player.send(ConfigMessage(300, specialEnergy * 10))
         player.send(ConfigMessage(301, if (specialToggled) 1 else 0))
     }

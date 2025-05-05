@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
-import net.scapeemulator.game.cache.MapSet
 import net.scapeemulator.game.io.DummyPlayerSerializer
 import net.scapeemulator.game.io.JdbcPlayerSerializer
 import net.scapeemulator.game.io.PlayerSerializer
@@ -16,6 +15,7 @@ import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
 import net.scapeemulator.game.plugin.PluginManager
+import net.scapeemulator.game.plugin.ScriptManager
 import net.scapeemulator.game.util.LandscapeKeyTable
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -52,6 +52,7 @@ class GameServer(loginAddress: SocketAddress) {
     val landscapeKeyTable: LandscapeKeyTable
     val codecRepository: CodecRepository
     val messageDispatcher: MessageDispatcher
+    val pluginManager: PluginManager
 
     // network
     val network: Network
@@ -86,6 +87,7 @@ class GameServer(loginAddress: SocketAddress) {
 
         /* load world */
         world = World(loginService)
+        pluginManager = PluginManager(this)
 
         /* start netty */
         network = Network(this)
@@ -110,11 +112,11 @@ class GameServer(loginAddress: SocketAddress) {
         executor.submit(updateService)
 
         /* i/o services */
-        executorIo.submit {
-            /* load plugins */
-            val plugins = PluginManager()
-            plugins.load(File("./data/scripts/"))
-        }
+//        executorIo.submit {
+//            /* load plugins */
+//            val plugins = ScriptManager()
+//            plugins.load(File("./data/scripts/"))
+//        }
 
         /* main game tick loop */
         gameExecutor.scheduleAtFixedRate(

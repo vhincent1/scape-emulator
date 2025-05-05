@@ -10,8 +10,9 @@ import kotlin.reflect.KClass
 class MessageDispatcher {
 
     private val handlers: MutableMap<KClass<*>, MessageHandler<*>> = HashMap()
-     val buttonDispatcher = ButtonDispatcher()
-     val commandDispatcher = CommandMessageHandler()
+
+    val buttonDispatcher = ButtonDispatcher()
+    val commandDispatcher = CommandMessageHandler()
 
     init {
         /* action buttons */

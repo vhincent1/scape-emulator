@@ -130,4 +130,66 @@ class InterfaceSet(private val player: Player) {
         player.send(ScriptIntMessage(622, player.position.toPackedInt())) // map center
         player.send(ScriptIntMessage(674, player.position.toPackedInt())) // player position
     }
+
+    //TODO: Lobby screen
+//    	public static void sendLobbyScreen(Player player) {
+//		Repository.getLobbyPlayers().add(player);
+//		player.getPacketDispatch().sendString("Welcome to " + GameWorld.getName() + "", 378, 115);
+//		player.getPacketDispatch().sendString(lastLogin(player), 378, 117);
+//		final int messages = player.getDetails().getPortal().getMessages();
+//		if (messages > 1) {
+//			player.getPacketDispatch().sendString("                                                                                                                                                                              " + "You have <col=01DF01>" + messages + " unread message</col> in your message centre.", 378, 15);
+//		} else {
+//			player.getPacketDispatch().sendString("                                                                                                                                                                              " + "You have " + messages + " unread message in your message centre.", 378, 15);
+//		}
+//		player.getPacketDispatch().sendString("text1", 378, 39);
+//		player.getPacketDispatch().sendString("Visit the forums", 378, 37);
+//		player.getPacketDispatch().sendString("Visit the official "+GameWorld.getName()+" forums to stay in touch with the latest updates.", 378, 38);
+//		player.getPacketDispatch().sendString("Forums", 378, 14);
+//		player.getPacketDispatch().sendString(GameWorld.getName() + " Store", 378, 7);
+//		if (player.isDonator()) {
+//			player.getPacketDispatch().sendString("text2", 378, 96);
+//			player.getPacketDispatch().sendString("You have <col=01DF01>unlimited</col> days of " + GameWorld.getName() + " member credit remaining.", 378, 94);
+//			player.getPacketDispatch().sendString("You have an unlimited amount of days of member credit. Thank you for supporting "+GameWorld.getName()+"!", 378, 93);
+//		} else {
+//			player.getPacketDispatch().sendString("text3", 378, 96);
+//			player.getPacketDispatch().sendString("You have zero days of " + GameWorld.getName() + " member credit.", 378, 94);
+//			player.getPacketDispatch().sendString("You are not a donator. Choose to donate and you'll get loads of extra benefits and features.", 378, 93);
+//		}
+//		player.getPacketDispatch().sendString("Never tell anyone your password, even if they claim to work for " + GameWorld.getName() + "!", 378, 56);
+//		player.getBankPinManager().drawLoginMessage();
+//		//player.getPacketDispatch().sendString(weeklyMessage, WEEKLY_MESSAGE.getComponent(), WEEKLY_MESSAGE.getChild());
+//		player.getInterfaceManager().openWindowsPane(new Component(549));
+//		player.getInterfaceManager().setOpened(new Component(378));
+//		PacketRepository.send(Interface.class, new InterfaceContext(player, 549, 2, 378, true));
+//		//PacketRepository.send(Interface.class, new InterfaceContext(player, 549, 3, WEEKLY_MESSAGE.getComponent(), true));
+//
+//		player.getInterfaceManager().openWindowsPane(new Component(378));
+//	}
+
+//    public final class LoginInterfacePlugin extends ComponentPlugin {
+//
+//        @Override
+//        public Plugin<Object> newInstance(Object arg) throws Throwable {
+//            ComponentDefinition.put(378, this);
+//            return null;
+//        }
+//
+//        @Override
+//        public boolean handle(final Player player, Component component, int opcode, int button, int slot, int itemId) {
+//            if (player.getLocks().isLocked("login")) {
+//                return true;
+//            }
+//            player.getLocks().lock("login", 2);
+//            player.getPulseManager().run(new Pulse(1) {
+//                @Override
+//                public boolean pulse() {
+//                    LoginConfiguration.configureGameWorld(player);
+//                    return true;
+//                }
+//            });
+//            return true;
+//        }
+//
+//    }
 }
