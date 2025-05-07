@@ -1,37 +1,32 @@
 package net.scapeemulator.game.msg.codec
 
-import net.scapeemulator.game.msg.ExtendedButtonMessage
-import net.scapeemulator.game.net.game.DataType
-import net.scapeemulator.game.net.game.GameFrame
-import net.scapeemulator.game.net.game.GameFrameReader
-import java.io.IOException
+//class ExtendedButtonMessageDecoder : MessageDecoder<ExtendedButtonMessage>(155) {
+//    @Throws(IOException::class)
+//    override fun decode(frame: GameFrame): ExtendedButtonMessage {
+////        case 155: //Interface options
+////        case 196:
+////        case 124:
+////        case 199:
+////        case 234:
+////        case 168:
+////        case 166:
+////        case 64:
+////        case 53:
+////        case 9:
+//        val reader = GameFrameReader(frame)
+//        val button = reader.getSigned(DataType.INT).toInt() //data
+//        val id = (button shr 16) and 0xFFFF //component
+//        val slot = button and 0xFFFF //buttonId
+//        val parameter = reader.getUnsigned(DataType.SHORT).toInt()
+//
+////        data = buffer.getInt()
+////        slot = buffer.getShort()
+////        componentId = (data shr 16) and 0xFFFF
+////        buttonId = data and 0xFFFF
+//        return ExtendedButtonMessage(id, slot, parameter)
+//    }
+//}
 
-class ExtendedButtonMessageDecoder : MessageDecoder<ExtendedButtonMessage>(155) {
-    @Throws(IOException::class)
-    override fun decode(frame: GameFrame): ExtendedButtonMessage {
-//        case 155: //Interface options
-//        case 196:
-//        case 124:
-//        case 199:
-//        case 234:
-//        case 168:
-//        case 166:
-//        case 64:
-//        case 53:
-//        case 9:
-        val reader = GameFrameReader(frame)
-        val button = reader.getSigned(DataType.INT).toInt() //data
-        val id = (button shr 16) and 0xFFFF //component
-        val slot = button and 0xFFFF //buttonId
-        val parameter = reader.getUnsigned(DataType.SHORT).toInt()
-
-//        data = buffer.getInt()
-//        slot = buffer.getShort()
-//        componentId = (data shr 16) and 0xFFFF
-//        buttonId = data and 0xFFFF
-        return ExtendedButtonMessage(id, slot, parameter)
-    }
-}
 
 //
 //class InterfaceOptionMessageDecoder : MessageDecoder<ExtendedButtonMessage>(156) {

@@ -1,12 +1,14 @@
 package net.scapeemulator.game.msg.handler
 
 import net.scapeemulator.game.button.ButtonDispatcher
-import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.ButtonMessage
+import net.scapeemulator.game.msg.ExtendedButtonMessage
 
-class ButtonMessageHandler(private val dispatcher: ButtonDispatcher) :
-    MessageHandler<ButtonMessage>() {
-    override fun handle(player: Player, message: ButtonMessage) {
-        dispatcher.handle(player, message.id, message.slot, 0)
-    }
+internal fun buttonMessageHandler(dispatcher: ButtonDispatcher) = messageHandler<ButtonMessage> { player, message ->
+    dispatcher.handle(player, message.id, message.slot, 0)
 }
+
+internal fun extendedButtonMessageHandler(dispatcher: ButtonDispatcher) =
+    messageHandler<ExtendedButtonMessage> { player, message ->
+        dispatcher.handle(player, message.id, message.slot, message.parameter)
+    }

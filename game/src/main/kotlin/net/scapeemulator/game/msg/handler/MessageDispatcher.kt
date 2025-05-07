@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.game.button.ButtonDispatcher
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.*
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import kotlin.reflect.KClass
 
 class MessageDispatcher {
@@ -16,37 +15,37 @@ class MessageDispatcher {
 
     init {
         /* action buttons */
-        handlers[ButtonMessage::class] = ButtonMessageHandler(buttonDispatcher)
-        handlers[ExtendedButtonMessage::class] = ExtendedButtonMessageHandler(buttonDispatcher)
+        handlers[ButtonMessage::class] = buttonMessageHandler(buttonDispatcher)
+        handlers[ExtendedButtonMessage::class] = extendedButtonMessageHandler(buttonDispatcher)
 
-        handlers[PingMessage::class] = PingMessageHandler()
-        handlers[IdleLogoutMessage::class] = IdleLogoutMessageHandler()
-        handlers[WalkMessage::class] = WalkMessageHandler()
-        handlers[ChatMessage::class] = ChatMessageHandler()
+        handlers[PingMessage::class] = pingMessageHandler
+        handlers[IdleLogoutMessage::class] = idleLogoutMessageHandler
+        handlers[WalkMessage::class] = walkMessageHandler
+        handlers[ChatMessage::class] = chatMessageHandler
 
         /* command handler */
         handlers[CommandMessage::class] = commandDispatcher
 
-        handlers[SwapItemsMessage::class] = SwapItemsMessageHandler()
-        handlers[EquipItemMessage::class] = EquipItemMessageHandler()
-        handlers[DisplayMessage::class] = DisplayMessageHandler()
-        handlers[RemoveItemMessage::class] = RemoveItemMessageHandler()
-        handlers[RegionChangedMessage::class] = RegionChangedMessageHandler()
-        handlers[ClickMessage::class] = ClickMessageHandler()
-        handlers[FocusMessage::class] = FocusMessageHandler()
-        handlers[CameraMessage::class] = CameraMessageHandler()
-        handlers[FlagsMessage::class] = FlagsMessageHandler()
-        handlers[SequenceNumberMessage::class] = SequenceNumberMessageHandler()
-        handlers[InterfaceClosedMessage::class] = InterfaceClosedMessageHandler()
-        handlers[ObjectOptionOneMessage::class] = object : MessageHandler<ObjectOptionOneMessage>() {
-            override fun handle(
-                player: Player,
-                message: ObjectOptionOneMessage
-            ) {
-                player.sendMessage("obj " + message.id + " x" + message.x)
-            }
+        handlers[SwapItemsMessage::class] = swapItemsMessageHandler
+        handlers[EquipItemMessage::class] = equipItemMessageHandler
+        handlers[RemoveItemMessage::class] = removeItemMessageHandler
 
+        handlers[DisplayMessage::class] = displayMessageHandler
+        handlers[RegionChangedMessage::class] = regionChangedHandler
+        handlers[ClickMessage::class] = clickMessageHandler
+        handlers[FocusMessage::class] = focusMessageHandler
+        handlers[CameraMessage::class] = cameraMessageHandler
+        handlers[FlagsMessage::class] = flagsMessageHandler
+        handlers[SequenceNumberMessage::class] = sequenceNumberMessageHandler
+        handlers[InterfaceClosedMessage::class] = interfaceClosedMessageHandler
+        handlers[ObjectOptionOneMessage::class] = messageHandler<ObjectOptionOneMessage>() { player, message ->
+            player.sendMessage("obj " + message.id + " x" + message.x)
         }
+        handlers[ObjectOptionTwoMessage::class] = messageHandler<ObjectOptionTwoMessage>() { player, message ->
+            player.sendMessage("obj " + message.id + " x" + message.x)
+        }
+
+
     }
 
 //    fun <T : Message> handlers[clazz: KClass<T>, handler: MessageHandler<T>) {
@@ -54,7 +53,7 @@ class MessageDispatcher {
 //    }
 
     @Suppress("UNCHECKED_CAST")
-    fun dispatch(player: Player, message: Message) {//todo check
+    internal fun dispatch(player: Player, message: Message) {//todo check
         val handler = handlers[message::class] //as MessageHandler<Message>?
         if (handler != null) {
             try {
@@ -68,6 +67,6 @@ class MessageDispatcher {
     }
 
     companion object {
-        private val logger = KotlinLogging.logger{ }
+        private val logger = KotlinLogging.logger { }
     }
 }

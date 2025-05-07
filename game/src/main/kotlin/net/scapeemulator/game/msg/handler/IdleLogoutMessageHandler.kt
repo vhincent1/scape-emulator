@@ -1,10 +1,7 @@
 package net.scapeemulator.game.msg.handler
 
-import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.IdleLogoutMessage
 
-class IdleLogoutMessageHandler : MessageHandler<IdleLogoutMessage>() {
-    override fun handle(player: Player, message: IdleLogoutMessage) {
-        // TODO implement
-    }
+internal val idleLogoutMessageHandler = messageHandler<IdleLogoutMessage> { player, message ->
+    //todo
 }
