@@ -26,7 +26,8 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
 
         /* set up the game interface */
         player.interfaceSet.init()
-        player.sendMessage("Welcome to HustlaScape.")
+        player.sendMessage("Welcome to HustlaScape. q p")
+        player.sendMessage("                                                 W")
 
         /* refresh skills, inventory, energy, etc. */
         player.inventory.refresh()
@@ -37,7 +38,7 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
         player.energy = player.energy // TODO: nicer way than this?
 
         /* plugin event */
-        server.pluginManager.handle(LoginEvent(player))
+        server.pluginManager.notify(LoginEvent(player))
     }
 
     @Throws(IOException::class)

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.net.handshake
 
-class HandshakeMessage( val service: Int) {
+class HandshakeMessage(val service: Int) {
     companion object {
         const val SERVICE_LOGIN: Int = 14
         const val SERVICE_UPDATE: Int = 15

@@ -18,7 +18,7 @@ class SettingsButtonHandler : ButtonHandler(Interface.SETTINGS) {
             settings.toggleAcceptingAid()
         } else if (slot == 16) {
             player.interfaceSet.openWindow(Interface.DISPLAY_SETTINGS)
-        // TODO needs 'please close the interface...' text?
+            // TODO needs 'please close the interface...' text?
         } else if (slot == 18) {
             player.interfaceSet.openWindow(Interface.AUDIO_SETTINGS)
         }

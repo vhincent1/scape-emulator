@@ -32,7 +32,7 @@ class SettingsTable(connection: Connection) : Table() {
                     "two_button_mouse" -> settings.twoButtonMouse = value != 0
                     "chat_fancy" -> settings.chatFancy = value != 0
                     "private_chat_split" -> settings.privateChatSplit = value != 0
-                    "accepting_aid" -> settings.acceptingAid =value != 0
+                    "accepting_aid" -> settings.acceptingAid = value != 0
                     else -> throw IOException("unknown setting: $setting")
                 }
             }

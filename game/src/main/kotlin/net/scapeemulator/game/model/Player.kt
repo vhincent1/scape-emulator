@@ -4,8 +4,6 @@ import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
 import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.GameSession
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 
 class Player : Mob() {
     var session: GameSession? = null
@@ -59,11 +57,19 @@ class Player : Mob() {
     var appearanceTicket: Int = nextAppearanceTicket()
         private set
 
-    var appearance: Appearance = Appearance.DEFAULT_APPEARANCE
+//    val attributes: MutableMap<String, Any> = HashMap()
+//    fun getAttribute(string: String, default: Any): Any = attributes[string] ?: default
+//
+//    fun addAttribute(string: String, value: Any) {
+//        attributes.put(string, value)
+//    }
+
+    var appearance: Appearance = Appearance.FEMALE_APPEARANCE
         set(appearance) {
             field = appearance
             this.appearanceTicket = nextAppearanceTicket()
         }
+
 
     var energy: Int = 100
         set(energy) {

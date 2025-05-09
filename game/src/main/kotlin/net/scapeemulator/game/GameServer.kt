@@ -15,7 +15,6 @@ import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
 import net.scapeemulator.game.plugin.PluginManager
-import net.scapeemulator.game.plugin.ScriptManager
 import net.scapeemulator.game.util.LandscapeKeyTable
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -148,7 +147,6 @@ class GameServer(loginAddress: SocketAddress) {
 
     private fun shutdown() {
         world.isOnline = false
-        println("bye")
         //network.shutdown() //world.online=false
         //game.shutdown() //save players
     }
@@ -176,18 +174,14 @@ class GameServer(loginAddress: SocketAddress) {
 
     companion object {
         private val logger = KotlinLogging.logger {}
-
         val INSTANCE: GameServer = GameServer(InetSocketAddress(NetworkConstants.LOGIN_PORT))
 
         @JvmStatic
         fun main(args: Array<String>) = try {
-
             /* start server */
             INSTANCE.start()
-
             /* shutdown hook */
             Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
-
         } catch (t: Throwable) {
             logger.error(t) { "Failed to start server." }
         }

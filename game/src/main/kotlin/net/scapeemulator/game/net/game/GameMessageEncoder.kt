@@ -13,7 +13,8 @@ class GameMessageEncoder(private val codecs: CodecRepository) : MessageToMessage
     @Throws(IOException::class)
     @Suppress("UNCHECKED_CAST")
     public override fun encode(ctx: ChannelHandlerContext, message: Message, out: MessageBuf<Any>) {
-        val encoder = codecs.get(message.javaClass) as MessageEncoder<Message>?
+        //todo rewrite?
+        val encoder = codecs.get(message::class) as MessageEncoder<Message>?
         encoder?.encode(ctx.alloc(), message)
         out.add(encoder!!.encode(ctx.alloc(), message))
     }

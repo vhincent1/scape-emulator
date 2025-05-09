@@ -6,10 +6,11 @@ import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.net.game.DataOrder
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
+import kotlin.reflect.KClass
 
 abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
-    private val blocks: MutableMap<Class<out PlayerBlock>, PlayerBlock> =
-        HashMap<Class<out PlayerBlock>, PlayerBlock>()
+    private val blocks: MutableMap<KClass<out PlayerBlock>, PlayerBlock> =
+        HashMap()
 
     init {
         if (player.isActive) {
@@ -28,14 +29,12 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
         }
 
         if (player.isChatUpdated) addBlock(ChatPlayerBlock(player))
-
         if (player.isAnimationUpdated) addBlock(AnimationPlayerBlock(player))
-
         if (player.isSpotAnimationUpdated) addBlock(SpotAnimationPlayerBlock(player))
     }
 
     private fun addBlock(block: PlayerBlock) {
-        blocks.put(block.javaClass, block)
+        blocks.put(block::class, block)
     }
 
     val isBlockUpdatedRequired: Boolean
@@ -55,14 +54,14 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
                 blockBuilder.put(DataType.BYTE, flags)
             }
 
-            encodeBlock(message, blockBuilder, ChatPlayerBlock::class.java)
-            encodeBlock(message, blockBuilder, AnimationPlayerBlock::class.java)
-            encodeBlock(message, blockBuilder, AppearancePlayerBlock::class.java)
-            encodeBlock(message, blockBuilder, SpotAnimationPlayerBlock::class.java)
+            encodeBlock(message, blockBuilder, ChatPlayerBlock::class)
+            encodeBlock(message, blockBuilder, AnimationPlayerBlock::class)
+            encodeBlock(message, blockBuilder, AppearancePlayerBlock::class)
+            encodeBlock(message, blockBuilder, SpotAnimationPlayerBlock::class)
         }
     }
 
-    private fun encodeBlock(message: PlayerUpdateMessage, builder: GameFrameBuilder, type: Class<out PlayerBlock>) {
+    private fun encodeBlock(message: PlayerUpdateMessage, builder: GameFrameBuilder, type: KClass<out PlayerBlock>) {
         val block = blocks[type]
         block?.encode(message, builder)
     }

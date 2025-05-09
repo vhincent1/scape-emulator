@@ -2,6 +2,7 @@ package net.scapeemulator.game.msg.handler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.game.button.ButtonDispatcher
+import net.scapeemulator.game.command.CommandDispatcher
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.*
 import kotlin.reflect.KClass
@@ -11,7 +12,7 @@ class MessageDispatcher {
     private val handlers: MutableMap<KClass<*>, MessageHandler<*>> = HashMap()
 
     val buttonDispatcher = ButtonDispatcher()
-    val commandDispatcher = CommandMessageHandler()
+    val commandDispatcher = CommandDispatcher()
 
     init {
         /* action buttons */
@@ -38,10 +39,10 @@ class MessageDispatcher {
         handlers[FlagsMessage::class] = flagsMessageHandler
         handlers[SequenceNumberMessage::class] = sequenceNumberMessageHandler
         handlers[InterfaceClosedMessage::class] = interfaceClosedMessageHandler
-        handlers[ObjectOptionOneMessage::class] = messageHandler<ObjectOptionOneMessage>() { player, message ->
+        handlers[ObjectOptionOneMessage::class] = messageHandler<ObjectOptionOneMessage> { player, message ->
             player.sendMessage("obj " + message.id + " x" + message.x)
         }
-        handlers[ObjectOptionTwoMessage::class] = messageHandler<ObjectOptionTwoMessage>() { player, message ->
+        handlers[ObjectOptionTwoMessage::class] = messageHandler<ObjectOptionTwoMessage> { player, message ->
             player.sendMessage("obj " + message.id + " x" + message.x)
         }
 

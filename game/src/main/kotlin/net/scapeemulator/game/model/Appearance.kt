@@ -1,19 +1,49 @@
 package net.scapeemulator.game.model
 
-class Appearance(val gender: Gender, val style: IntArray, val colors: IntArray) {
-//    fun getStyle(index: Int): Int {
-//        return style[index]
-//    }
-//
-//    fun getColor(index: Int): Int {
-//        return colors[index]
+class Appearance(@JvmField val gender: Gender, val style: IntArray, private val colours: IntArray) {
+
+    fun getBody(body: Body) = style[body.ordinal]
+    fun getColor(colour: Colour) = colours[colour.ordinal]
+
+    fun setBody(body: Body, value: Int) {
+        style[body.ordinal] = value
+        println("style[${body.name}] = ${value}")
+    }
+
+//    fun setColour(colour: Colour, value: Int) {
+//        colours[colour.ordinal] = value
 //    }
 
+
+    fun generate(): Appearance {
+        return Appearance(
+            Gender.FEMALE,
+            intArrayOf(
+                getBody(Body.HEAD),
+                getBody(Body.FACIAL),
+                getBody(Body.TORSO),
+                getBody(Body.ARMS),
+                getBody(Body.HANDS),
+                getBody(Body.LEGS),
+                getBody(Body.FEET)
+            ),
+            intArrayOf(2, 5, 8, 11, 14)
+        )
+    }
+
     companion object {
+
         @JvmField
-        val DEFAULT_APPEARANCE: Appearance = Appearance(
+        val MALE_APPEARANCE: Appearance = Appearance(
             Gender.MALE,
             intArrayOf(0, 10, 18, 26, 33, 36, 42),
+            intArrayOf(2, 5, 8, 11, 14)
+        )
+
+        @JvmField
+        val FEMALE_APPEARANCE: Appearance = Appearance(
+            Gender.FEMALE,
+            intArrayOf(45, 1000, 56, 64, 69, 72, 80),
             intArrayOf(2, 5, 8, 11, 14)
         )
     }

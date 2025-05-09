@@ -16,7 +16,7 @@ class LandscapeKeyTable {
     }
 
     companion object {
-        private val logger = KotlinLogging.logger{ }
+        private val logger = KotlinLogging.logger { }
         private val EMPTY_KEY_ARRAY = IntArray(4)
 
         @Throws(IOException::class)

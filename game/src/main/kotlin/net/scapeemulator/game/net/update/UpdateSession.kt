@@ -101,6 +101,6 @@ class UpdateSession(server: GameServer, channel: Channel) : Session(server, chan
     }
 
     companion object {
-        private val logger = KotlinLogging.logger{ }
+        private val logger = KotlinLogging.logger { }
     }
 }

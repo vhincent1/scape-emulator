@@ -1,11 +1,31 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.msg.InterfaceOpenMessage
-import net.scapeemulator.game.msg.InterfaceRootMessage
-import net.scapeemulator.game.msg.ScriptIntMessage
+import net.scapeemulator.game.msg.*
 import java.util.*
 
 class InterfaceSet(private val player: Player) {
+    enum class InterfaceType(
+        private val fixedPanel: Int,
+        private val resizablePanel: Int,
+        private val fixedChild: Int,
+        private val resizableChild: Int
+    ) {
+        DEFAULT(Interface.FIXED, Interface.RESIZABLE, 11, 6),
+        OVERLAY(Interface.FIXED, Interface.RESIZABLE, 4, 5),
+        TAB(Interface.FIXED, Interface.RESIZABLE, 83, 93),
+        SINGLE_TAB(Interface.FIXED, Interface.RESIZABLE, 80, 76),
+        DIALOGUE(Interface.CHATBOX, Interface.CHATBOX, 12, 12),
+        WINDOW_PANE(Interface.FIXED, Interface.RESIZABLE, 0, 0),
+        CLIENTSCRIPT_CHATBOX(Interface.CHATBOX, Interface.CHATBOX, 6, 6),
+        CHATBOX(Interface.CHATBOX, Interface.CHATBOX, 8, 8);
+
+        fun getPanel(displayMode: DisplayMode): Int =
+            if (displayMode == DisplayMode.FIXED) fixedPanel else resizablePanel
+
+        fun getChild(displayMode: DisplayMode): Int =
+            if (displayMode == DisplayMode.FIXED) fixedChild else resizableChild
+    }
+
     enum class DisplayMode {
         FIXED, RESIZABLE
     }
@@ -13,7 +33,7 @@ class InterfaceSet(private val player: Player) {
     private val tabs = IntArray(15)
     var fullscreen: Int = -1
         private set
-    var displayMode: DisplayMode? = DisplayMode.FIXED
+    var displayMode: DisplayMode = DisplayMode.FIXED
 
     init {
         Arrays.fill(tabs, -1)
@@ -26,7 +46,7 @@ class InterfaceSet(private val player: Player) {
             player.send(InterfaceRootMessage(Interface.FIXED, 0))
             player.send(InterfaceOpenMessage(Interface.FIXED, 75, 752, 1)) // chat box
             player.send(InterfaceOpenMessage(Interface.FIXED, 14, 751, 1)) // chat options
-            player.send(InterfaceOpenMessage(752, 8, 137, 1)) // chat username & scroll bar
+            player.send(InterfaceOpenMessage(Interface.CHATBOX, 8, 137, 1)) // chat username & scroll bar
             player.send(InterfaceOpenMessage(Interface.FIXED, 10, 754, 1)) // PM split chat
 
             player.send(InterfaceOpenMessage(Interface.FIXED, 70, Interface.HITPOINTS_ORB, 1)) // hitpoints orb
@@ -37,7 +57,7 @@ class InterfaceSet(private val player: Player) {
             player.send(InterfaceRootMessage(Interface.RESIZABLE, 0))
             player.send(InterfaceOpenMessage(Interface.RESIZABLE, 70, 752, 1)) // chat box
             player.send(InterfaceOpenMessage(Interface.RESIZABLE, 23, 751, 1)) // chat options
-            player.send(InterfaceOpenMessage(752, 8, 137, 1)) // chat username & scroll bar
+            player.send(InterfaceOpenMessage(Interface.CHATBOX, 8, 137, 1)) // chat username & scroll bar
             player.send(InterfaceOpenMessage(Interface.RESIZABLE, 71, 754, 1)) // PM split chat (correct?)
 
             player.send(InterfaceOpenMessage(Interface.RESIZABLE, 13, Interface.HITPOINTS_ORB, 1)) // hitpoints orb
@@ -123,6 +143,18 @@ class InterfaceSet(private val player: Player) {
         } else {
             player.send(InterfaceRootMessage(Interface.RESIZABLE, 2))
         }
+    }
+
+    fun close() {
+        if (displayMode == DisplayMode.FIXED) {
+            player.send(InterfaceCloseMessage(Interface.FIXED, 11))
+        } else {
+            player.send(InterfaceCloseMessage(Interface.RESIZABLE, 6))
+        }
+        player.send(ScriptMessage(101, ""))
+
+//        val t = InterfaceType.CHATBOX
+//        player.send(InterfaceCloseMessage(t.getPanel(displayMode), t.getChild(displayMode)))
     }
 
     fun openWorldMap() {

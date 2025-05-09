@@ -10,6 +10,7 @@ import java.io.IOException
 
 object MapSet {
     private val logger = KotlinLogging.logger {}
+
     @Throws(IOException::class)
     fun init(cache: Cache, keyTable: LandscapeKeyTable) {
         logger.info { "Reading map and landscape files..." }
@@ -29,8 +30,10 @@ object MapSet {
                     if (entry == null) continue
 
                     try {
-                        if (entry.getIdentifier() == landscapeIdentifier) readLandscape(cache, keyTable, x, y, id)
-                        else if (entry.getIdentifier() == mapIdentifier) readMap(cache, x, y, id)
+                        if (entry.getIdentifier() == landscapeIdentifier)
+                            readLandscape(cache, keyTable, x, y, id)
+                        else if (entry.getIdentifier() == mapIdentifier)
+                            readMap(cache, x, y, id)
                     } catch (ex: Exception) {
                         logger.debug(ex) { "Failed to read map/landscape file $x, $y." }
                     }
@@ -46,14 +49,14 @@ object MapSet {
         val key = keyTable.getKeys(x, y)
         buffer = Container.decode(buffer, key).getData()
 
-        val landscape = Landscape.decode(x, y, buffer)
+        Landscape.decode(x, y, buffer)
 
     }
 
     @Throws(IOException::class)
     private fun readMap(cache: Cache, x: Int, y: Int, id: Int) {
         val buffer = cache.read(5, id).getData()
-        val map = Map.decode(x, y, buffer)
+        Map.decode(x, y, buffer)
 
 //        println("Map:") //ape toll
 //        println(map.getTile(2801, 2704, 0).flags)

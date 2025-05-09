@@ -24,6 +24,7 @@ enum class Direction(private val intValue: Int) {
                         -1 -> return NORTH_WEST
                     }
                 }
+
                 -1 -> {
                     when (deltaX) {
                         1 -> return SOUTH_EAST
@@ -31,6 +32,7 @@ enum class Direction(private val intValue: Int) {
                         -1 -> return SOUTH_WEST
                     }
                 }
+
                 0 -> {
                     when (deltaX) {
                         1 -> return EAST

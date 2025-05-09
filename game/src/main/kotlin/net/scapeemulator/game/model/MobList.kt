@@ -2,7 +2,7 @@ package net.scapeemulator.game.model
 
 class MobList<T : Mob>(capacity: Int) : Iterable<T> {
     private val mobs = arrayOfNulls<Mob>(capacity)
-     var size = 0
+    var size = 0
 
     private inner class MobListIterator : MutableIterator<T> {
         private var index = 0

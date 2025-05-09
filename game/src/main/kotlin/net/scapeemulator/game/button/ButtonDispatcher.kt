@@ -1,7 +1,9 @@
 package net.scapeemulator.game.button
 
+import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.model.Interface
 import net.scapeemulator.game.model.Player
+import net.scapeemulator.game.plugin.ButtonEvent
 
 class ButtonDispatcher {
     private val handlers = HashMap<Int, ButtonHandler>()
@@ -42,6 +44,11 @@ class ButtonDispatcher {
 
     fun handle(player: Player, id: Int, slot: Int, parameter: Int) {
         val handler = handlers[id]
-        handler?.handle(player, slot, parameter)
+//        handler?.handle(player, slot, parameter)
+        if (handler != null)
+            handler.handle(player, slot, parameter)
+        else
+            GameServer.INSTANCE.pluginManager.notify(ButtonEvent(player, id, slot))
     }
+
 }

@@ -1,7 +1,6 @@
 package net.scapeemulator.game.net.update
 
-import java.util.Queue
-import java.util.ArrayDeque
+import java.util.*
 
 
 class UpdateService : Runnable {

@@ -3,12 +3,12 @@ package net.scapeemulator.game.tools
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.def.ItemDefinition
 import net.scapeemulator.game.model.Equipment
-import net.scapeemulator.game.model.WeaponClass
 import java.io.IOException
 import java.util.*
 
 object EquipmentDumper {
-    private val logger =KotlinLogging.logger{ }
+    private val logger = KotlinLogging.logger { }
+
     @Throws(IOException::class)
     @JvmStatic
 //    fun main(args: Array<String>) {
@@ -134,8 +134,7 @@ object EquipmentDumper {
         if (getSlot(def) != Equipment.HEAD) return false
 
         val name = def.name!!.lowercase(Locale.getDefault())
-        if (name.contains("full")) return true
-        return false
+        return name.contains("full")
     }
 
     private fun isFullMask(def: ItemDefinition): Boolean {

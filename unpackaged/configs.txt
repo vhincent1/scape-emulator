@@ -4,9 +4,18 @@ sendConfig(802, -1);// Stronghold of security.
 sendConfig(1085, 249852);// Zombie hand emote
 sendConfig(1160,-1); //summoning orb
 
+sendConfig(300, 1000);//Full Spec Bar
+sendConfig(300, 800);//80% Spec Bar
+sendConfig(300, 600);//60% Spec Bar
+sendConfig(300, 400);//40% Spec Bar
+sendConfig(300, 200);//20% Spec Bar
+sendConfig(300, 0);//Empty Spec Bar
+
 music 
 https://rune-server.org/threads/530-music-configuration.601718/
 
+access masks
+https://rune-server.org/threads/interface-component-settings-a-k-a-access-masks-100.365286/
 
 spec bar
 

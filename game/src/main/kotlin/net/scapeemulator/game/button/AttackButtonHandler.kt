@@ -36,9 +36,9 @@ class AttackButtonHandler(private val tab: Int, private val styles: IntArray, pr
     }
 
     fun configureButton(interfaceId: Int, slot: Int) {
-        val tab = interfaceId
+        interfaceId
 
-      //  val style = WeaponClass.forTab(tab, slot)
+        //  val style = WeaponClass.forTab(tab, slot)
 
 
     }

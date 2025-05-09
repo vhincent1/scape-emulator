@@ -26,8 +26,6 @@ object Equipment {
         val remaining = inventory.add(item)
         equipment.set(slot, remaining)
 
-        println("REMOVING: " + item.definition!!.id + " SLOT: $slot")
-
         if (slot == WEAPON && remaining == null) {
             weaponChanged(player)
         }

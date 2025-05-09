@@ -1,0 +1,71 @@
+<configuration>
+    <!--    Console logging -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--            %-5level -->
+            <pattern>%boldGreen(%d{HH:mm:ss.SSS}) %magenta([%thread]) %highlight([%-5level]) %yellow(%logger{36})
+                %white(-) %msg%n
+            </pattern>
+            <!--            <pattern>[%date] %highlight([%level]) [%logger{10} %file:%line] %msg%n</pattern>-->
+        </encoder>
+    </appender>
+
+    <!--    File logging -->
+    <property name="HOME_LOG" value="logs/app.log"/>
+    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <totalSizeCap>20MB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+        <!--        <layout class="ch.qos.logback.classic.html.HTMLLayout"/>-->
+    </appender>
+
+    <!--  ************************* -->
+
+    <!--    <root level="info,debug,error">-->
+    <!--    <file>${log.name.log}</file>  System.setProperty("log.name", "name"-->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <logger name="net.scapeemulator.game.model.ItemDefinitions" additivity="false" level="debug">
+        <appender-ref ref="FILE-ROLLING"/>
+    </logger>
+    <!--    <root level="debug">-->
+    <!--        <appender-ref ref="FILE-ROLLING"/>-->
+    <!--    </root>-->
+    <!--    <root class="net.scapeemulator.game.GameServer" level="debug"/>-->
+</configuration>
+
+        <!--<configuration>-->
+        <!--<appender name="COLOR" class="ch.qos.logback.core.ConsoleAppender">-->
+        <!--    <encoder>-->
+        <!--        <pattern>[%date] %highlight([%level]) [%logger{10} %file:%line] %msg%n</pattern>-->
+        <!--        &lt;!&ndash;             ^^^^^^^^^^ &ndash;&gt;-->
+        <!--    </encoder>-->
+        <!--</appender>-->
+        <!--<appender name="NOCOLOR" class="ch.qos.logback.core.ConsoleAppender">-->
+        <!--    <encoder>-->
+        <!--        <pattern>[%date] [%level] [%logger{10} %file:%line] %msg%n</pattern>-->
+        <!--    </encoder>-->
+        <!--</appender>-->
+        <!--<root level="debug">-->
+        <!--    &lt;!&ndash; to use enable this mode pass -Dcolor to jvm &ndash;&gt;-->
+        <!--    <if condition='isDefined("color")'>-->
+        <!--        <then>-->
+        <!--            <appender-ref ref="COLOR"/>-->
+        <!--        </then>-->
+        <!--        <else>-->
+        <!--            <appender-ref ref="NOCOLOR"/>-->
+        <!--        </else>-->
+        <!--    </if>-->
+        <!--</root>-->
+        <!--</configuration>-->

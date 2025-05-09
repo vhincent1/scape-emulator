@@ -23,6 +23,6 @@ class GameMessageDecoder(private val codecs: CodecRepository) : MessageToMessage
     }
 
     companion object {
-        private val logger = KotlinLogging.logger{ }
+        private val logger = KotlinLogging.logger { }
     }
 }

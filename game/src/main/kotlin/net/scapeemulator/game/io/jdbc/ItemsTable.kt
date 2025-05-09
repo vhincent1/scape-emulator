@@ -10,8 +10,10 @@ import java.sql.SQLException
 import java.sql.Types
 
 abstract class ItemsTable(connection: Connection, private val type: String) : Table() {
-    private val loadStatement: PreparedStatement = connection.prepareStatement("SELECT * FROM items WHERE player_id = ? AND type = ?;")
-    private val saveStatement: PreparedStatement = connection.prepareStatement("INSERT INTO items (player_id, type, slot, item, amount) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE item = VALUES(item), amount = VALUES(amount);")
+    private val loadStatement: PreparedStatement =
+        connection.prepareStatement("SELECT * FROM items WHERE player_id = ? AND type = ?;")
+    private val saveStatement: PreparedStatement =
+        connection.prepareStatement("INSERT INTO items (player_id, type, slot, item, amount) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE item = VALUES(item), amount = VALUES(amount);")
 
     abstract fun getInventory(player: Player): Inventory
 

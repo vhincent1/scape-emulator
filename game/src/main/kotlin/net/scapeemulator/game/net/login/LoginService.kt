@@ -24,7 +24,7 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
     }
 
     fun registerNewPlayers(world: World) {
-        if(!world.isOnline) {
+        if (!world.isOnline) {
             println("World is offline")
             return
         }

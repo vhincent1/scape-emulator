@@ -17,10 +17,9 @@ class ChatPlayerBlock(player: Player) : PlayerBlock(0x80) {
         this.rights = player.rights
     }
 
-    public override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
+    override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         val bytes = ByteArray(256)
         val size = ChatUtils.pack(chatMessage!!.text, bytes)
-
         builder.put(DataType.SHORT, DataOrder.LITTLE, (chatMessage.color shl 8) or chatMessage.effects)
         builder.put(DataType.BYTE, rights)
         builder.put(DataType.BYTE, size)

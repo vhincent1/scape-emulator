@@ -15,11 +15,9 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
     private val combat: Int = player.skillSet.combatLevel
     private val skill: Int = player.skillSet.totalLevel
 
-    public override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
+    override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         val gender = appearance.gender
-
         val propertiesBuilder = GameFrameBuilder(builder.allocator)
-
         /*
 		 * flags field:
 		 *   bit 0   - gender (0 = male, 1 = female)
@@ -30,47 +28,47 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
 		 */
         val flags = gender.ordinal
         propertiesBuilder.put(DataType.BYTE, flags)
-        propertiesBuilder.put(DataType.BYTE, -1) // pk icon
+        propertiesBuilder.put(DataType.BYTE, -1) // pk/skull icon
         propertiesBuilder.put(DataType.BYTE, -1) // prayer icon
 
         var item = equipment.get(Equipment.HEAD)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         item = equipment.get(Equipment.CAPE)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         item = equipment.get(Equipment.NECK)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         item = equipment.get(Equipment.WEAPON)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         item = equipment.get(Equipment.BODY)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[2])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.TORSO))
         }
 
         item = equipment.get(Equipment.SHIELD)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
@@ -78,19 +76,19 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         var fullBody = false
         item = equipment.get(Equipment.BODY)
         if (item != null) //TODO fix proper values
-            fullBody = forId(item.id)!!.isFullBody()
+            fullBody = item.definition!!.isFullBody()
 
         if (!fullBody) {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[3])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.ARMS))
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         item = equipment.get(Equipment.LEGS)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[5])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.LEGS))
         }
 
         var fullHelm = false
@@ -98,38 +96,38 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         item = equipment.get(Equipment.HEAD)
         if (item != null) {
             //TODO fix proper values
-            fullHelm = forId(item.id)!!.isFullHelm()
-            fullMask = forId(item.id)!!.isFullMask()
+            fullHelm = item.definition!!.isFullHelm()
+            fullMask = item.definition!!.isFullMask()
         }
         if (!fullHelm && !fullMask) {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[0])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.HEAD))
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
         item = equipment.get(Equipment.HANDS)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[4])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.HANDS))
         }
 
         item = equipment.get(Equipment.FEET)
         if (item != null) {
-            propertiesBuilder.put(DataType.SHORT, 0x8000 or forId(item.id)!!.equipmentId)
+            propertiesBuilder.put(DataType.SHORT, 0x8000 or item.definition!!.equipmentId)
         } else {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[6])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.FEET))
         }
 
         item = equipment.get(Equipment.HEAD) // TODO check
         if (gender == Gender.MALE && !fullMask && !fullHelm) {
-            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.style[1])
+            propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.FACIAL))
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
 
-        for (i in 0..4) {
-            propertiesBuilder.put(DataType.BYTE, appearance.colors[i])
+        Colour.values().forEach { value ->
+            propertiesBuilder.put(DataType.BYTE, appearance.getColor(value))
         }
 
         propertiesBuilder.put(DataType.SHORT, stance) // todo: weapon stance
@@ -150,7 +148,4 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         builder.putRawBuilder(propertiesBuilder)
     }
 
-    fun forId(id: Int): ItemDefinition? {
-        return ItemDefinitions.forId(id)
-    }
 }

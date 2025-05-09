@@ -75,7 +75,7 @@ abstract class Mob : Entity() {
         this.animation = animation
     }
 
-    fun playSpotAnimation(spotAnimation: SpotAnimation?) {
+    fun playSpotAnimation(spotAnimation: SpotAnimation) {
         this.spotAnimation = spotAnimation
     }
 

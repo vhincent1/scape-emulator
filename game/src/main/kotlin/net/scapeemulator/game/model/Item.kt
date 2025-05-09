@@ -1,8 +1,6 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.model.ItemDefinition
-
-class Item (id: Int, amount: Int) {
+class Item(id: Int, amount: Int) {
     val id: Int
     val amount: Int
 

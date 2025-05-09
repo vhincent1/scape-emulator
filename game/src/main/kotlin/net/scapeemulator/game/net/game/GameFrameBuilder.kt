@@ -157,6 +157,7 @@ class GameFrameBuilder(alloc: ByteBufAllocator, opcode: Int = -1, type: GameFram
             buffer.writeByte(longValue.toByte().toInt())
             buffer.writeByte((longValue shr 24).toByte().toInt())
             buffer.writeByte((longValue shr 16).toByte().toInt())
+            //putIntA
         } else if (order == DataOrder.INVERSED_MIDDLE) {
             require(transformation == DataTransformation.NONE) { "inversed middle endian cannot be transformed" }
             require(type == DataType.INT) { "inversed middle endian can only be used with an integer" }
@@ -164,6 +165,7 @@ class GameFrameBuilder(alloc: ByteBufAllocator, opcode: Int = -1, type: GameFram
             buffer.writeByte((longValue shr 24).toByte().toInt())
             buffer.writeByte(longValue.toByte().toInt())
             buffer.writeByte((longValue shr 8).toByte().toInt())
+            //putIntB
         } else {
             throw IllegalArgumentException("unknown order")
         }
