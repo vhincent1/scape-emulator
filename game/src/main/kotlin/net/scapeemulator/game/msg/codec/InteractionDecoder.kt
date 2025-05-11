@@ -22,53 +22,44 @@ const val PLAYER_OPTION_5 = 4
 const val PLAYER_OPTION_6 = 114
 const val PLAYER_OPTION_7 = 175
 const val MAGIC_ON_PLAYER = 195 // magic on player
-
 val playerInteraction = handleDecoder(3) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD)
     println("Opcode: $index")
     return@handleDecoder PlayerInteractionMessage(index.toInt(), 69)
 }
-
 val playerInteraction1 = handleDecoder(PLAYER_OPTION_1) { frame ->
     val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(), 1)
+    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
+    return@handleDecoder PlayerInteractionMessage(1, index)
 }
-//todo
 val playerInteraction2 = handleDecoder(PLAYER_OPTION_2) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(), 2)
+    return@handleDecoder PlayerInteractionMessage(2, index.toInt())
 }
 val playerInteraction3 = handleDecoder(PLAYER_OPTION_3) { frame ->
     val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(), 3)
+    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
+    return@handleDecoder PlayerInteractionMessage(3, index)
 }
 val playerInteraction4 = handleDecoder(PLAYER_OPTION_4) { frame ->
     val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(), 4)
+    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
+    return@handleDecoder PlayerInteractionMessage(4, index)
 }
-
 val playerInteraction5 = handleDecoder(PLAYER_OPTION_5) { frame ->
     val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(),  5)
+    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE).toInt()
+    return@handleDecoder PlayerInteractionMessage(5, index)
 }
-
 val playerInteraction6 = handleDecoder(PLAYER_OPTION_6) { frame ->
     val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(), 6)
+    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
+    return@handleDecoder PlayerInteractionMessage(6, index)
 }
-
 val playerInteraction7 = handleDecoder(PLAYER_OPTION_7) { frame ->
     val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT,  DataTransformation.ADD)
-    return@handleDecoder PlayerInteractionMessage(index.toInt(), 7)
+    val index = reader.getUnsigned(DataType.SHORT, DataTransformation.ADD).toInt()
+    return@handleDecoder PlayerInteractionMessage(7, index)
 }
-
-
-
