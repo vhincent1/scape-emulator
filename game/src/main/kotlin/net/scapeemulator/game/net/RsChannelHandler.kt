@@ -26,7 +26,7 @@ class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHa
         logger.info { "Channel disconnected: " + ctx.channel().remoteAddress() + "." }
     }
 
-    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable?) {
+    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         //TODO fix
         logger.warn(cause) { "Exception caught, closing channel..." }
         ctx.close()

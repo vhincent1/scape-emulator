@@ -1,3 +1,3 @@
 package net.scapeemulator.game.msg
 
-abstract class Message 
+abstract class Message

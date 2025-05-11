@@ -113,7 +113,8 @@ data class ItemDefinition(
     val funWeapon: Boolean,
     val renderAnimation: Int,
     val attackAnimations: IntArray?,
-    val attackSounds: IntArray?
+    val attackSounds: IntArray?,
+    val maleWornModelId1: Int
 ) {
 
     fun <V> getConfig(key: String, fail: V): V {

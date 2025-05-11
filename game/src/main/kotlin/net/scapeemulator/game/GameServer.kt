@@ -51,7 +51,7 @@ class GameServer(loginAddress: SocketAddress) {
     val landscapeKeyTable: LandscapeKeyTable
     val codecRepository: CodecRepository
     val messageDispatcher: MessageDispatcher
-    val pluginManager: PluginManager
+//    val pluginManager: PluginManager
 
     // network
     val network: Network
@@ -86,7 +86,7 @@ class GameServer(loginAddress: SocketAddress) {
 
         /* load world */
         world = World(loginService)
-        pluginManager = PluginManager(this)
+//        pluginManager = PluginManager(this)
 
         /* start netty */
         network = Network(this)
@@ -175,16 +175,17 @@ class GameServer(loginAddress: SocketAddress) {
     companion object {
         private val logger = KotlinLogging.logger {}
         val INSTANCE: GameServer = GameServer(InetSocketAddress(NetworkConstants.LOGIN_PORT))
+        val plugins: PluginManager = PluginManager(INSTANCE)
 
         @JvmStatic
         fun main(args: Array<String>) = try {
             /* start server */
             INSTANCE.start()
+//            PluginManager(INSTANCE)
             /* shutdown hook */
             Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
         } catch (t: Throwable) {
             logger.error(t) { "Failed to start server." }
         }
     }
-
 }

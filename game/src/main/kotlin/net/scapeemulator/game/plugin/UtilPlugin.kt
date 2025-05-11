@@ -3,8 +3,11 @@ package net.scapeemulator.game.plugin
 import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.command.handleCommand
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.msg.InterfaceVisibleMessage
+import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.task.Action
+import net.scapeemulator.game.util.displayEnterPrompt
+import net.scapeemulator.game.util.removeHintIcon
+import net.scapeemulator.game.util.sendHintIcon
 
 val spawnItems = setOf(
     //ancients
@@ -27,7 +30,8 @@ val spawnItems = setOf(
     Item(4734, 1)
 )
 
-fun spawnBots(server: GameServer) {
+fun spawnBots() {
+    val server = GameServer.INSTANCE
     println("Spawning")
     val spawnLocation = Position(3222, 3219)
     val playerBot = Player().apply {
@@ -50,19 +54,83 @@ fun spawnBots(server: GameServer) {
             stop()
         }
     }
-    server.world.taskScheduler.schedule(action)
+//    server.world.taskScheduler.schedule(action)
 }
 
-fun utilPlugin(server: GameServer) = pluginHandler(
+fun utilPlugin() = pluginHandler(
     { event ->
         if (event is LoginEvent) {
             spawnItems.forEach(event.player.inventory::add)
             event.player.sendMessage("Welcome agent <b><img=0>${event.player.username.length} ")
+
+            event.player.send(InteractionOptionMessage(0, "Attack"))
+            event.player.send(InteractionOptionMessage(1, "Trade with"))
+            event.player.send(InteractionOptionMessage(2, "Request Assit"))
+            event.player.send(InteractionOptionMessage(3, "Test"))
+            event.player.send(InteractionOptionMessage(4, "Hi"))
+            event.player.send(InteractionOptionMessage(6, "6"))
+            event.player.send(InteractionOptionMessage(7, "7"))
+
+            val hintIcons = emptyArray<Int>()
+//            event.player.send(
+//                HintArrowMessage(
+//                    slot = 1,
+//                    targetType = 10, //1 npc 10 player 2 ground
+//
+//                    targetId = 1,//idx
+//                    entity = event.player,
+//                )
+//            )
+            event.player.sendMessage("PlayerID: ${event.player.id}")
+
+        } else if (event is MessageEvent) {
+            val player = event.player
+            if (event.message is PlayerInteractionMessage) {
+                player.sendMessage("PlayerID: ${event.player.username}")
+//                val hint = HintIconMessage(
+//                    slot = 1,
+//                    target = event.message.target,//idx
+//                    entity = event.player,
+//                )
+//                player.send(hint)
+                player.sendHintIcon(0, event.message.target, event.player)
+            }
         }
 
-    }, { spawnBots(server) },
+    }, { spawnBots() },
     arrayOf(
-        handleCommand("i") { player, arguments ->
+        handleCommand("cm") { player, arguments ->
+            player.send(ClearMinimapMessage())
+//            player.displayEnter(RunScript.Type.STRING) { player, value ->
+//                player.sendMessage("VALUE:  $value")
+//            }
+            player.displayEnterPrompt("Enter String", RunScript.Type.STRING) { player, value ->
+                player.sendMessage("Value: $value")
+            }
+        }, handleCommand("t") { player, arguments ->
+            if (arguments.size != 1) {
+                player.sendMessage("Syntax ::i [id]")
+                return@handleCommand
+            }
+            val id = arguments[0].toInt() ?: 2
+//            val arrowId = arguments[1].toInt() ?: 1
+            player.sendMessage("TargetType: $id")
+            val hint = HintIconMessage(
+                slot = -1,
+//                targetType = 2, //1 npc 10 player 2 ground
+//                targetId = 1,//idx
+                position = player.position
+            )
+            player.send(hint)
+        }, handleCommand("ree") { player, arguments ->
+            if (arguments.size != 1) {
+                player.sendMessage("Syntax ::r [id]")
+                return@handleCommand
+            }
+            val id = arguments[0].toInt()
+            println("removing hint icon $id")
+            player.removeHintIcon(id, player)
+        }, handleCommand("i") { player, arguments ->
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::i [id]")
                 return@handleCommand

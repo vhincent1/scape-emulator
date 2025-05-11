@@ -15,24 +15,7 @@ class Appearance(@JvmField val gender: Gender, val style: IntArray, private val 
 //    }
 
 
-    fun generate(): Appearance {
-        return Appearance(
-            Gender.FEMALE,
-            intArrayOf(
-                getBody(Body.HEAD),
-                getBody(Body.FACIAL),
-                getBody(Body.TORSO),
-                getBody(Body.ARMS),
-                getBody(Body.HANDS),
-                getBody(Body.LEGS),
-                getBody(Body.FEET)
-            ),
-            intArrayOf(2, 5, 8, 11, 14)
-        )
-    }
-
     companion object {
-
         @JvmField
         val MALE_APPEARANCE: Appearance = Appearance(
             Gender.MALE,

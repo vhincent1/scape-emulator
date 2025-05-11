@@ -85,6 +85,10 @@ class CharDesign {
 
     private val attributes: MutableMap<String, Any> = HashMap()
 
+    fun <T> getAttribute(username: String, key: String, default: T): T {
+        return (attributes[username + key] ?: default) as T
+    }
+
     fun open(player: Player) {
         println("Open")
         player.sendMessage("Open")
@@ -94,29 +98,17 @@ class CharDesign {
         player.interfaceSet.openWindow(771) //{ close event}
     }
 
-    fun refresh(player: Player, body: Boolean, colour: Boolean) {
-        if (body) {
-            var value = player.appearance.getBody(Body.HEAD)
-            value = value or player.appearance.getBody(Body.TORSO) shl 9
-            value = value or player.appearance.getBody(Body.ARMS) shl 13
-            value = value or player.appearance.getBody(Body.HANDS) shl 17
-            value = value or player.appearance.getBody(Body.LEGS) shl 21
-            value = value or player.appearance.getBody(Body.FEET) shl 25
-            println("Value: $value")
-        }
-    }
-
     //TODO: fix
     private fun updateLook(player: Player, body: Body, increment: Boolean) {
         val type = "char-design:look" + body.ordinal
+        println("TYPE: $type")
         val max = body.getIds(player.appearance.gender).size - 1
         println("Max: $max")
         println("Incr: increment: $increment")
 //        var value: Int = player.appearance.getBody(body) + (if (increment) 1 else -1)
-        val attr = attributes[type] ?: 0
+        val attr = attributes[player.username + type] ?: 0
         var value: Int = attr as Int + (if (increment) 1 else -1)
 
-        println("Index: $value")
         if (value < 0)
             value = max
         else if (value > max)
@@ -128,17 +120,12 @@ class CharDesign {
 
         println("${body.name}=${bodyPart}")
 
-//        attributes[type] = value
-//        attributes[body.name] = bodyPart
-
-        attributes[player.username + type] = value
-        attributes[player.username + body.name] = bodyPart
+        attributes.put(player.username + body.name, bodyPart)
+        attributes.put(player.username + type, value)
 
         player.appearance = player.appearance.apply {
             setBody(body, bodyPart)
         }
-
-//        CharacterDesign.refresh(player, true, false)
     }
 
     fun handleButtons(player: Player, buttonId: Int) {
@@ -209,15 +196,14 @@ class CharDesign {
             }
 
             else -> {
-                player.sendMessage("buttonId = $buttonId")
+//                player.sendMessage("buttonId = $buttonId")
 //                player.sendMessage("SkinColor: ${player.appearance.getColor(Colour.SKIN)}")
             }
         }
     }
 }
 
-private fun generateAppearance(): Appearance {
-    val gender = if (Random.nextBoolean()) Gender.MALE else Gender.FEMALE
+private fun generateAppearance(gender: Gender = if (Random.nextBoolean()) Gender.MALE else Gender.FEMALE): Appearance {
     return Appearance(
         gender, intArrayOf(
             Body.HEAD.getIds(gender).random(),
@@ -246,23 +232,26 @@ val charDesignPlugin = pluginHandler(
         handleCommand("char") { player, args ->
             charDesign.open(player)
         },
+        handleCommand("c") { player, args ->
+            println(charDesign.getAttribute(player.username, "char-design:look0", 0))
+        },
         handleCommand("gender") { player, args ->
             player.appearance =
                 if (player.appearance.gender == Gender.MALE)
                     FEMALE_APPEARANCE else MALE_APPEARANCE
         },
-        handleCommand("legs") { player, args ->
+        handleCommand("hair") { player, args ->
             if (args.size != 1) {
-                player.sendMessage("Syntax ::legs [id]")
+                player.sendMessage("Syntax ::hair [id]")
                 return@handleCommand
             }
             val id = args[0].toInt()
 
             player.appearance = player.appearance.apply {
-                setBody(Body.LEGS, id)
+                setBody(Body.HEAD, id)
             }
 
-            player.sendMessage("legs: id=$id")
+            player.sendMessage("hair: id=$id")
         },
         handleCommand("r") { player, args ->
             player.settings.toggleTwoButtonMouse()

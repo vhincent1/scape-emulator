@@ -6,9 +6,8 @@ import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.GameSession
 
 class Player : Mob() {
-    var session: GameSession? = null
-
     var databaseId: Int = 0
+    var session: GameSession? = null
 
     lateinit var username: String
     lateinit var password: String
@@ -23,6 +22,8 @@ class Player : Mob() {
     var chatMessage: ChatMessage? = null
     val settings: PlayerSettings = PlayerSettings(this)
     val interfaceSet: InterfaceSet = InterfaceSet(this)
+
+    var runScript: RunScript? = null
 
 //    var lastLogin
 //    private fun lastLogin(): String {
@@ -57,19 +58,11 @@ class Player : Mob() {
     var appearanceTicket: Int = nextAppearanceTicket()
         private set
 
-//    val attributes: MutableMap<String, Any> = HashMap()
-//    fun getAttribute(string: String, default: Any): Any = attributes[string] ?: default
-//
-//    fun addAttribute(string: String, value: Any) {
-//        attributes.put(string, value)
-//    }
-
     var appearance: Appearance = Appearance.FEMALE_APPEARANCE
         set(appearance) {
             field = appearance
             this.appearanceTicket = nextAppearanceTicket()
         }
-
 
     var energy: Int = 100
         set(energy) {
@@ -152,6 +145,7 @@ class Player : Mob() {
 
     override val isRunning: Boolean
         get() = settings.running
+
 
     fun nextAppearanceTicket(): Int {
         if (++appearanceTicketCounter == 0)

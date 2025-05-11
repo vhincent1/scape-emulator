@@ -48,7 +48,7 @@ class ButtonDispatcher {
         if (handler != null)
             handler.handle(player, slot, parameter)
         else
-            GameServer.INSTANCE.pluginManager.notify(ButtonEvent(player, id, slot))
+            GameServer.plugins.notify(ButtonEvent(player, id, slot))
     }
 
 }

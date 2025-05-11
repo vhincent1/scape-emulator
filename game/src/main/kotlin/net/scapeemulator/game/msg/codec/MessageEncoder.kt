@@ -12,6 +12,7 @@ abstract class MessageEncoder<T : Message>(@JvmField val clazz: KClass<T>) {
 }
 
 fun <T : Message> handleEncoder(
+//    vararg opcodes: Int?,
     klass: KClass<T>,
     block: (alloc: ByteBufAllocator, message: T) -> GameFrame
 ): MessageEncoder<T> {
@@ -21,3 +22,20 @@ fun <T : Message> handleEncoder(
         }
     }
 }
+
+//fun <T : Message> handleEncoder(
+//    vararg opcodes: Int, klass: KClass<T>,
+//    block: (alloc: ByteBufAllocator, message: T) -> GameFrame
+//): Map<KClass<*>, MessageEncoder<T>> {
+//    val map = HashMap<KClass<*>, MessageEncoder<T>>()
+//    for (opcode in opcodes) {
+//        val messageEncoder = object : MessageEncoder<T>(klass) {
+//            override fun encode(alloc: ByteBufAllocator, message: T): GameFrame {
+//                return block(alloc, message)
+//            }
+//        }
+//        map[klass] = messageEncoder
+//        outCodecsDebug[opcode] = messageEncoder
+//    }
+//    return map
+//}

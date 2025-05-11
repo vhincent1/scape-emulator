@@ -1,10 +1,12 @@
 package net.scapeemulator.game.msg.handler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.button.ButtonDispatcher
 import net.scapeemulator.game.command.CommandDispatcher
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.*
+import net.scapeemulator.game.plugin.MessageEvent
 import kotlin.reflect.KClass
 
 class MessageDispatcher {
@@ -18,6 +20,11 @@ class MessageDispatcher {
         /* action buttons */
         handlers[ButtonMessage::class] = buttonMessageHandler(buttonDispatcher)
         handlers[ExtendedButtonMessage::class] = extendedButtonMessageHandler(buttonDispatcher)
+
+        handlers[PlayerInteractionMessage::class] = messageHandler<PlayerInteractionMessage> { player, message ->
+            //todo clear minimap flag
+            println("Message: index=${message.index} target=${message.target}")
+        }
 
         handlers[PingMessage::class] = pingMessageHandler
         handlers[IdleLogoutMessage::class] = idleLogoutMessageHandler
@@ -46,7 +53,7 @@ class MessageDispatcher {
             player.sendMessage("obj " + message.id + " x" + message.x)
         }
 
-
+        handlers[RunScriptMessage::class] = runScriptHandler
     }
 
 //    fun <T : Message> handlers[clazz: KClass<T>, handler: MessageHandler<T>) {
@@ -59,6 +66,9 @@ class MessageDispatcher {
         if (handler != null) {
             try {
                 handler.handle(player, message)
+
+                GameServer.plugins.notify(MessageEvent(player, message))
+
             } catch (t: Throwable) {
                 logger.warn(t) { "Error processing packet." }
             }

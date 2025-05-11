@@ -1,7 +1,6 @@
 package net.scapeemulator.game.msg.codec
 
 import net.scapeemulator.game.msg.DisplayModelMessage
-import net.scapeemulator.game.msg.codec.CodecRepository.Companion.handleEncoder
 import net.scapeemulator.game.net.game.DataOrder
 import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
@@ -11,7 +10,7 @@ enum class Type {
     PLAYER, NPC, ITEM, MODEL
 }
 
-internal val displayModelEncoder = handleEncoder(66, 73, 50, 67, klass = DisplayModelMessage::class) { alloc, message ->
+internal val displayModelEncoder = handleEncoder(DisplayModelMessage::class) { alloc, message ->
     var builder: GameFrameBuilder
     val value = message.interfaceId shl 16 or message.childId
     when (message.type) {

@@ -1,0 +1,219 @@
+case 591:
+p.appearanceUpdateReq = true;
+p.updateReq = true;
+switch(buttonId) {
+
+case 182:
+color = 1;
+break;
+
+
+
+case 183:
+color = 1;
+break;
+
+case 184:
+color = 2;
+break;
+
+case 180:
+p.getActionSender().removeShownInterface(p);
+color = 1;
+break;
+
+//start torsos
+case 185:
+p.look[2] = 111;
+break;
+case 186:
+p.look[2] = 116;
+break;
+case 187:
+p.look[2] = 114;
+break;
+case 188:
+p.look[2] = 115;
+break;
+case 189:
+p.look[2] = 112;
+break;
+case 190:
+p.look[2] = 113;
+break;
+case 191:
+p.look[2] = 18;
+break;
+case 192:
+p.look[2] = 19;
+break;
+case 193:
+p.look[2] = 20;
+break;
+case 194:
+p.look[2] = 21;
+break;
+case 195:
+p.look[2] = 22;
+break;
+case 196:
+p.look[2] = 23;
+break;
+case 197:
+p.look[2] = 24;
+break;
+case 198:
+p.look[2] = 25;
+break;
+//end torsos
+
+//start sleeves
+case 199:
+p.look[3] = 105;
+break;
+case 200:
+p.look[3] = 108;
+break;
+case 201:
+p.look[3] = 107;
+break;
+case 202:
+p.look[3] = 106;
+break;
+case 203:
+p.look[3] = 109;
+break;
+case 204:
+p.look[3] = 110;
+break;
+case 205:
+p.look[3] = 28;
+break;
+case 206:
+p.look[3] = 26;
+break;
+case 207:
+p.look[3] = 27;
+break;
+case 208:
+p.look[3] = 29;
+break;
+case 209:
+p.look[3] = 30;
+break;
+case 210:
+p.look[3] = 31;
+break;
+//end sleeves
+
+//start legs
+case 211:
+p.look[5] = 36;
+break;
+case 212:
+p.look[5] = 85;
+break;
+case 213:
+p.look[5] = 37;
+break;
+case 214:
+p.look[5] = 41;
+break;
+case 215:
+p.look[5] = 89;
+break;
+case 216:
+p.look[5] = 90;
+break;
+case 217:
+p.look[5] = 39;
+break;
+case 218:
+p.look[5] = 88;
+break;
+case 219:
+p.look[5] = 87;
+break;
+case 220:
+p.look[5] = 38;
+break;
+case 221:
+p.look[5] = 86;
+break;
+
+case 280://black
+p.color[color] = 16;
+break;
+case 279://dark grey
+p.color[color] = color;
+break;
+case 278://taupe
+p.color[color] = 17;
+break;
+case 277://light grey
+p.color[color] = 18;
+break;
+case 276://beige
+p.color[color] = color + 4;
+break;
+case 275://navy blue
+p.color[color] = color + 2;
+break;
+case 274://indigo
+p.color[color] = 27;
+break;
+case 273://violet
+p.color[color] = 28;
+break;
+case 272://mauve
+p.color[color] = color + 9;
+break;
+case 270://light blue
+p.color[color] = 20;
+break;
+case 271://pale blue
+p.color[color] = color + 13;
+break;
+case 269://dark blue
+p.color[color] = color + 6;
+break;
+case 268://royal blue
+p.color[color] = 21;
+break;
+case 267://dark green
+p.color[color] = 26;
+break;
+case 266://forest green
+p.color[color] = color == 2 ? 0 : 15;
+break;
+case 265://sea green
+p.color[color] = color + 7;
+break;
+case 264://mint green
+p.color[color] = 25;
+break;
+case 263://moss green
+p.color[color] = color + 12;
+break;
+case 262://gold
+p.color[color] = color + 8;
+break;
+
+case 281:
+color = 1;
+color = 2;
+break;
+
+default:
+Misc.println("Unhandled char screen button: "  + buttonId + ":" + buttonId2);
+break;
+}
+break;
+
+if (cmd[0].equals("clothes")) {
+				if (p.gender == 1) {
+					p.getActionSender().showInterface(p, 594);
+				} else {
+					p.getActionSender().showInterface(p, 591);
+				}
+			}

@@ -2,11 +2,9 @@ package net.scapeemulator.game.command
 
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.SkillSet
-import net.scapeemulator.game.msg.InteractionOptionMessage
 
 class MasterCommandHandler : CommandHandler("master") {
     override fun handle(player: Player, arguments: Array<String>) {
-        player.send(InteractionOptionMessage(0, "Attack"))
         if (player.rights < 2) return
 
         if (arguments.size != 0) {

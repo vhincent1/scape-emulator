@@ -1,0 +1,65 @@
+package net.scapeemulator.game.msg.codec
+
+import net.scapeemulator.game.msg.*
+import net.scapeemulator.game.net.game.*
+
+internal val serverMessageEncoder = handleEncoder(ServerMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 70, GameFrame.Type.VARIABLE_BYTE)
+    builder.putString(message.text)
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val systemUpdateEncoder = handleEncoder(SystemUpdateMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 85)
+    builder.put(DataType.SHORT, message.time)
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val minimapStatus = handleEncoder(MiniMapStatusMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 192)
+    builder.put(DataType.BYTE, message.setting)
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val clearMinimapFlag = handleEncoder(ClearMinimapMessage::class) { alloc, message ->
+    return@handleEncoder GameFrameBuilder(alloc, 153).toGameFrame()
+}
+
+internal val hintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 217)
+    builder.put(DataType.BYTE, message.slot shl 6 or message.targetType) //10 player 1 npc
+    builder.put(DataType.BYTE, message.arrowId)
+    if (message.arrowId > 0) {
+        if (message.remove) {
+            builder.put(DataType.SHORT, 0)
+            builder.put(DataType.SHORT, 0)
+            builder.put(DataType.BYTE, 0)
+        } else if (message.targetType == 1 || message.targetType == 10) {
+            builder.put(DataType.SHORT, message.targetId)
+            builder.put(DataType.SHORT, 0)
+            builder.put(DataType.BYTE, 0)
+        } else if (message.entity?.position != null || message.position != null) {
+            val pos = message.entity?.position ?: message.position!!
+            builder.put(DataType.SHORT, pos.x)
+            builder.put(DataType.SHORT, pos.y)
+            builder.put(DataType.BYTE, pos.height)
+        }
+        builder.put(DataType.SHORT, message.modelId)
+    }
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val energyMessageEncoder = handleEncoder(EnergyMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 234)
+    builder.put(DataType.BYTE, message.energy)
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val interactionOptionEncoder = handleEncoder(InteractionOptionMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 44, GameFrame.Type.VARIABLE_BYTE)
+    builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, -1)
+    builder.put(DataType.BYTE, if (message.index == 0) 1 else 0)
+    builder.put(DataType.BYTE, message.index + 1)
+    builder.putString(message.name)
+    return@handleEncoder builder.toGameFrame()
+}

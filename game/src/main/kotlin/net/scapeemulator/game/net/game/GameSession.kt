@@ -38,7 +38,7 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
         player.energy = player.energy // TODO: nicer way than this?
 
         /* plugin event */
-        server.pluginManager.notify(LoginEvent(player))
+        GameServer.plugins.notify(LoginEvent(player))
     }
 
     @Throws(IOException::class)

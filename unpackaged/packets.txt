@@ -1,0 +1,17 @@
+// putIntA
+builder.put(DataType.INT,DataOrder.MIDDLE,  value)
+
+//putIntB
+builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, value))
+
+//putShortA
+builder.put(DataType.SHORT, DataTransformation.ADD, value)
+
+//putLEShort
+builder.put(DataType.SHORT, DataOrder.LITTLE, value)
+
+//putLEShortA
+builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, value)
+
+//put((byte) value)
+builder.put(DataType.BYTE, value)

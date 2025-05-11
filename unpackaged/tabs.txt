@@ -1,0 +1,88 @@
+Apr 8, 2009
+Add bookmark
+#1
+Adding, or Disabling Tabs.
+
+Description - Allowing you to disable or enable tabs so players can use or not use, it is good for somethings like can't mass lag things you can disable then fix then enable again.
+
+Difficulty - 1/10 - Need the ability to read and not just copy and pasting. Im trying to teach you here.
+
+Tested Server - Rs2HD, Jc-Scape
+
+Credits - The Owners of the Servers i Tested as above JC + Graham and Freesunfury for making the Tutorial and explaining to the people.
+
+Tutorial Length - Short, just a short explanation.
+
+Files Modified - ActionSender.java
+
+Okay, first off to start with there are 2 diffrent ways i will be showing you how to do the 1st way is using LD - Low Detail, as most people use. The 2nd Way is using HD Login.
+
+LD Set up
+First open ActionSender.java and search for
+Code:
+public void sendLogin() {
+
+Now when you search that and you look under the code
+
+you will see something very similar to this
+
+Code:
+		sendMapRegion();
+		sendWindowPane(548);
+		sendTab(14, 751); // Chat options
+		sendTab(75, 752); // Chatbox
+		sendTab(70, 748); // HP bar
+		sendTab(71, 749); // Prayer bar
+		sendTab(72, 750); // Energy bar
+		//sendTab(67, 747); // Summoning bar
+		sendInterface(1, 752, 8, 137); // Username on chat
+		sendTab(83, 92); // Attack tab
+		sendTab(84, 320); // Skill tab
+		sendTab(85, 274); // Quest tab
+		sendTab(86, 149); // Inventory tab
+		sendTab(87, 387); // Equipment tab
+		sendTab(88, 271); // Prayer tab
+
+Okay all of these "sendTab" Methods are all the items you see when you play, for example "QuestTab" If you wanted to disable it go to the "sendTab(85, 274); // Quest tab"
+Most are all commented so you know which do which action.
+
+If you wanted to disable this simply just place // infront of the method like this
+Code:
+//sendTab(85, 274); // Quest tab
+
+That will disable you from clicking that tab, so you can't use those features to enable it again just take the "//" out that you placed there.
+
+You can do this with all of these methods here you just need to know there functions, im just telling you the basics and from here you can figure it out.
+
+If you really wanted to you can just take out the right click options too, if you didn't want one for example search
+
+Code:
+public void setOptions() {
+
+You should see
+
+Code:
+public void setOptions() {
+			sendPlayerOption("Attack", 2, 1);
+			sendPlayerOption("Follow", 3, 2);
+			sendPlayerOption("Trade with", 4, 3);
+}
+
+Comment out the one you don't want for example i don't want "Follow" Lets say it doesn't work so i don't need it there do this
+
+Code:
+public void setOptions() {
+			sendPlayerOption("Attack", 2, 1);
+			//sendPlayerOption("Follow", 3, 2);
+			sendPlayerOption("Trade with", 4, 3);
+}
+
+You could delete that hole thing instead of commenting but i would recommend not doing that just in case you forgot the method and cannot code it again :p
+
+
+Now for HD
+
+Very simular to the LD but you search
+Code:
+public void sendHdLogin() {
+in ActionSender.java, then you want to do the same steps that i showed you in LD Version.

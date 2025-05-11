@@ -1,0 +1,61 @@
+Sep 26, 2009
+Add bookmark
+#1
+Well i noticed no-one worried about quickchat, And i saw No-one that used correct streams (aka missing a few, easy to find in client), Looked into it,
+Green = Packet ID
+Red = Streams
+Code:
+if (i_87_ == 5059) {
+[COLOR="Lime"]Class21.aPacketStream_466.createFrame(i + -218, 250);[/COLOR]
+[COLOR="Red"]Class21.aPacketStream_466.writeByte(32, 0);[/COLOR]
+PacketStream.anInt4129++;
+int i_267_ = Class21.aPacketStream_466.anInt2945;
+[COLOR="Red"]Class21.aPacketStream_466.writeByte(32, 0);[/COLOR]
+[COLOR="Red"]Class21.aPacketStream_466.writeWord(false, aClass58_4498.anInt1089);[/COLOR]
+aClass58_4498.aClass68_Sub20_Sub8_1099.method1081(-33, aClass58_4498.anIntArray1090, Class21.aPacketStream_466);
+Class21.aPacketStream_466.method935(-i_267_ + Class21.aPacketStream_466.anInt2945, 125);
+break;
+}
+Before it was only 1 write word and byte, so here it is.
+A few examples:
+Code:
+[quickchat] Quick Chat: Stream1: 3 Stream2: 0 Stream3: 153 - Responses > Yes
+[quickchat] Quick Chat: Stream1: 3 Stream2: 0 Stream3: 154 - Responses > No
+[quickchat] Quick Chat: Stream1: 3 Stream2: 0 Stream3: 155 - Responses > Okay.
+
+Here it is.
+
+Code:
+package palidino76.rs2.io.packets;
+
+import palidino76.rs2.players.Player;
+import palidino76.rs2.util.Misc;
+
+public class QuickChat {
+public Player p;
+    public QuickChat(Player p) {
+        if (p == null || p.stream == null) {
+            return;
+        }
+        int stream1 = p.stream.readUnsignedByte();
+        int stream2 = p.stream.readUnsignedByte();
+        int stream3 = p.stream.readUnsignedWord();
+		Misc.println("[" + p.username + "] Quick Chat: Stream1: " + stream1 + " Stream2: " + stream2 +" Stream3: "+stream3);
+    }
+
+    private String getString(int id) {
+        switch (id) {
+        default:
+            return "Fail.";
+        }
+    }
+}
+
+Creds to whoever had that before, Creds to me for streams.
+
+In General quickchat, Perhaps the easiest of them all, just finding the ids, and they just go up on each one, On others like skills its a bit harder, apparently there is no stream for the secondary items, either that or it is another packet (aka if you wanted to say "Try training on..." it would not work, same packet streams each time), but most other quickchat works, Just a bit confusing how they did it.
+
+Also taking requests for correct streams, Seeing as its not too hard to find.
+
+EDIT:
+There are a few more variables i bet, which means the secondary things i bet

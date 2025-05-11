@@ -1,8 +1,6 @@
 package net.scapeemulator.game.msg.codec
 
-import io.netty.buffer.ByteBufAllocator
 import net.scapeemulator.game.msg.Message
-import net.scapeemulator.game.net.game.GameFrame
 import net.scapeemulator.game.util.LandscapeKeyTable
 import kotlin.reflect.KClass
 
@@ -16,6 +14,15 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(idleLogoutMessageDecoder)
         bind(buttonMessageDecoder)
         bind(extendedButtonMessageDecoder)
+
+
+        bind(playerInteraction1)
+        bind(playerInteraction2)
+        bind(playerInteraction3)
+        bind(playerInteraction4)
+        bind(playerInteraction5)
+        bind(playerInteraction6)
+        bind(playerInteraction7)
 
 //        bind(InterfaceOptionMessageDecoder())
 
@@ -65,6 +72,12 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(scriptStringMessageEncoder)
         bind(scriptIntMessageEncoder)
         bind(displayModelEncoder)
+        bind(clearMinimapFlag)
+        bind(hintArrowEncoder)
+        bind(minimapStatus)
+        bind(playerInteraction)
+        bind(enterAmountDecoder)
+        bind(enterTextDecoder)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix
@@ -72,49 +85,24 @@ class CodecRepository(table: LandscapeKeyTable) {
     fun bind(decoder: MessageDecoder<*>) = decoder.also { inCodecs[decoder.opcode] = it }
     fun bind(encoder: MessageEncoder<*>) = encoder.also { outCodecs[encoder.clazz] = it }
 
-    fun bind(encoder: MessageEncoder<*>, opcode: Int) = encoder.also {
-        outCodecs[encoder.clazz] = it
-        outCodecsDebug[opcode] = encoder
-    }
+    fun bind(encoder: MessageEncoder<*>, opcode: Int) = encoder.also { outCodecs[encoder.clazz] = it }
     fun bind(encoders: Map<KClass<*>, MessageEncoder<*>>) = encoders.forEach { entry -> bind(entry.value) }
-
-    companion object {
-
-        private val outCodecsDebug = arrayOfNulls<MessageEncoder<*>>(265)
-
-        fun <T : Message> handleEncoder(
-            vararg opcodes: Int, klass: KClass<T>,
-            block: (alloc: ByteBufAllocator, message: T) -> GameFrame
-        ): Map<KClass<*>, MessageEncoder<T>> {
-            val map = HashMap<KClass<*>, MessageEncoder<T>>()
-            for (opcode in opcodes) {
-                val messageEncoder = object : MessageEncoder<T>(klass) {
-                    override fun encode(alloc: ByteBufAllocator, message: T): GameFrame {
-                        return block(alloc, message)
-                    }
-                }
-                map[klass] = messageEncoder
-                outCodecsDebug[opcode] = messageEncoder
-            }
-            return map
-        }
-    }
-
-    fun dump() {
-        var count = 0
-        inCodecs.forEach { a ->
-            if (a == null) return@forEach
-            println("opcode=${a.opcode} class=${a.javaClass.name}")
-        }
-        outCodecsDebug.forEach { a ->
-            count++
-            if (a != null)
-                println("opcode=" + count + " class=${a.clazz.qualifiedName}")
-        }
-        println("C" + count)
-    }
-
 }
+//    companion object {
+//    fun dump() {
+//        var count = 0
+//        inCodecs.forEach { a ->
+//            if (a == null) return@forEach
+//            println("opcode=${a.opcode} class=${a.javaClass.name}")
+//        }
+//        outCodecsDebug.forEach { a ->
+//            count++
+//            if (a != null)
+//                println("opcode=" + count + " class=${a.clazz.qualifiedName}")
+//        }
+//        println("C" + count)
+//    }
+//}
 
 //fun main(args: Array<String>) {
 //    val codecRepository = CodecRepository(LandscapeKeyTable())

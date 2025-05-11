@@ -11,7 +11,7 @@ class PluginManager(val server: GameServer) {
 
     init {
         addListener(loginPlugin)
-        addListener(utilPlugin(server))
+        addListener(utilPlugin())
         addListener(charDesignPlugin)
 
 //        var buttonCount = 0

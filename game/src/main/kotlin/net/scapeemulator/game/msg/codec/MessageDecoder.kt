@@ -16,3 +16,11 @@ fun <T : Message> handleDecoder(opcode: Int, block: (frame: GameFrame) -> T): Me
         }
     }
 }
+
+//fun <T : Message> handleDecoder(vararg opcode: Int, block: (frame: GameFrame) -> T): MessageDecoder<T> {
+//    return object : MessageDecoder<T>(opcode) {
+//        override fun decode(frame: GameFrame): T {
+//            return block(frame)
+//        }
+//    }
+//}

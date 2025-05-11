@@ -1,0 +1,22 @@
+Style Slot
+Attack.UNARMED
+0 2 - Accurate,   Crush,   Attack   XP
+1 3 - Aggressive, Crush,   Strength XP
+2 4 - Defence,    Crush,   Defence  XP
+
+Attack.WHIP
+0 2 - Accurate,   Slash,   Attack   XP
+1 3 - Controlled, Slash,   Shared   XP
+2 4 - Defence,    Slash,   Defence  XP
+
+Attack.DAGGER
+0 2 - Accurate,   Stab,    Attack   XP
+1 3 - Aggressive, Stab,    Strength XP
+2 4 - Aggressive, Slash,   Strength XP
+3 5 - Defensive,  Stab,    Defence  XP
+
+Attack.GODSWORD
+0 2 - Accurate,   Slash,   Attack   XP
+1 3 - Aggressive, Slash,   Strength XP
+2 4 - Controlled, Stab,    Shared   XP
+3 5 - Defensive,  Slash,   Defence  XP
