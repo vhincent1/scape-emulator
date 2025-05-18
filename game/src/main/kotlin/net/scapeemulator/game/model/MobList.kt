@@ -1,64 +1,104 @@
 package net.scapeemulator.game.model
 
-class MobList<T : Mob>(capacity: Int) : Iterable<T> {
-    private val mobs = arrayOfNulls<Mob>(capacity)
-    var size = 0
+//typealias PlayerList = MobList<Player>
+//typealias NpcList = MobList<Player>
 
-    private inner class MobListIterator : MutableIterator<T> {
-        private var index = 0
+//class ActorList<T : Mob>(capacity: Int) : Iterable<T> {
+//    private val mobs = arrayOfNulls<Mob>(capacity)
+//    var size = 0
+//
+//    private inner class MobListIterator : MutableIterator<T> {
+//        private var index = 0
+//
+//        override fun hasNext(): Boolean {
+//            for (i in index..<mobs.size) {
+//                if (mobs[i] != null) return true
+//            }
+//            return false
+//        }
+//
+//        override fun next(): T {
+//            while (index < mobs.size) {
+//                if (mobs[index] != null) return mobs[index++] as T
+//                index++
+//            }
+//            throw NoSuchElementException()
+//        }
+//
+//        override fun remove() {
+//            check(!(index == 0 || mobs[index - 1] == null))
+//            this@ActorList.remove(mobs[index - 1] as T)
+//        }
+//    }
+//
+//    fun get(index: Int): T {
+//        return mobs[index] as T
+//    }
+//
+//    fun add(mob: T): Boolean {
+//        for (id in mobs.indices) {
+//            if (mobs[id] == null) {
+//                mobs[id] = mob
+//                size++
+//
+//                mob.index = id + 1
+//                return true
+//            }
+//        }
+//        return false
+//    }
+//
+//    fun remove(mob: T) {
+//        var id = mob.index
+//        assert(id != 0)
+//        id--
+//        assert(mobs[id] === mob)
+//        mobs[id] = null
+//        size--
+//        mob.resetId()
+//    }
+//    override fun iterator(): MutableIterator<T> {
+//        return MobListIterator()
+//    }
+//}
 
-        override fun hasNext(): Boolean {
-            for (i in index..<mobs.size) {
-                if (mobs[i] != null) return true
-            }
 
-            return false
-        }
+class ActorList<T>(
+    private val initialCapacity: Int,
+    private val actors: MutableList<T?> = createMutableList<T?>(initialCapacity)
+) : List<T?> by actors {
+    override val size: Int get() = actors.count { it != null }
+    val indices: IntRange get() = actors.indices
+    val capacity: Int get() = actors.size
 
-        override fun next(): T {
-            while (index < mobs.size) {
-                if (mobs[index] != null) return mobs[index++] as T
-                index++
-            }
+    @Suppress("UNCHECKED_CAST")
+    fun add(actor: Mob): Boolean {
+        val index = actors.freeIndex()
+        if (index == INVALID_INDEX) return false
+        actors[index] = actor as T
+        actor.index = index
+        return actors[actor.index] != null
+    }
 
-            throw NoSuchElementException()
-        }
-
-        override fun remove() {
-            check(!(index == 0 || mobs[index - 1] == null))
-
-            this@MobList.remove(mobs[index - 1] as T)
+    fun remove(actor: Mob): Boolean = when {
+        actor.index == INVALID_INDEX -> false
+        actors[actor.index] != actor -> false
+        else -> {
+            actors[actor.index] = null
+            actor.resetId()//reset
+            actors[actor.index] == null
         }
     }
 
-    fun add(mob: T): Boolean {
-        for (id in mobs.indices) {
-            if (mobs[id] == null) {
-                mobs[id] = mob
-                size++
+    override fun isEmpty(): Boolean = size == 0
 
-                mob.id = id + 1
-                return true
-            }
-        }
+    private fun <T> List<T>.freeIndex(): Int = (INDEX_PADDING until indices.last).firstOrNull { this[it] == null } ?: INVALID_INDEX
 
-        return false
-    }
+    private companion object {
+        const val INVALID_INDEX = -1 //0?
+        const val INDEX_PADDING = 1
 
-    fun remove(mob: T) {
-        var id = mob.id
-        assert(id != 0)
-
-        id--
-        assert(mobs[id] === mob)
-
-        mobs[id] = null
-        size--
-
-        mob.resetId()
-    }
-
-    override fun iterator(): MutableIterator<T> {
-        return MobListIterator()
+        @Suppress("UNCHECKED_CAST")
+        fun <T> createMutableList(size: Int): MutableList<T?> = (arrayOfNulls<Any?>(size) as Array<T?>).toMutableList()
     }
 }

@@ -3,12 +3,12 @@ package net.scapeemulator.game.util
 import net.scapeemulator.game.model.Entity
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.RunScript
-import net.scapeemulator.game.msg.ClearMinimapMessage
 import net.scapeemulator.game.msg.HintIconMessage
 import net.scapeemulator.game.msg.InteractionOptionMessage
+import net.scapeemulator.game.msg.ResetMinimapFlagMessage
 import net.scapeemulator.game.msg.ScriptMessage
 
-fun Player.sendHintIcon(slot: Int = 0, target: Int, entity: Entity) {
+fun Player.sendHintIcon(slot: Int?, target: Int, entity: Entity) {
     fun freeSlot(): Int {
         for (i in hintIcons.indices)
             if (hintIcons[i] == null)
@@ -19,9 +19,9 @@ fun Player.sendHintIcon(slot: Int = 0, target: Int, entity: Entity) {
         for (i in hintIcons.indices)
             hintIcons[i] = null
 
-    println(freeSlot())
+//    println("FREESLOT: " + freeSlot())
     val hint = HintIconMessage(
-        slot = freeSlot(),
+        slot = slot ?: freeSlot(),
         target = target,//idx
         entity = entity,
     )
@@ -31,14 +31,14 @@ fun Player.sendHintIcon(slot: Int = 0, target: Int, entity: Entity) {
 }
 
 fun Player.removeHintIcon(slot: Int, entity: Entity) {
-    val hint = HintIconMessage(slot = slot, entity = entity)
+    val hint = HintIconMessage(slot, entity)
     hint.remove = true
     hintIcons[hint.slot] = null
     send(hint)
 }
 
 fun Player.clearMinimapFlag() {
-    send(ClearMinimapMessage())
+    send(ResetMinimapFlagMessage())
 }
 
 fun Player.sendPlayerOption(slot: Int, option: String) {
@@ -48,4 +48,8 @@ fun Player.sendPlayerOption(slot: Int, option: String) {
 fun Player.displayEnterPrompt(prompt: String, type: RunScript.Type, block: (Player, Any) -> Unit) {
     send(ScriptMessage(type.id, type.types, prompt))
     runScript = RunScript(block)
+}
+
+fun Player.appenedHit(damage: Int, type: Int) {
+
 }

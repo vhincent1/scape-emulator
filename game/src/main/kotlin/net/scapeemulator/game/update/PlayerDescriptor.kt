@@ -9,8 +9,7 @@ import net.scapeemulator.game.net.game.GameFrameBuilder
 import kotlin.reflect.KClass
 
 abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
-    private val blocks: MutableMap<KClass<out PlayerBlock>, PlayerBlock> =
-        HashMap()
+    private val blocks: MutableMap<KClass<out PlayerBlock>, PlayerBlock> = HashMap()
 
     init {
         if (player.isActive) {
@@ -20,7 +19,7 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
              * following code to crash. Skipping this code doesn't matter as no
              * update blocks can be sent when removing a player.
              */
-            val id = player.id - 1
+            val id = player.index - 1
             val ticket = player.appearanceTicket
             if (tickets[id] != ticket) {
                 tickets[id] = ticket
@@ -31,7 +30,11 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
         if (player.isChatUpdated) addBlock(ChatPlayerBlock(player))
         if (player.isAnimationUpdated) addBlock(AnimationPlayerBlock(player))
         if (player.isSpotAnimationUpdated) addBlock(SpotAnimationPlayerBlock(player))
+        if (player.isHitUpdated) addBlock(HitBlock(player))
+        if (player.isHit2Updated) addBlock(HitSecondBlock(player))
+        if (player.isFacingUpdated) addBlock(FaceMobBlock(player))
     }
+
 
     private fun addBlock(block: PlayerBlock) {
         blocks.put(block::class, block)
@@ -54,9 +57,49 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
                 blockBuilder.put(DataType.BYTE, flags)
             }
 
+            //ordering matter
+            /*
+        if (flags.isChatTextUpdateRequired()) {
+			mask |= 0x80;
+		}
+		if(flags.isHitUpdateRequired()) {
+			mask |= 0x1;
+		}
+		if(flags.isAnimationUpdateRequired()) {
+			mask |= 0x8;
+		}
+		if (flags.isAppearanceUpdateRequired() || forceAppearance) {
+			mask |= 0x4;
+		}
+		if (flags.isEntityFocusUpdateRequired()) {
+			mask |= 0x2;
+		}
+		if (flags.isForceMovementRequired()) {
+			mask |= 0x400;
+		}
+		if (flags.isForceTextUpdateRequired()) {
+			mask |= 0x20;
+		}
+		if(flags.isHit2UpdateRequired()) {
+			mask |= 0x200;
+		}
+		if(flags.isForceMovementRequired()) {
+			//mask |= 0x800;
+		}
+		if (flags.isGraphicsUpdateRequired()) {
+			mask |= 0x100;
+		}
+		if (flags.isFaceLocationUpdateRequired()) {
+			mask |= 0x40;
+		}	*/
+
             encodeBlock(message, blockBuilder, ChatPlayerBlock::class)
+            encodeBlock(message, blockBuilder, HitBlock::class)
             encodeBlock(message, blockBuilder, AnimationPlayerBlock::class)
             encodeBlock(message, blockBuilder, AppearancePlayerBlock::class)
+            encodeBlock(message, blockBuilder, FaceMobBlock::class)
+
+            encodeBlock(message, blockBuilder, HitSecondBlock::class)
             encodeBlock(message, blockBuilder, SpotAnimationPlayerBlock::class)
         }
     }

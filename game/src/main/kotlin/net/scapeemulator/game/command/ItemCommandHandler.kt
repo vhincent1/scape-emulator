@@ -31,7 +31,7 @@ class ItemCommandHandler : CommandHandler("item") {
         if (def2 != null) {
 //            println(def2.isFullHelm())
 //            println(def2.isFullBody())
-            println(def2.slot)
+            println("SLOT: "+def2.slot)
         }
 
     }

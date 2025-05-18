@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
+import net.scapeemulator.game.cache.LandscapeKeyTable
 import net.scapeemulator.game.io.DummyPlayerSerializer
 import net.scapeemulator.game.io.JdbcPlayerSerializer
 import net.scapeemulator.game.io.PlayerSerializer
@@ -15,7 +16,7 @@ import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
 import net.scapeemulator.game.plugin.PluginManager
-import net.scapeemulator.game.util.LandscapeKeyTable
+import net.scapeemulator.game.task.SyncTask
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
 import java.io.FileInputStream
@@ -28,6 +29,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
+
 
 class GameServer(loginAddress: SocketAddress) {
 
@@ -46,12 +48,15 @@ class GameServer(loginAddress: SocketAddress) {
     // world
     val world: World
     val version: Int = 530
+
     val cache: Cache
     val checksumTable: ChecksumTable
     val landscapeKeyTable: LandscapeKeyTable
     val codecRepository: CodecRepository
     val messageDispatcher: MessageDispatcher
-//    val pluginManager: PluginManager
+    val plugins: PluginManager
+
+    private val syncTask: Set<SyncTask>
 
     // network
     val network: Network
@@ -85,23 +90,15 @@ class GameServer(loginAddress: SocketAddress) {
         updateService = UpdateService()
 
         /* load world */
-        world = World(loginService)
-//        pluginManager = PluginManager(this)
+        world = World(1, loginService)
+        syncTask = setOf(world)
+
+        plugins = PluginManager(this)
 
         /* start netty */
         network = Network(this)
         network.start()
     }
-
-//    private fun readResource(resource: String, charset: Charset = Charsets.UTF_8) : String {
-//        val resourceUrl = javaClass.classLoader?.getResource(resource)
-//        return resourceUrl!!.readText(charset)
-//    }
-// only works inside a class
-//val lines = this::class.java.getResourceAsStream("file.txt")?.bufferedReader()?.readLines()
-//
-//    // works otherwise
-//    val lines = object {}.javaClass.getResourceAsStream("file.txt")?.bufferedReader()?.readLines()
 
     private fun start() {
         world.isOnline = true
@@ -118,14 +115,17 @@ class GameServer(loginAddress: SocketAddress) {
 //        }
 
         /* main game tick loop */
+
+        var tick = 0
         gameExecutor.scheduleAtFixedRate(
             {
-                var tick = 0
                 if (!world.isOnline) return@scheduleAtFixedRate
                 try {
                     val time = measureTimeMillis {
                         ++tick
-                        world.tick()
+                        for (task in syncTask) {
+                            task.sync(tick)
+                        }
                     }
                     val freeMemoryMB = ((Runtime.getRuntime().freeMemory() / 1024) / 1024).toFloat()
                     val totalMemoryMB = ((Runtime.getRuntime().totalMemory() / 1024) / 1024).toFloat()
@@ -175,7 +175,7 @@ class GameServer(loginAddress: SocketAddress) {
     companion object {
         private val logger = KotlinLogging.logger {}
         val INSTANCE: GameServer = GameServer(InetSocketAddress(NetworkConstants.LOGIN_PORT))
-        val plugins: PluginManager = PluginManager(INSTANCE)
+        //   val plugins: PluginManager = PluginManager(INSTANCE)
 
         @JvmStatic
         fun main(args: Array<String>) = try {

@@ -1,8 +1,38 @@
 package net.scapeemulator.game.msg.codec
 
+import net.scapeemulator.game.cache.LandscapeKeyTable
 import net.scapeemulator.game.msg.Message
-import net.scapeemulator.game.util.LandscapeKeyTable
 import kotlin.reflect.KClass
+
+object Opcode {
+    const val CHAT_OPCODE: Int = 186
+    const val CAMERA: Int = 140
+    const val BUTTON: Int = 158
+    const val CLICK: Int = 200
+    const val COMMAND: Int = 216
+    const val DISPLAY_MESSAGE: Int = 86
+    const val EQUIPMENT: Int = 55
+    const val IDLE_LOGOUT: Int = 245
+    const val PING: Int = 137
+    const val QUICK_CHAT: Int = 222
+    const val WALK: Int = 230
+    const val EXAMINE_ITEM: Int = 72
+    const val NPC_ATTACK_OPTION: Int = 12
+    const val NPC_EXAMINE: Int = 65
+    const val WEAR_ITEM: Int = 103
+    const val ITEM_ON_ITEM: Int = 58
+    const val MOVE_ITEM: Int = 6
+    const val REMOVE_ITEM: Int = 81
+    const val EXAMINE_OBJECT: Int = 176
+    const val EXTENDED_BUTTON: Int = 94
+    const val FOCUS_MESSAGE: Int = 248
+    const val CLICK_ITEM: Int = 214
+    const val OPERATE_ITEM: Int = 124
+    const val DROP_ITEM: Int = 88
+    const val ITEM_ON_OBJECT: Int = 116
+    const val ITEM_ON_PLAYER: Int = 123
+    const val CLICK_CHAT_BOX: Int = 105
+}
 
 class CodecRepository(table: LandscapeKeyTable) {
     private val inCodecs = arrayOfNulls<MessageDecoder<*>>(256)
@@ -72,12 +102,12 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(scriptStringMessageEncoder)
         bind(scriptIntMessageEncoder)
         bind(displayModelEncoder)
-        bind(clearMinimapFlag)
         bind(hintArrowEncoder)
         bind(minimapStatus)
-        bind(playerInteraction)
         bind(enterAmountDecoder)
         bind(enterTextDecoder)
+
+        bind(npcInteraction)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix

@@ -62,6 +62,8 @@ object ItemDefinitions {
     }
 }
 
+data class SpecialHandler(val item: Int)
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ItemDefinition(
     val id: Integer,

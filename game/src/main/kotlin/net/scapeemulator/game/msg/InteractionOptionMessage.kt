@@ -1,4 +1,7 @@
 package net.scapeemulator.game.msg
 
-class InteractionOptionMessage(@JvmField val index: Int,  @JvmField val name: String) : Message()
-class PlayerInteractionMessage(@JvmField val target: Int, @JvmField val index: Int) : Message()
+class InteractionOptionMessage(@JvmField val position: Int, @JvmField val name: String) : Message()
+
+class InteractionMessage(val type: InteractionType, val index: Int, val option: Int) : Message() {
+    enum class InteractionType { PLAYER, NPC }
+}

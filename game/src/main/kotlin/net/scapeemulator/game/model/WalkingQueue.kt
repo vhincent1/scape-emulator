@@ -43,6 +43,7 @@ class WalkingQueue(private val mob: Mob) {
         }
     }
 
+
     fun tick() {
         var position: Position? = mob.position
 

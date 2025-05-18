@@ -3,7 +3,8 @@ package net.scapeemulator.game.task
 abstract class Task(delay: Int, immediate: Boolean) {
     var isRunning: Boolean = true
         private set
-    private val delay: Int
+    val delay: Int
+    var name = ""
     private var countdown: Int
 
     init {

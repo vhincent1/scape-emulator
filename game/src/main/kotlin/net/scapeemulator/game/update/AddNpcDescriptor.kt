@@ -13,7 +13,7 @@ class AddNpcDescriptor(npc: Npc) : NpcDescriptor(npc) {
     private val position: Position
 
     init {
-        this.id = npc.id
+        this.id = npc.index
         this.type = npc.type
         this.direction = npc.mostRecentDirection
         this.position = npc.position

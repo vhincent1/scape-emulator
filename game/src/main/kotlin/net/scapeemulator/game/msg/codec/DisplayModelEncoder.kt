@@ -1,14 +1,11 @@
 package net.scapeemulator.game.msg.codec
 
 import net.scapeemulator.game.msg.DisplayModelMessage
+import net.scapeemulator.game.msg.DisplayModelMessage.Type
 import net.scapeemulator.game.net.game.DataOrder
 import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
-
-enum class Type {
-    PLAYER, NPC, ITEM, MODEL
-}
 
 internal val displayModelEncoder = handleEncoder(DisplayModelMessage::class) { alloc, message ->
     var builder: GameFrameBuilder

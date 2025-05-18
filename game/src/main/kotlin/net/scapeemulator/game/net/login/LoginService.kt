@@ -8,19 +8,89 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingDeque
 
 class LoginService(private val serializer: PlayerSerializer) : Runnable {
+    companion object {
+        const val LOGIN_REQUESTS = 20
+    }
+
+    //todo fix login
     private class SessionPlayerPair(val session: LoginSession, val player: Player)
 
     private val jobs: BlockingQueue<Job> = LinkedBlockingDeque<Job>()
+    private val connectionList = arrayListOf<String>()
     private val newPlayers: Queue<SessionPlayerPair> = ArrayDeque<SessionPlayerPair>()
     private val oldPlayers: Queue<Player> = ArrayDeque<Player>()
 
-    private val connectionList = arrayListOf<String>()
-
     fun addLoginRequest(session: LoginSession, request: LoginRequest) = jobs.add(LoginJob(session, request))
-    fun addLogoutRequest(player: Player) {
-        synchronized(oldPlayers) {
-            oldPlayers.add(player)
+    fun addLogoutRequest(player: Player) = synchronized(oldPlayers) { oldPlayers.add(player) }
+
+    private fun processLoginRequests(world: World) = synchronized(newPlayers) {
+        if (newPlayers.isEmpty()) return@synchronized
+        newPlayers.take(LOGIN_REQUESTS).onEach { pair ->
+            if (world.getPlayerByName(pair.player.username) != null) {
+                /* player is already online */
+                pair.session.sendLoginFailure(LoginResponse.STATUS_ALREADY_ONLINE)
+            } else if (!world.players.add(pair.player)) { // add player
+                /* world is full */
+                pair.session.sendLoginFailure(LoginResponse.STATUS_WORLD_FULL)
+            } else {
+                /* send success packet & switch to GameSession */
+                pair.session.sendLoginSuccess(LoginResponse.STATUS_OK, pair.player)
+            }
+        }.also(newPlayers::removeAll)
+
+//            var pair: SessionPlayerPair?
+//            while (newPlayers.poll().also { pair = it } != null) {
+//                if (pair == null) return
+//                // todo: ip address check
+////                println("new player " + pair.player.username)
+////                println("ADDRESS: ${pair.session.channel.remoteAddress()}")
+////                val ip = pair.session.channel.remoteAddress() as InetSocketAddress
+////                val ipAddress = ip.address.toString()
+////                println(ipAddress)
+////
+////                val c = connectionList.count { it.contains(ipAddress) }
+////                if (c >= 3) {
+////                    pair.session.sendLoginFailure(LoginResponse.STATUS_LOGIN_LIMIT_EXCEEDED)
+////                    return
+////                } else {
+////                    connectionList.add(ipAddress)
+////                }
+////                println("count "+c)
+//
+//                if (world.getPlayerByName(pair.player.username) != null) {
+//                    /* player is already online */
+//                    pair.session.sendLoginFailure(LoginResponse.STATUS_ALREADY_ONLINE)
+//                } else if (!world.players.add(pair.player)) {
+//                    /* world is full */
+//                    pair.session.sendLoginFailure(LoginResponse.STATUS_WORLD_FULL)
+//                } else {
+//                    /* send success packet & switch to GameSession */
+//                    pair.session.sendLoginSuccess(LoginResponse.STATUS_OK, pair.player)
+//                }
+//            }
+//        }
+    }
+
+    private fun processLogoutRequests(world: World) = synchronized(oldPlayers) {
+//        var player: Player?//todo check
+//        while (oldPlayers.poll().also { player = it } != null) {
+//            if (player == null) continue
+//            val rem = world.players.remove(player)//check
+//            player.resetId()
+//            println("Remove $rem index=${player.index}")
+////                connectionList.remove((player.session.channel.remoteAddress() as InetSocketAddress).address.toString())
+//            jobs.add(LogoutJob(player))
+//        }
+
+        if (oldPlayers.isEmpty()) return@synchronized
+        oldPlayers.onEach { player ->
+            val rem = world.players.remove(player)//check
+            player.resetId()
+//            println("Remove $rem index=${player.index}")
+//                connectionList.remove((player.session.channel.remoteAddress() as InetSocketAddress).address.toString())
+            jobs.add(LogoutJob(player))
         }
+        oldPlayers.clear()
     }
 
     fun registerNewPlayers(world: World) {
@@ -28,52 +98,8 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
             println("World is offline")
             return
         }
-        val players = world.players
-
-        synchronized(oldPlayers) {
-            var player: Player?//todo check
-            while (oldPlayers.poll().also { player = it } != null) {
-                if (player == null) return
-                players.remove(player)//check
-
-//                connectionList.remove((player.session.channel.remoteAddress() as InetSocketAddress).address.toString())
-
-                jobs.add(LogoutJob(player))
-            }
-        }
-
-        synchronized(newPlayers) {
-            var pair: SessionPlayerPair?
-            while (newPlayers.poll().also { pair = it } != null) {
-                if (pair == null) return
-                // todo: ip address check
-//                println("new player " + pair.player.username)
-//                println("ADDRESS: ${pair.session.channel.remoteAddress()}")
-//                val ip = pair.session.channel.remoteAddress() as InetSocketAddress
-//                val ipAddress = ip.address.toString()
-//                println(ipAddress)
-//
-//                val c = connectionList.count { it.contains(ipAddress) }
-//                if (c >= 3) {
-//                    pair.session.sendLoginFailure(LoginResponse.STATUS_LOGIN_LIMIT_EXCEEDED)
-//                    return
-//                } else {
-//                    connectionList.add(ipAddress)
-//                }
-//                println("count "+c)
-
-                if (world.getPlayerByName(pair.player.username) != null) {
-                    /* player is already online */
-                    pair.session.sendLoginFailure(LoginResponse.STATUS_ALREADY_ONLINE)
-                } else if (!players.add(pair.player)) {
-                    /* world is full */
-                    pair.session.sendLoginFailure(LoginResponse.STATUS_WORLD_FULL)
-                } else {
-                    /* send success packet & switch to GameSession */
-                    pair.session.sendLoginSuccess(LoginResponse.STATUS_OK, pair.player)
-                }
-            }
-        }
+        processLogoutRequests(world)
+        processLoginRequests(world)
     }
 
     override fun run() {

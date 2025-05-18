@@ -2,11 +2,10 @@ package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.command.handleCommand
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.model.Appearance.Companion.FEMALE_APPEARANCE
-import net.scapeemulator.game.model.Appearance.Companion.MALE_APPEARANCE
 import net.scapeemulator.game.msg.AnimateInterfaceMessage
 import net.scapeemulator.game.msg.ConfigMessage
 import net.scapeemulator.game.msg.DisplayModelMessage
+import net.scapeemulator.game.msg.ExtendedButtonMessage
 import kotlin.random.Random
 
 /*
@@ -81,7 +80,7 @@ Body:-
 NEED TO DO.
 
 */
-class CharDesign {
+object CharDesign {
 
     private val attributes: MutableMap<String, Any> = HashMap()
 
@@ -137,10 +136,7 @@ class CharDesign {
             49, 52 -> {
                 val female = buttonId == 52
                 //todo fix
-                player.appearance = if (female)
-                    FEMALE_APPEARANCE
-                else
-                    MALE_APPEARANCE
+                player.appearance = if (female) Appearance(Gender.FEMALE) else Appearance(Gender.MALE)
                 player.send(ConfigMessage(1262, if (female) 8 else 1))
             }
             // head
@@ -218,14 +214,21 @@ private fun generateAppearance(gender: Gender = if (Random.nextBoolean()) Gender
     )
 }
 
-private val charDesign = CharDesign()
+fun copy(player: Player, newAppearance: Appearance) {
+    player.appearance = Appearance(newAppearance.gender, newAppearance.style, newAppearance.colours)
+}
+
+private val charDesign = CharDesign
 val charDesignPlugin = pluginHandler(
     { event ->
-        if (event is ButtonEvent) {
-            charDesign.handleButtons(event.player, event.slotId)
+        if (event is MessageEvent) {
+            if (event.message is ExtendedButtonMessage) {
+                charDesign.handleButtons(event.player, event.message.slot)
+            }
         }
         if (event is LoginEvent) {
-            // event.player.appearance = generateAppearance()
+            event.player.appearance = Appearance(Gender.FEMALE)
+//            copy(event.player, FEMALE_APPEARANCE) //generateAppearance()
         }
 
     }, arrayOf(
@@ -236,9 +239,8 @@ val charDesignPlugin = pluginHandler(
             println(charDesign.getAttribute(player.username, "char-design:look0", 0))
         },
         handleCommand("gender") { player, args ->
-            player.appearance =
-                if (player.appearance.gender == Gender.MALE)
-                    FEMALE_APPEARANCE else MALE_APPEARANCE
+            player.appearance = if (player.appearance.gender == Gender.MALE)
+                Appearance(Gender.MALE) else Appearance(Gender.FEMALE)
         },
         handleCommand("hair") { player, args ->
             if (args.size != 1) {

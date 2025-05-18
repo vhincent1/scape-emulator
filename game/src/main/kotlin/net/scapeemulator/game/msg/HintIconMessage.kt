@@ -8,8 +8,8 @@ import net.scapeemulator.game.model.Position
 class HintIconMessage(
     var slot: Int, val targetType: Int, val targetId: Int, val entity: Entity?,
 ) : Message() {
-    val arrowId = 1 // -1 remove
-    var modelId = -1
+    val arrowId = 1 // -1 remove 0 full 1 hollow
+    var modelId = 65535
     var position: Position? = null
     var remove: Boolean = false
 
@@ -25,6 +25,7 @@ class HintIconMessage(
         )
     }
 
+    // arrow on position
     constructor(slot: Int, position: Position) : this(
         slot = slot,
         targetType = 2,
@@ -34,6 +35,7 @@ class HintIconMessage(
         this.position = position
     }
 
+    // arrow on target
     constructor(slot: Int, target: Int, entity: Entity) : this(
         slot = slot,
         targetType = if (entity is Player) 10 else if (entity is Npc) 1 else 2,
@@ -41,9 +43,10 @@ class HintIconMessage(
         entity = entity,
     )
 
-    constructor(slot: Int, entity: Entity?) : this(
+    // arrow on entity (remove)
+    constructor(slot: Int, entity: Entity) : this(
         slot = slot,
-        targetType = 0,
+        targetType = if (entity is Player) 10 else if (entity is Npc) 1 else 2,
         targetId = -1,//entity.index,
         entity = entity,
     )

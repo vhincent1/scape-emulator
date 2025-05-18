@@ -16,7 +16,6 @@ class UpdateService : Runnable {
     override fun run() {
         while (true) {
             var session: UpdateSession?//check
-
             synchronized(pendingSessions) {
                 while ((pendingSessions.poll().also { session = it }) == null) {
                     try {
@@ -26,8 +25,7 @@ class UpdateService : Runnable {
                     }
                 }
             }
-
-            session!!.processFileQueue()
+            session?.processFileQueue()
         }
     }
 }

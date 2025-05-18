@@ -10,6 +10,7 @@ import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.net.RsChannelHandler
 import net.scapeemulator.game.net.Session
 import net.scapeemulator.game.net.game.*
+import net.scapeemulator.game.plugin.LoginEvent
 import java.io.IOException
 import java.security.SecureRandom
 
@@ -35,8 +36,10 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
         channel.write(response).addListener(ChannelFutureListener.CLOSE)
     }
 
-    fun sendLoginSuccess(status: Int, player: Player) {
 
+    //todo cleanup
+    fun sendLoginSuccess(status: Int, player: Player) {
+        // write login response
         val buf = channel.alloc().buffer(11)
         buf.writeByte(player.rights)
         buf.writeByte(0)
@@ -45,20 +48,18 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
         buf.writeByte(0)
         buf.writeByte(0)
         buf.writeByte(0)
-        buf.writeShort(player.id)
+        buf.writeShort(player.index)
         buf.writeByte(1)
         buf.writeByte(1)
-
+        // ---------------------------
         val pipeline = channel.pipeline()
         val session = GameSession(server, channel, player)
         val handler = pipeline.get(RsChannelHandler::class.java)
 
-        handler.setSession(session)
+        handler.session = session
         pipeline.remove(ReadTimeoutHandler::class.java) // TODO a different timeout mechanism is used in-game
-
         val response = LoginResponse(status, buf)
         channel.write(response)
-
         pipeline.addFirst(
             GameFrameEncoder(outRandom),
             GameMessageEncoder(server.codecRepository),
@@ -66,12 +67,27 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
             GameMessageDecoder(server.codecRepository)
         )
 
+
+
         if (displayMode == 0 || displayMode == 1)
             player.interfaceSet.displayMode = InterfaceSet.DisplayMode.FIXED
         else
             player.interfaceSet.displayMode = InterfaceSet.DisplayMode.RESIZABLE
 
-        session.init()
+        player.session = session
+
+//        val account = accountService.findAccountByUsername(username)
+//        if (account == null || !reconnecting && !accountService.validateAccount(password, account.password)) {
+//            session.writeAndFlush(INVALID_USERNAME_PASSWORD_OPCODE)
+//            session.disconnect("Invalid user credentials. Disconnecting client")
+//            return
+//        }
+//        Player(account, world, session)
+        //world.requestLogin
+        player.login()
+
+        /* plugin event */
+        server.plugins.notify(LoginEvent(player))
     }
 
     @Throws(IOException::class)
@@ -111,7 +127,7 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
         outRandom = IsaacRandom(seed)
         displayMode = request.displayMode
 
-        service.addLoginRequest(this, request)
+        service.addLoginRequest(this, request) // --> sendLoginRequest/sendLoginSuccess
     }
 
     companion object {

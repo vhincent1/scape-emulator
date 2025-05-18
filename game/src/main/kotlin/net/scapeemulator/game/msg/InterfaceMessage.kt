@@ -11,8 +11,7 @@ class InterfaceCloseMessage(@JvmField val id: Int, @JvmField val slot: Int) : Me
 
 //type = isWalkable
 class InterfaceOpenMessage(
-    @JvmField val id: Int,
-    @JvmField val slot: Int,
+    @JvmField val id: Int, @JvmField val slot: Int,
     @JvmField val childId: Int,
     @JvmField val type: Int
 ) : Message()
@@ -35,7 +34,5 @@ class InterfaceSlottedItemsMessage(
 
 class InterfaceTextMessage(@JvmField val id: Int, @JvmField val slot: Int, @JvmField val text: String) : Message()
 class AnimateInterfaceMessage(
-    @JvmField val animationId: Int,
-    @JvmField val interfaceId: Int,
-    @JvmField val childId: Int
+    @JvmField val animationId: Int, @JvmField val interfaceId: Int, @JvmField val childId: Int
 ) : Message()

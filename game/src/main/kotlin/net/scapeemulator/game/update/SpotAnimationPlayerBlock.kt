@@ -8,13 +8,9 @@ import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
 class SpotAnimationPlayerBlock(player: Player) : PlayerBlock(0x100) {
-    private val spotAnimation: SpotAnimation?
+    private val spotAnimation: SpotAnimation? = player.spotAnimation
 
-    init {
-        this.spotAnimation = player.spotAnimation
-    }
-
-    public override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
+    override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         builder.put(DataType.SHORT, DataOrder.LITTLE, spotAnimation!!.id)
         builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, (spotAnimation.height shl 16) or spotAnimation.delay)
     }

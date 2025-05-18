@@ -1,7 +1,5 @@
 package net.scapeemulator.game.msg
 
-import net.scapeemulator.game.msg.codec.Type
-
 class DisplayModelMessage(
     @JvmField val type: Type,
     @JvmField val nodeId: Int,
@@ -9,6 +7,10 @@ class DisplayModelMessage(
     @JvmField val interfaceId: Int,
     @JvmField val childId: Int
 ) : Message() {
+
+    enum class Type {
+        PLAYER, NPC, ITEM, MODEL
+    }
 
     @JvmField
     var zoom: Int = 0

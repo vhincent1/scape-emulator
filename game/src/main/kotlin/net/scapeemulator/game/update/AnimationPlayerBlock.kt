@@ -7,13 +7,9 @@ import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
 class AnimationPlayerBlock(player: Player) : PlayerBlock(0x8) {
-    private val animation: Animation?
+    private val animation: Animation? = player.animation
 
-    init {
-        this.animation = player.animation
-    }
-
-    public override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
+    override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         builder.put(DataType.SHORT, animation!!.id)
         builder.put(DataType.BYTE, animation.delay)
     }

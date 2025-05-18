@@ -12,8 +12,8 @@ abstract class PluginHandler : PluginEvent() {
 internal fun pluginHandler(
     block: (PluginEvent) -> Unit,
     init: () -> Unit,
-    cmdBlock: Array<CommandHandler>,
-    buttonBlock: Array<ButtonHandler>,
+    cmdBlock: Array<CommandHandler> = emptyArray(),
+    buttonBlock: Array<ButtonHandler> =  emptyArray(),
 ): PluginHandler {
     return object : PluginHandler() {
         init {
@@ -28,8 +28,8 @@ internal fun pluginHandler(
 
 internal fun pluginHandler(
     block: (PluginEvent) -> Unit,
-    cmdBlock: Array<CommandHandler>,
-    buttonBlock: Array<ButtonHandler>,
+    cmdBlock: Array<CommandHandler> = emptyArray(),
+    buttonBlock: Array<ButtonHandler> = emptyArray(),
 ): PluginHandler {
     return pluginHandler(block, {}, cmdBlock, buttonBlock)
 }

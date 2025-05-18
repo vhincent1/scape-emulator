@@ -5,7 +5,6 @@ import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.Container
 import net.scapeemulator.cache.ReferenceTable
 import net.scapeemulator.cache.util.StringUtils
-import net.scapeemulator.game.util.LandscapeKeyTable
 import java.io.IOException
 
 object MapSet {

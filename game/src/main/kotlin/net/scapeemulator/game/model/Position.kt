@@ -31,10 +31,15 @@ class Position {
     val centralRegionY: Int
         get() = y / 8
 
+
     fun isWithinDistance(position: Position): Boolean {
-        val deltaX = position.x - x
-        val deltaY = position.y - y
-        return deltaX >= -16 && deltaX <= 15 && deltaY >= -16 && deltaY <= 15
+        return isWithinDistance(position, 15)
+    }
+
+    fun isWithinDistance(position: Position, distance: Int): Boolean {
+        val deltaX: Int = position.x - x
+        val deltaY: Int = position.y - y
+        return deltaX >= -(distance + 1) && deltaX <= distance && deltaY >= -(distance + 1) && deltaY <= distance
     }
 
     fun toPackedInt(): Int {

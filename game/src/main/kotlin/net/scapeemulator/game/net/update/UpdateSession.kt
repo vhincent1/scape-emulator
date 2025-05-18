@@ -13,14 +13,10 @@ import java.io.IOException
 import java.util.*
 
 class UpdateSession(server: GameServer, channel: Channel) : Session(server, channel) {
-    private val service: UpdateService
+    private val service: UpdateService = server.updateService
     private val fileQueue: Deque<FileRequest> = ArrayDeque<FileRequest>()
     private var idle = true
     private var handshakeComplete = false
-
-    init {
-        this.service = server.updateService
-    }
 
     fun processFileQueue() {
         val request: FileRequest?//check
@@ -81,12 +77,10 @@ class UpdateSession(server: GameServer, channel: Channel) : Session(server, chan
             }
         } else {
             val version = message as UpdateVersionMessage
-
-            val status: Int
-            if (version.version == server.version) {
-                status = UpdateStatusMessage.STATUS_OK
+            val status: Int = if (version.version == server.version) {
+                UpdateStatusMessage.STATUS_OK
             } else {
-                status = UpdateStatusMessage.STATUS_OUT_OF_DATE
+                UpdateStatusMessage.STATUS_OUT_OF_DATE
             }
 
             val future = channel.write(UpdateStatusMessage(status))

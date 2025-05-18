@@ -4,10 +4,14 @@ import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
 import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.GameSession
+import net.scapeemulator.game.plugin.CombatTask
 
-class Player : Mob() {
+//todo Player(world, account, session)
+class Player() : Mob() {
     var databaseId: Int = 0
     var session: GameSession? = null
+
+    var combatTask: CombatTask? = null
 
     lateinit var username: String
     lateinit var password: String
@@ -53,12 +57,14 @@ class Player : Mob() {
 //        return null
 //    }
 
+//    var nextAttack =-1
+
     val appearanceTickets: IntArray = IntArray(World.MAX_PLAYERS)
     var appearanceTicketCounter = 0
     var appearanceTicket: Int = nextAppearanceTicket()
         private set
 
-    var appearance: Appearance = Appearance.FEMALE_APPEARANCE
+    var appearance: Appearance = Appearance(Gender.FEMALE)
         set(appearance) {
             field = appearance
             this.appearanceTicket = nextAppearanceTicket()
@@ -90,6 +96,27 @@ class Player : Mob() {
         init()
     }
 
+    override fun login() {
+        //online = true
+        /* set up player for their initial region change */
+        val position = position
+        lastKnownRegion = position
+        send(RegionChangeMessage(position))
+
+        /* set up the game interface */
+        interfaceSet.init()
+        sendMessage("Welcome to HustlaScape. q p")
+        sendMessage("                                                 W")
+
+        /* refresh skills, inventory, energy, etc. */
+        inventory.refresh()
+        bank.refresh()
+        equipment.refresh()
+        settings.refresh()
+        skillSet.refresh()
+        energy = energy // TODO: nicer way than this?
+    }
+
     private fun init() {
         skillSet.addListener(SkillMessageListener(this))
         skillSet.addListener(SkillAppearanceListener(this))
@@ -102,25 +129,6 @@ class Player : Mob() {
         equipment.addListener(InventoryMessageListener(this, 387, 28, 94))
         equipment.addListener(InventoryFullListener(this, "equipment"))
         equipment.addListener(InventoryAppearanceListener(this))
-        // add equip listener
-//        equipment.addListener(object : InventoryListener {
-//            override fun itemChanged(
-//                inventory: Inventory,
-//                slot: Int,
-//                item: Item?
-//            ) {
-//                println("equip listener: " + item.toString())
-//            }
-//
-//            override fun itemsChanged(inventory: Inventory) {
-//                println("Item: " + inventory.toString())
-//            }
-//
-//            override fun capacityExceeded(inventory: Inventory) {
-//                println("Item: " + inventory.toString())
-//            }
-//
-//        })
     }
 
     fun send(message: Message): ChannelFuture? {
@@ -131,7 +139,7 @@ class Player : Mob() {
         send(ServerMessage(text))
     }
 
-    fun logout() {
+    override fun logout() {
         // TODO this seems fragile
         val future = send(LogoutMessage())
         future?.addListener(ChannelFutureListener.CLOSE)
@@ -153,4 +161,5 @@ class Player : Mob() {
         return appearanceTicketCounter
     }
 
+    override fun getClientIndex(): Int = index.plus(32768)
 }

@@ -10,5 +10,6 @@ internal fun buttonMessageHandler(dispatcher: ButtonDispatcher) = messageHandler
 
 internal fun extendedButtonMessageHandler(dispatcher: ButtonDispatcher) =
     messageHandler<ExtendedButtonMessage> { player, message ->
+        println("Extended button message: $message")
         dispatcher.handle(player, message.id, message.slot, message.parameter)
     }

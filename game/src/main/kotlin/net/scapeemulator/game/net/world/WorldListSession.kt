@@ -24,7 +24,7 @@ class WorldListSession(server: GameServer, channel: Channel) : Session(server, c
 
         val worlds = arrayOf(
             World(1, World.FLAG_MEMBERS or World.FLAG_HIGHLIGHT, 0, "-", "127.0.0.1"),
-            World(2, World.FLAG_MEMBERS or World.FLAG_HIGHLIGHT, 0, "a", "127.0.0.1"),
+            World(2, World.FLAG_MEMBERS or World.FLAG_HIGHLIGHT, 0, "a", "127.0.0.1:5555"),
 //            World(2, World.FLAG_MEMBERS or World.FLAG_HIGHLIGHT, 0, "-", "127.0.0.1"),
 //            World(2, World.FLAG_MEMBERS or World.FLAG_LOOT_SHARE, 0, "a", "127.0.0.1")
         )

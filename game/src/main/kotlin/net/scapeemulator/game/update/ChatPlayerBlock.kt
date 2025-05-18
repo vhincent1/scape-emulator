@@ -9,13 +9,8 @@ import net.scapeemulator.game.net.game.GameFrameBuilder
 import net.scapeemulator.util.ChatUtils
 
 class ChatPlayerBlock(player: Player) : PlayerBlock(0x80) {
-    private val chatMessage: ChatMessage?
-    private val rights: Int
-
-    init {
-        this.chatMessage = player.chatMessage
-        this.rights = player.rights
-    }
+    private val chatMessage: ChatMessage? = player.chatMessage
+    private val rights: Int = player.rights
 
     override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         val bytes = ByteArray(256)

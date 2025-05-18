@@ -13,6 +13,8 @@ class PlayerSettings(val player: Player) {
     var specialToggled = false
     var specialEnergy = 100
         set(value) {
+            if (field < 0) field = 0
+            if (field > 100) field = 100
             field = value
             refreshSpecialBar()
         }

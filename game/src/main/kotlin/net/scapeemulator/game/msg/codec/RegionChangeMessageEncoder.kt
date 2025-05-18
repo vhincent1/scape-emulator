@@ -1,8 +1,8 @@
 package net.scapeemulator.game.msg.codec
 
+import net.scapeemulator.game.cache.LandscapeKeyTable
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.net.game.*
-import net.scapeemulator.game.util.LandscapeKeyTable
 
 internal fun regionChangeEncoder(table: LandscapeKeyTable) =
     handleEncoder(RegionChangeMessage::class) { alloc, message ->

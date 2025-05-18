@@ -1,6 +1,7 @@
 package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.GameServer
+import net.scapeemulator.game.plugin.CombatPlugin.combatHandler
 
 class PluginManager(val server: GameServer) {
 
@@ -11,15 +12,20 @@ class PluginManager(val server: GameServer) {
 
     init {
         addListener(loginPlugin)
-        addListener(utilPlugin())
+        addListener(utilPlugin(server.world))
         addListener(charDesignPlugin)
+        addListener(combatHandler(server.world))
 
 //        var buttonCount = 0
 //        listeners.forEach { buttonCount = it.buttons().size }
         bind()
     }
 
-    fun notify(event: PluginEvent) = listeners.forEach { listener -> listener.handle(event) }
+    //todo check
+    fun notify(event: PluginEvent) {
+        listeners.onEach { listener -> listener.handle(event) }
+    }
+
     private fun bind() = listeners.forEach { listener ->
         listener.buttons().forEach(server.messageDispatcher.buttonDispatcher::bind)
         listener.commands().forEach(server.messageDispatcher.commandDispatcher::bind)

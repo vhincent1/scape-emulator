@@ -21,14 +21,11 @@ internal val minimapStatus = handleEncoder(MiniMapStatusMessage::class) { alloc,
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val clearMinimapFlag = handleEncoder(ClearMinimapMessage::class) { alloc, message ->
-    return@handleEncoder GameFrameBuilder(alloc, 153).toGameFrame()
-}
-
+//todo fix: player needs to re-connect
 internal val hintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 217)
-    builder.put(DataType.BYTE, message.slot shl 6 or message.targetType) //10 player 1 npc
-    builder.put(DataType.BYTE, message.arrowId)
+    builder.put(DataType.BYTE, message.slot shl 6 or message.targetType) //10 player 1 npc 2 loc
+    builder.put(DataType.BYTE, if (message.arrowId < 32768) 0 else 1) // 0 full 1 hollow
     if (message.arrowId > 0) {
         if (message.remove) {
             builder.put(DataType.SHORT, 0)
@@ -44,7 +41,7 @@ internal val hintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, m
             builder.put(DataType.SHORT, pos.y)
             builder.put(DataType.BYTE, pos.height)
         }
-        builder.put(DataType.SHORT, message.modelId)
+        builder.put(DataType.SHORT, message.modelId)//model id
     }
     return@handleEncoder builder.toGameFrame()
 }
@@ -58,8 +55,8 @@ internal val energyMessageEncoder = handleEncoder(EnergyMessage::class) { alloc,
 internal val interactionOptionEncoder = handleEncoder(InteractionOptionMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 44, GameFrame.Type.VARIABLE_BYTE)
     builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, -1)
-    builder.put(DataType.BYTE, if (message.index == 0) 1 else 0)
-    builder.put(DataType.BYTE, message.index + 1)
+    builder.put(DataType.BYTE, if (message.position == 0) 1 else 0)
+    builder.put(DataType.BYTE, message.position + 1)
     builder.putString(message.name)
     return@handleEncoder builder.toGameFrame()
 }

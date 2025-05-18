@@ -14,15 +14,19 @@ import net.scapeemulator.game.net.world.WorldListSession
 import java.io.IOException
 
 class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHandlerAdapter<Any>() {
-    private var session: Session? = null
+    companion object {
+        /* TODO: more specific generics here? */
+        private val logger = KotlinLogging.logger { }
+    }
+
+    var session: Session? = null
 
     override fun channelActive(ctx: ChannelHandlerContext) {
         logger.info { "Channel connected: " + ctx.channel().remoteAddress() + "." }
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
-        if (session != null)
-            session?.channelClosed()
+        if (session != null) session?.channelClosed()
         logger.info { "Channel disconnected: " + ctx.channel().remoteAddress() + "." }
     }
 
@@ -32,6 +36,7 @@ class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHa
         ctx.close()
     }
 
+    //todo clean up
     @Throws(IOException::class)
     override fun messageReceived(ctx: ChannelHandlerContext, message: Any) {
         if (session != null) {
@@ -39,11 +44,15 @@ class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHa
         } else {
             val handshake = message as HandshakeMessage
             when (handshake.service) {
-                HandshakeMessage.SERVICE_LOGIN ->
+                HandshakeMessage.SERVICE_LOGIN -> {
                     session = LoginSession(server, ctx.channel())
+                }
 
                 HandshakeMessage.SERVICE_UPDATE ->
                     session = UpdateSession(server, ctx.channel())
+
+                HandshakeMessage.SERVICE_WORLD_LIST ->
+                    session = WorldListSession(server, ctx.channel())
 
                 HandshakeMessage.SERVICE_JAGGRAB ->
                     session = JaggrabSession(server, ctx.channel())
@@ -55,19 +64,7 @@ class RsChannelHandler(private val server: GameServer) : ChannelInboundMessageHa
 
                 HandshakeMessage.SERVICE_AUTO_LOGIN ->
                     session = AutoLoginSession(server, ctx.channel())
-
-                HandshakeMessage.SERVICE_WORLD_LIST ->
-                    session = WorldListSession(server, ctx.channel())
             }
         }
-    }
-
-    fun setSession(session: Session) {
-        this.session = session
-    }
-
-    companion object {
-        /* TODO: more specific generics here? */
-        private val logger = KotlinLogging.logger { }
     }
 }

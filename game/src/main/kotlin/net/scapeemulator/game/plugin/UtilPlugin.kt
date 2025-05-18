@@ -1,39 +1,44 @@
 package net.scapeemulator.game.plugin
 
-import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.command.handleCommand
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.msg.*
+import net.scapeemulator.game.msg.HintIconMessage
+import net.scapeemulator.game.msg.InterfaceVisibleMessage
 import net.scapeemulator.game.task.Action
 import net.scapeemulator.game.util.displayEnterPrompt
 import net.scapeemulator.game.util.removeHintIcon
-import net.scapeemulator.game.util.sendHintIcon
+import net.scapeemulator.game.util.sendPlayerOption
 
 val spawnItems = setOf(
     //ancients
-    Item(10887, 1),
-    Item(13902, 1),
-    Item(13899, 1),
-    Item(13883, 1),
-
+    Item(4675),
+    Item(10887),
+    Item(13902),
+    Item(13899),
+    Item(13883),
     //verac
-    Item(4753, 1),
-    Item(4757, 1),
-    Item(4759, 1),
-
-    Item(11694, 1),
-    Item(5698, 1),
-    Item(882, 1),
-    Item(4732, 1),
-    Item(4736, 1),
-    Item(4738, 1),
-    Item(4734, 1)
+    Item(4753),
+    Item(4757),
+    Item(4759),
+    Item(11694),
+    Item(5698),
+    Item(882),
+    Item(4732),
+    Item(4736),
+    Item(4738),
+    Item(4734),
+    Item(995, 69.m())
 )
 
-fun spawnBots() {
-    val server = GameServer.INSTANCE
+fun Int.m(): Int = this * 1_000_000
+
+fun spawnBots(world: World) {
+//    val server = GameServer.INSTANCE
     println("Spawning")
     val spawnLocation = Position(3222, 3219)
+    val npc = Npc(1).apply { position = Position(3221, 3219) }
+    world.npcs.add(npc)
+    println("NPC INDEX: ${npc.index}")
     val playerBot = Player().apply {
         // session = player.session
         lastKnownRegion = spawnLocation
@@ -42,65 +47,58 @@ fun spawnBots() {
         mostRecentDirection = Direction.NORTH
 
         //todo fix player equipment
-        equipment.add(Item(4732, 1), Equipment.HEAD)
-        equipment.add(Item(4736, 1), Equipment.BODY)
-        equipment.add(Item(4738, 1), Equipment.LEGS)
-        equipment.add(Item(4734, 1), Equipment.WEAPON)
+        equipment.add(Item(4732), Equipment.HEAD)
+        equipment.add(Item(4736), Equipment.BODY)
+        equipment.add(Item(4738), Equipment.LEGS)
+        equipment.add(Item(4734), Equipment.WEAPON)
     }
-    server.world.players.add(playerBot)
+    world.players.add(playerBot)
+    println("PLAYER BOT INDEX: ${playerBot.index}")
     val action = object : Action<Player>(playerBot, delay = 20, immediate = false) {
         override fun execute() {
-            server.world.loginService.addLogoutRequest(mob)
+//            server.world.loginService.addLogoutRequest(mob)
             stop()
         }
     }
-//    server.world.taskScheduler.schedule(action)
+//    world.taskScheduler.schedule(action)
 }
 
-fun utilPlugin() = pluginHandler(
+
+fun utilPlugin(world: World) = pluginHandler(
     { event ->
         if (event is LoginEvent) {
-            spawnItems.forEach(event.player.inventory::add)
+            spawnItems.onEach(event.player.inventory::add)
             event.player.sendMessage("Welcome agent <b><img=0>${event.player.username.length} ")
-
-            event.player.send(InteractionOptionMessage(0, "Attack"))
-            event.player.send(InteractionOptionMessage(1, "Trade with"))
-            event.player.send(InteractionOptionMessage(2, "Request Assit"))
-            event.player.send(InteractionOptionMessage(3, "Test"))
-            event.player.send(InteractionOptionMessage(4, "Hi"))
-            event.player.send(InteractionOptionMessage(6, "6"))
-            event.player.send(InteractionOptionMessage(7, "7"))
-
-            val hintIcons = emptyArray<Int>()
-//            event.player.send(
-//                HintArrowMessage(
-//                    slot = 1,
-//                    targetType = 10, //1 npc 10 player 2 ground
-//
-//                    targetId = 1,//idx
-//                    entity = event.player,
-//                )
-//            )
-            event.player.sendMessage("PlayerID: ${event.player.id}")
-
-        } else if (event is MessageEvent) {
-            val player = event.player
-            if (event.message is PlayerInteractionMessage) {
-                player.sendMessage("PlayerID: ${event.player.username}")
-//                val hint = HintIconMessage(
-//                    slot = 1,
-//                    target = event.message.target,//idx
-//                    entity = event.player,
-//                )
-//                player.send(hint)
-                player.sendHintIcon(0, event.message.target, event.player)
-            }
+            event.player.sendPlayerOption(0, "Attack")
+            event.player.sendPlayerOption(1, "Trade with")
+            event.player.sendPlayerOption(2, "Request Assist")
+            event.player.sendPlayerOption(3, "Test")
+            event.player.sendPlayerOption(4, "Hi")
+            event.player.sendPlayerOption(6, "6")
+            event.player.sendPlayerOption(7, "7")
+            event.player.sendMessage("PlayerID: ${event.player.index}")
         }
 
-    }, { spawnBots() },
+    }, { spawnBots(world) },
     arrayOf(
+        handleCommand("a") { player, args ->
+
+
+        },
+        handleCommand("npc") { player, arguments ->
+            if (arguments.size != 1) {
+                player.sendMessage("Syntax ::npc [id]")
+                return@handleCommand
+            }
+            val id = arguments[0].toInt()
+            val npc = Npc(id).apply {
+                position = player.position.apply {
+                    x + 1
+                }
+            }
+            world.npcs.add(npc)
+        },
         handleCommand("cm") { player, arguments ->
-            player.send(ClearMinimapMessage())
 //            player.displayEnter(RunScript.Type.STRING) { player, value ->
 //                player.sendMessage("VALUE:  $value")
 //            }
@@ -108,6 +106,7 @@ fun utilPlugin() = pluginHandler(
                 player.sendMessage("Value: $value")
             }
         }, handleCommand("t") { player, arguments ->
+
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::i [id]")
                 return@handleCommand

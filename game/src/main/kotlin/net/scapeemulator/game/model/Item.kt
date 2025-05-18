@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model
 
-class Item(id: Int, amount: Int) {
+class Item(id: Int, amount: Int = 1) {
     val id: Int
     val amount: Int
 

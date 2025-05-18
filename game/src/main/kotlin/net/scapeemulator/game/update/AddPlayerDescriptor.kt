@@ -12,7 +12,7 @@ class AddPlayerDescriptor(player: Player, tickets: IntArray) : PlayerDescriptor(
     private val position: Position
 
     init {
-        this.id = player.id
+        this.id = player.index
         this.direction = player.mostRecentDirection
         this.position = player.position
     }
