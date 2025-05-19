@@ -7,7 +7,7 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
-internal val displayModelEncoder = handleEncoder(DisplayModelMessage::class) { alloc, message ->
+internal val DisplayModelEncoder = handleEncoder(DisplayModelMessage::class) { alloc, message ->
     var builder: GameFrameBuilder
     val value = message.interfaceId shl 16 or message.childId
     when (message.type) {

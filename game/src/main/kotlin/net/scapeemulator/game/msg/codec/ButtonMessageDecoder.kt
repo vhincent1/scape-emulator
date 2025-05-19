@@ -15,15 +15,15 @@ import net.scapeemulator.game.net.game.GameFrameReader
 //    }
 //}
 
-internal val buttonMessageDecoder = handleDecoder(10) { frame ->
+internal val ButtonMessageDecoder = MessageDecoder(10) { frame ->
     val reader = GameFrameReader(frame)
     val button = reader.getSigned(DataType.INT).toInt()
     val id = (button shr 16) and 0xFFFF
     val slot = button and 0xFFFF
-    return@handleDecoder ButtonMessage(id, slot)
+    return@MessageDecoder ButtonMessage(id, slot)
 }
 
-internal val extendedButtonMessageDecoder = handleDecoder(155) { frame ->
+internal val ExtendedButtonMessageDecoder = MessageDecoder(155) { frame ->
     //        case 155: //Interface options
 //        case 196:
 //        case 124:
@@ -44,6 +44,6 @@ internal val extendedButtonMessageDecoder = handleDecoder(155) { frame ->
 //        slot = buffer.getShort()
 //        componentId = (data shr 16) and 0xFFFF
 //        buttonId = data and 0xFFFF
-    return@handleDecoder ExtendedButtonMessage(id, slot, parameter)
+    return@MessageDecoder ExtendedButtonMessage(id, slot, parameter)
 
 }

@@ -4,8 +4,8 @@ import net.scapeemulator.game.msg.FlagsMessage
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameReader
 
-internal val flagsMessageDecoder = handleDecoder(98) { frame ->
+internal val FlagsMessageDecoder = MessageDecoder(98) { frame ->
     val reader = GameFrameReader(frame)
     val flags = reader.getUnsigned(DataType.INT).toInt()
-    return@handleDecoder FlagsMessage(flags)
+    return@MessageDecoder FlagsMessage(flags)
 }

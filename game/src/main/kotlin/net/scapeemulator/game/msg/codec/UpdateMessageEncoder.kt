@@ -5,7 +5,7 @@ import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.net.game.GameFrame
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
-internal val playerUpdateMessageEncoder = handleEncoder(PlayerUpdateMessage::class) { alloc, message ->
+internal val PlayerUpdateMessageEncoder = handleEncoder(PlayerUpdateMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 225, GameFrame.Type.VARIABLE_SHORT)
     val blockBuilder = GameFrameBuilder(alloc)
     builder.switchToBitAccess()
@@ -26,7 +26,7 @@ internal val playerUpdateMessageEncoder = handleEncoder(PlayerUpdateMessage::cla
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val npcUpdateMessageEncoder = handleEncoder(NpcUpdateMessage::class) { alloc, message ->
+internal val NpcUpdateMessageEncoder = handleEncoder(NpcUpdateMessage::class) { alloc, message ->
 
     val builder = GameFrameBuilder(alloc, 32, GameFrame.Type.VARIABLE_SHORT)
     val blockBuilder = GameFrameBuilder(alloc)

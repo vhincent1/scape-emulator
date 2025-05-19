@@ -5,7 +5,7 @@ import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameReader
 import net.scapeemulator.util.ChatUtils
 
-internal val chatMessageDecoder = handleDecoder(237) { frame ->
+internal val ChatMessageDecoder = MessageDecoder(237) { frame ->
     val reader = GameFrameReader(frame)
     val size = reader.length - 2
 
@@ -16,5 +16,5 @@ internal val chatMessageDecoder = handleDecoder(237) { frame ->
     reader.getBytes(bytes)
     val text = ChatUtils.unpack(bytes)
 
-    return@handleDecoder ChatMessage(color, effects, text)
+    return@MessageDecoder ChatMessage(color, effects, text)
 }

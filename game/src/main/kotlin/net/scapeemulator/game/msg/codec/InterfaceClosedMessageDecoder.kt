@@ -3,6 +3,6 @@ package net.scapeemulator.game.msg.codec
 import net.scapeemulator.game.msg.InterfaceClosedMessage
 
 private val INTERFACE_CLOSED_MESSAGE = InterfaceClosedMessage()
-val interfaceClosedMessageDecoder = handleDecoder(184) {
-    return@handleDecoder INTERFACE_CLOSED_MESSAGE
+val InterfaceClosedMessageDecoder = MessageDecoder(184) {
+    return@MessageDecoder INTERFACE_CLOSED_MESSAGE
 }

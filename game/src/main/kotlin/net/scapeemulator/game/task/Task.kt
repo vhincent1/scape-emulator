@@ -4,7 +4,6 @@ abstract class Task(delay: Int, immediate: Boolean) {
     var isRunning: Boolean = true
         private set
     val delay: Int
-    var name = ""
     private var countdown: Int
 
     init {

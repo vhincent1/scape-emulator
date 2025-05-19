@@ -6,7 +6,7 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameReader
 
-internal val swapItemsMessageDecoder = handleDecoder(231) { frame ->
+internal val SwapItemsMessageDecoder = MessageDecoder(231) { frame ->
     val reader = GameFrameReader(frame)
     val source = reader.getUnsigned(DataType.SHORT).toInt()
     val inter = reader.getSigned(DataType.INT, DataOrder.LITTLE).toInt()
@@ -14,5 +14,5 @@ internal val swapItemsMessageDecoder = handleDecoder(231) { frame ->
     val slot = inter and 0xFFFF
     val destination = reader.getUnsigned(DataType.SHORT, DataTransformation.ADD).toInt()
     val type = reader.getUnsigned(DataType.BYTE, DataTransformation.SUBTRACT).toInt()
-    return@handleDecoder SwapItemsMessage(id, slot, source, destination, type)
+    return@MessageDecoder SwapItemsMessage(id, slot, source, destination, type)
 }

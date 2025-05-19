@@ -4,7 +4,7 @@ import net.scapeemulator.game.model.Position
 import net.scapeemulator.game.msg.WalkMessage
 
 
-internal val walkMessageHandler = messageHandler<WalkMessage> { player, message ->
+internal val WalkMessageHandler = MessageHandler<WalkMessage> { player, message ->
     val z = player.position.height
 
     val queue = player.walkingQueue

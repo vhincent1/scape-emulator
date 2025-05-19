@@ -6,7 +6,7 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameReader
 
-internal val clickMessageDecoder = handleDecoder(75) { frame ->
+internal val ClickMessageDecoder = MessageDecoder(75) { frame ->
     val reader = GameFrameReader(frame)
     val flags = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
     val pos = reader.getUnsigned(DataType.INT, DataOrder.INVERSED_MIDDLE).toInt()
@@ -17,5 +17,5 @@ internal val clickMessageDecoder = handleDecoder(75) { frame ->
     val x = pos and 0xffff
     val y = (pos shr 16) and 0xffff
 
-    return@handleDecoder ClickMessage(time, x, y, rightClick)
+    return@MessageDecoder ClickMessage(time, x, y, rightClick)
 }

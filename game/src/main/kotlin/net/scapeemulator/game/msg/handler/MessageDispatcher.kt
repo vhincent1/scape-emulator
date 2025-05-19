@@ -16,42 +16,41 @@ class MessageDispatcher() {
 
     init {
         /* action buttons */
-        handlers[ButtonMessage::class] = buttonMessageHandler(buttonDispatcher)
-        handlers[ExtendedButtonMessage::class] = extendedButtonMessageHandler(buttonDispatcher)
+        handlers[ButtonMessage::class] = ButtonMessageHandler(buttonDispatcher)
+        handlers[ExtendedButtonMessage::class] = ExtendedButtonMessageHandler(buttonDispatcher)
 
-        handlers[InteractionMessage::class] = messageHandler<InteractionMessage> { player, message ->
+        handlers[InteractionMessage::class] = MessageHandler<InteractionMessage> { player, message ->
             //todo clear minimap flag
 //            println("Interaction: index=${message.option} target=${message.index} type=${message.type}")
         }
 
-        handlers[PingMessage::class] = pingMessageHandler
-        handlers[IdleLogoutMessage::class] = idleLogoutMessageHandler
-        handlers[WalkMessage::class] = walkMessageHandler
-        handlers[ChatMessage::class] = chatMessageHandler
+        handlers[PingMessage::class] = PingMessageHandler
+        handlers[IdleLogoutMessage::class] = IdleLogoutMessageHandler
+        handlers[WalkMessage::class] = WalkMessageHandler
+        handlers[ChatMessage::class] = ChatMessageHandler
 
         /* command handler */
         handlers[CommandMessage::class] = commandDispatcher
 
-        handlers[SwapItemsMessage::class] = swapItemsMessageHandler
-        handlers[EquipItemMessage::class] = equipItemMessageHandler
-        handlers[RemoveItemMessage::class] = removeItemMessageHandler
-
-        handlers[DisplayMessage::class] = displayMessageHandler
-        handlers[RegionChangedMessage::class] = regionChangedHandler
-        handlers[ClickMessage::class] = clickMessageHandler
-        handlers[FocusMessage::class] = focusMessageHandler
-        handlers[CameraMessage::class] = cameraMessageHandler
-        handlers[FlagsMessage::class] = flagsMessageHandler
-        handlers[SequenceNumberMessage::class] = sequenceNumberMessageHandler
-        handlers[InterfaceClosedMessage::class] = interfaceClosedMessageHandler
-        handlers[ObjectOptionOneMessage::class] = messageHandler<ObjectOptionOneMessage> { player, message ->
+        handlers[SwapItemsMessage::class] = SwapItemsMessageHandler
+        handlers[EquipItemMessage::class] = EquipItemMessageHandler
+        handlers[RemoveItemMessage::class] = RemoveItemMessageHandler
+        handlers[DisplayMessage::class] = DisplayMessageHandler
+        handlers[RegionChangedMessage::class] = RegionChangedHandler
+        handlers[ClickMessage::class] = ClickMessageHandler
+        handlers[FocusMessage::class] = FocusMessageHandler
+        handlers[CameraMessage::class] = CameraMessageHandler
+        handlers[FlagsMessage::class] = FlagsMessageHandler
+        handlers[SequenceNumberMessage::class] = SequenceNumberMessageHandler
+        handlers[InterfaceClosedMessage::class] = InterfaceClosedMessageHandler
+        handlers[ObjectOptionOneMessage::class] = MessageHandler<ObjectOptionOneMessage> { player, message ->
             player.sendMessage("obj " + message.id + " x" + message.x)
         }
-        handlers[ObjectOptionTwoMessage::class] = messageHandler<ObjectOptionTwoMessage> { player, message ->
+        handlers[ObjectOptionTwoMessage::class] = MessageHandler<ObjectOptionTwoMessage> { player, message ->
             player.sendMessage("obj " + message.id + " x" + message.x)
         }
 
-        handlers[RunScriptMessage::class] = runScriptHandler
+        handlers[RunScriptMessage::class] = RunScriptHandler
     }
 
 //    fun <T : Message> handlers[clazz: KClass<T>, handler: MessageHandler<T>) {

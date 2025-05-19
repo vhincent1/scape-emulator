@@ -3,26 +3,26 @@ package net.scapeemulator.game.msg.codec
 import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.*
 
-internal val serverMessageEncoder = handleEncoder(ServerMessage::class) { alloc, message ->
+internal val ServerMessageEncoder = handleEncoder(ServerMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 70, GameFrame.Type.VARIABLE_BYTE)
     builder.putString(message.text)
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val systemUpdateEncoder = handleEncoder(SystemUpdateMessage::class) { alloc, message ->
+internal val SystemUpdateEncoder = handleEncoder(SystemUpdateMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 85)
     builder.put(DataType.SHORT, message.time)
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val minimapStatus = handleEncoder(MiniMapStatusMessage::class) { alloc, message ->
+internal val MinimapStatus = handleEncoder(MiniMapStatusMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 192)
     builder.put(DataType.BYTE, message.setting)
     return@handleEncoder builder.toGameFrame()
 }
 
 //todo fix: player needs to re-connect
-internal val hintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, message ->
+internal val HintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 217)
     builder.put(DataType.BYTE, message.slot shl 6 or message.targetType) //10 player 1 npc 2 loc
     builder.put(DataType.BYTE, if (message.arrowId < 32768) 0 else 1) // 0 full 1 hollow
@@ -46,13 +46,13 @@ internal val hintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, m
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val energyMessageEncoder = handleEncoder(EnergyMessage::class) { alloc, message ->
+internal val EnergyMessageEncoder = handleEncoder(EnergyMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 234)
     builder.put(DataType.BYTE, message.energy)
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interactionOptionEncoder = handleEncoder(InteractionOptionMessage::class) { alloc, message ->
+internal val InteractionOptionEncoder = handleEncoder(InteractionOptionMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 44, GameFrame.Type.VARIABLE_BYTE)
     builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, -1)
     builder.put(DataType.BYTE, if (message.position == 0) 1 else 0)

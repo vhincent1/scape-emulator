@@ -4,7 +4,7 @@ import net.scapeemulator.game.model.Interface
 import net.scapeemulator.game.model.InterfaceSet
 import net.scapeemulator.game.msg.DisplayMessage
 
-internal val displayMessageHandler = messageHandler<DisplayMessage> { player, message ->
+internal val DisplayMessageHandler = MessageHandler<DisplayMessage> { player, message ->
     val interfaces = player.interfaceSet
     val currentMode = interfaces.displayMode
     val newMode = if (message.mode == 0 || message.mode == 1) InterfaceSet.DisplayMode.FIXED

@@ -9,7 +9,7 @@ abstract class MessageDecoder<T : Message>(@JvmField val opcode: Int) {
     abstract fun decode(frame: GameFrame): T
 }
 
-fun <T : Message> handleDecoder(opcode: Int, block: (frame: GameFrame) -> T): MessageDecoder<T> {
+fun <T : Message> MessageDecoder(opcode: Int, block: (frame: GameFrame) -> T): MessageDecoder<T> {
     return object : MessageDecoder<T>(opcode) {
         override fun decode(frame: GameFrame): T {
             return block(frame)

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.plugin
 
-import net.scapeemulator.game.command.handleCommand
+import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.HintIconMessage
 import net.scapeemulator.game.msg.InterfaceVisibleMessage
@@ -14,8 +14,9 @@ val spawnItems = setOf(
     Item(4675),
     Item(10887),
     Item(13902),
-    Item(13899),
+    Item(13899), //vls
     Item(13883),
+    Item(14484), //dclaws
     //verac
     Item(4753),
     Item(4757),
@@ -38,7 +39,6 @@ fun spawnBots(world: World) {
     val spawnLocation = Position(3222, 3219)
     val npc = Npc(1).apply { position = Position(3221, 3219) }
     world.npcs.add(npc)
-    println("NPC INDEX: ${npc.index}")
     val playerBot = Player().apply {
         // session = player.session
         lastKnownRegion = spawnLocation
@@ -53,7 +53,6 @@ fun spawnBots(world: World) {
         equipment.add(Item(4734), Equipment.WEAPON)
     }
     world.players.add(playerBot)
-    println("PLAYER BOT INDEX: ${playerBot.index}")
     val action = object : Action<Player>(playerBot, delay = 20, immediate = false) {
         override fun execute() {
 //            server.world.loginService.addLogoutRequest(mob)
@@ -64,7 +63,7 @@ fun spawnBots(world: World) {
 }
 
 
-fun utilPlugin(world: World) = pluginHandler(
+fun UtilPlugin(world: World) = PluginHandler(
     { event ->
         if (event is LoginEvent) {
             spawnItems.onEach(event.player.inventory::add)
@@ -81,14 +80,14 @@ fun utilPlugin(world: World) = pluginHandler(
 
     }, { spawnBots(world) },
     arrayOf(
-        handleCommand("a") { player, args ->
+        CommandHandler("a") { player, args ->
 
 
         },
-        handleCommand("npc") { player, arguments ->
+        CommandHandler("npc") { player, arguments ->
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::npc [id]")
-                return@handleCommand
+                return@CommandHandler
             }
             val id = arguments[0].toInt()
             val npc = Npc(id).apply {
@@ -98,18 +97,18 @@ fun utilPlugin(world: World) = pluginHandler(
             }
             world.npcs.add(npc)
         },
-        handleCommand("cm") { player, arguments ->
+        CommandHandler("cm") { player, arguments ->
 //            player.displayEnter(RunScript.Type.STRING) { player, value ->
 //                player.sendMessage("VALUE:  $value")
 //            }
             player.displayEnterPrompt("Enter String", RunScript.Type.STRING) { player, value ->
                 player.sendMessage("Value: $value")
             }
-        }, handleCommand("t") { player, arguments ->
+        }, CommandHandler("t") { player, arguments ->
 
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::i [id]")
-                return@handleCommand
+                return@CommandHandler
             }
             val id = arguments[0].toInt() ?: 2
 //            val arrowId = arguments[1].toInt() ?: 1
@@ -121,39 +120,39 @@ fun utilPlugin(world: World) = pluginHandler(
                 position = player.position
             )
             player.send(hint)
-        }, handleCommand("ree") { player, arguments ->
+        }, CommandHandler("ree") { player, arguments ->
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::r [id]")
-                return@handleCommand
+                return@CommandHandler
             }
             val id = arguments[0].toInt()
             println("removing hint icon $id")
             player.removeHintIcon(id, player)
-        }, handleCommand("i") { player, arguments ->
+        }, CommandHandler("i") { player, arguments ->
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::i [id]")
-                return@handleCommand
+                return@CommandHandler
             }
             val id = arguments[0].toInt()
             player.interfaceSet.openWindow(id) //667 equip
-        }, handleCommand("io") { player, arguments ->
+        }, CommandHandler("io") { player, arguments ->
             if (arguments.size != 1) {
                 player.sendMessage("Syntax ::io [id]")
-                return@handleCommand
+                return@CommandHandler
             }
             val id = arguments[0].toInt()
             player.interfaceSet.openOverlay(id) //667 equip
-        }, handleCommand("iconfig") { player, arguments ->
-            if (player.rights < 2) return@handleCommand
+        }, CommandHandler("iconfig") { player, arguments ->
+            if (player.rights < 2) return@CommandHandler
             val id = arguments[0].toInt()
             val value = arguments[1].toInt()
             val hidden = arguments.size > 2
             //special bar 301 ?
             player.send(InterfaceVisibleMessage(id, value, hidden))
             player.sendMessage("id: $id, value: $value, hidden: $hidden")
-        }, handleCommand("anim") { player, arguments ->
-            if (player.rights < 2) return@handleCommand
-            if (arguments.isEmpty()) return@handleCommand
+        }, CommandHandler("anim") { player, arguments ->
+            if (player.rights < 2) return@CommandHandler
+            if (arguments.isEmpty()) return@CommandHandler
             val id = arguments[0].toInt()
             val delay = if (arguments.size != 1) arguments[1].toInt() else 0
             //special bar 301 ?

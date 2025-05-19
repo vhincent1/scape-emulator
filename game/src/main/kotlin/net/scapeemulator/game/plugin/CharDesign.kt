@@ -1,6 +1,6 @@
 package net.scapeemulator.game.plugin
 
-import net.scapeemulator.game.command.handleCommand
+import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.AnimateInterfaceMessage
 import net.scapeemulator.game.msg.ConfigMessage
@@ -219,7 +219,7 @@ fun copy(player: Player, newAppearance: Appearance) {
 }
 
 private val charDesign = CharDesign
-val charDesignPlugin = pluginHandler(
+val CharDesignPlugin = PluginHandler(
     { event ->
         if (event is MessageEvent) {
             if (event.message is ExtendedButtonMessage) {
@@ -232,20 +232,20 @@ val charDesignPlugin = pluginHandler(
         }
 
     }, arrayOf(
-        handleCommand("char") { player, args ->
+        CommandHandler("char") { player, args ->
             charDesign.open(player)
         },
-        handleCommand("c") { player, args ->
+        CommandHandler("c") { player, args ->
             println(charDesign.getAttribute(player.username, "char-design:look0", 0))
         },
-        handleCommand("gender") { player, args ->
+        CommandHandler("gender") { player, args ->
             player.appearance = if (player.appearance.gender == Gender.MALE)
                 Appearance(Gender.MALE) else Appearance(Gender.FEMALE)
         },
-        handleCommand("hair") { player, args ->
+        CommandHandler("hair") { player, args ->
             if (args.size != 1) {
                 player.sendMessage("Syntax ::hair [id]")
-                return@handleCommand
+                return@CommandHandler
             }
             val id = args[0].toInt()
 
@@ -255,17 +255,17 @@ val charDesignPlugin = pluginHandler(
 
             player.sendMessage("hair: id=$id")
         },
-        handleCommand("r") { player, args ->
+        CommandHandler("r") { player, args ->
             player.settings.toggleTwoButtonMouse()
         },
-        handleCommand("close") { player, args ->
+        CommandHandler("close") { player, args ->
             player.interfaceSet.close()
 //            val value = player.getAttribute("HEAD", 0)
             //   val value = charDesign.getAttribute(player.username, "HEAD")
             //   println("Close: $value")
 //            player.appearance.setBody(Body.HEAD, value)
         },
-        handleCommand("gc") { player, args ->
+        CommandHandler("gc") { player, args ->
             Body.values().forEach { body ->
                 val i = player.appearance.getBody(body)
                 println("style[${body.name}] = ${i}")

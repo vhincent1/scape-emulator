@@ -4,7 +4,7 @@ import net.scapeemulator.game.cache.LandscapeKeyTable
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.net.game.*
 
-internal fun regionChangeEncoder(table: LandscapeKeyTable) =
+internal fun RegionChangeEncoder(table: LandscapeKeyTable) =
     handleEncoder(RegionChangeMessage::class) { alloc, message ->
         val builder = GameFrameBuilder(alloc, 162, GameFrame.Type.VARIABLE_SHORT)
 

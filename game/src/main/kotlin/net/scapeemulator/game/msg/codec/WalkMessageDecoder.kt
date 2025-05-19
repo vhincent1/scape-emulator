@@ -5,7 +5,7 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameReader
 
-internal fun walkMessageDecoder(opcode: Int) = handleDecoder(opcode) { frame ->
+internal fun walkMessageDecoder(opcode: Int) = MessageDecoder(opcode) { frame ->
     val reader = GameFrameReader(frame)
     val anticheat = frame.opcode == 39
     val stepCount = (reader.length - (if (anticheat) 19 else 5)) / 2 + 1
@@ -20,5 +20,5 @@ internal fun walkMessageDecoder(opcode: Int) = handleDecoder(opcode) { frame ->
         val stepY = y + reader.getSigned(DataType.BYTE, DataTransformation.SUBTRACT).toInt()
         steps[i] = WalkMessage.Step(stepX, stepY)
     }
-    return@handleDecoder WalkMessage(steps, running)
+    return@MessageDecoder WalkMessage(steps, running)
 }

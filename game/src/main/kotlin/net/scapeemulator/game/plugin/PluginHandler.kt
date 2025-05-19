@@ -9,11 +9,11 @@ abstract class PluginHandler : PluginEvent() {
     abstract fun buttons(): Array<ButtonHandler>
 }
 
-internal fun pluginHandler(
+internal fun PluginHandler(
     block: (PluginEvent) -> Unit,
     init: () -> Unit,
-    cmdBlock: Array<CommandHandler> = emptyArray(),
-    buttonBlock: Array<ButtonHandler> =  emptyArray(),
+    commandHandlers: Array<CommandHandler> = emptyArray(),
+    buttonHandlers: Array<ButtonHandler> = emptyArray(),
 ): PluginHandler {
     return object : PluginHandler() {
         init {
@@ -21,17 +21,17 @@ internal fun pluginHandler(
         }
 
         override fun handle(event: PluginEvent) = block(event)
-        override fun commands(): Array<CommandHandler> = cmdBlock
-        override fun buttons(): Array<ButtonHandler> = buttonBlock
+        override fun commands(): Array<CommandHandler> = commandHandlers
+        override fun buttons(): Array<ButtonHandler> = buttonHandlers
     }
 }
 
-internal fun pluginHandler(
+internal fun PluginHandler(
     block: (PluginEvent) -> Unit,
     cmdBlock: Array<CommandHandler> = emptyArray(),
     buttonBlock: Array<ButtonHandler> = emptyArray(),
 ): PluginHandler {
-    return pluginHandler(block, {}, cmdBlock, buttonBlock)
+    return PluginHandler(block, {}, cmdBlock, buttonBlock)
 }
 
 

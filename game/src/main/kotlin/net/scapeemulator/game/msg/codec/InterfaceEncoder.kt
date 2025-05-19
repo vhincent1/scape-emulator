@@ -4,7 +4,7 @@ import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.*
 
 @JvmField
-internal val interfaceRootEncoder = handleEncoder(InterfaceRootMessage::class) { alloc, message ->
+internal val InterfaceRootEncoder = handleEncoder(InterfaceRootMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 145, GameFrame.Type.FIXED)
     builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.id)
     builder.put(DataType.BYTE, DataTransformation.ADD, message.type)//type
@@ -12,7 +12,7 @@ internal val interfaceRootEncoder = handleEncoder(InterfaceRootMessage::class) {
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceOpenEncoder = handleEncoder(InterfaceOpenMessage::class) { alloc, message ->
+internal val InterfaceOpenEncoder = handleEncoder(InterfaceOpenMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 155)
     builder.put(DataType.BYTE, message.type) // isWalkable ? 1 : 0
     builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, (message.id shl 16) or message.slot)
@@ -21,7 +21,7 @@ internal val interfaceOpenEncoder = handleEncoder(InterfaceOpenMessage::class) {
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceCloseEncoder = handleEncoder(InterfaceCloseMessage::class) { alloc, message ->
+internal val InterfaceCloseEncoder = handleEncoder(InterfaceCloseMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 149)
     builder.put(DataType.SHORT, 0)
 //    builder.put(DataType.SHORT, message.id)
@@ -33,7 +33,7 @@ internal val interfaceCloseEncoder = handleEncoder(InterfaceCloseMessage::class)
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceVisibleEncoder = handleEncoder(InterfaceVisibleMessage::class) { alloc, message ->
+internal val InterfaceVisibleEncoder = handleEncoder(InterfaceVisibleMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 21)
     builder.put(DataType.BYTE, DataTransformation.NEGATE, if (message.isVisible) 0 else 1)
     builder.put(DataType.SHORT, 0)
@@ -41,7 +41,7 @@ internal val interfaceVisibleEncoder = handleEncoder(InterfaceVisibleMessage::cl
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceTextEncoder = handleEncoder(InterfaceTextMessage::class) { alloc, message ->
+internal val InterfaceTextEncoder = handleEncoder(InterfaceTextMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 171, GameFrame.Type.VARIABLE_SHORT)
     builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, (message.id shl 16) or message.slot)
     builder.putString(message.text)
@@ -49,7 +49,7 @@ internal val interfaceTextEncoder = handleEncoder(InterfaceTextMessage::class) {
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceItemsMessageEncoder = handleEncoder(InterfaceItemsMessage::class) { alloc, message ->
+internal val InterfaceItemsMessageEncoder = handleEncoder(InterfaceItemsMessage::class) { alloc, message ->
     val items = message.items
     val builder = GameFrameBuilder(alloc, 105, GameFrame.Type.VARIABLE_SHORT)
     builder.put(DataType.INT, (message.id shl 16) or message.slot)
@@ -74,7 +74,7 @@ internal val interfaceItemsMessageEncoder = handleEncoder(InterfaceItemsMessage:
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceSlottedItemsEncoder = handleEncoder(InterfaceSlottedItemsMessage::class) { alloc, message ->
+internal val InterfaceSlottedItemsEncoder = handleEncoder(InterfaceSlottedItemsMessage::class) { alloc, message ->
     val items = message.items
     val builder = GameFrameBuilder(alloc, 22, GameFrame.Type.VARIABLE_SHORT)
     builder.put(DataType.INT, (message.id shl 16) or message.slot)
@@ -101,13 +101,13 @@ internal val interfaceSlottedItemsEncoder = handleEncoder(InterfaceSlottedItemsM
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val interfaceResetItemsEncoder = handleEncoder(InterfaceResetItemsMessage::class) { alloc, message ->
+internal val InterfaceResetItemsEncoder = handleEncoder(InterfaceResetItemsMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 144)
     builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, (message.id shl 16) or message.slot)
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val animateInterfaceEncoder = handleEncoder(AnimateInterfaceMessage::class) { alloc, message ->
+internal val AnimateInterfaceEncoder = handleEncoder(AnimateInterfaceMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 36)
     builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, (message.interfaceId shl 16) + message.childId)
     builder.put(DataType.SHORT, DataOrder.LITTLE, message.animationId)

@@ -1,7 +1,7 @@
 package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.GameServer
-import net.scapeemulator.game.plugin.CombatPlugin.combatHandler
+import net.scapeemulator.game.plugin.CombatPlugin.CombatHandler
 
 class PluginManager(val server: GameServer) {
 
@@ -11,10 +11,10 @@ class PluginManager(val server: GameServer) {
     }
 
     init {
-        addListener(loginPlugin)
-        addListener(utilPlugin(server.world))
-        addListener(charDesignPlugin)
-        addListener(combatHandler(server.world))
+        addListener(LoginPlugin)
+        addListener(UtilPlugin(server.world))
+        addListener(CharDesignPlugin)
+        addListener(CombatHandler(server.world))
 
 //        var buttonCount = 0
 //        listeners.forEach { buttonCount = it.buttons().size }

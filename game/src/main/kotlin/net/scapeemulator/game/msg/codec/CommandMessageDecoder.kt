@@ -12,8 +12,8 @@ import net.scapeemulator.game.net.game.GameFrameReader
 //    }
 //}
 
-internal val commandMessageDecoder = handleDecoder(44) { frame ->
+internal val CommandMessageDecoder = MessageDecoder(44) { frame ->
     val reader = GameFrameReader(frame)
     val command = reader.string
-    return@handleDecoder CommandMessage(command)
+    return@MessageDecoder CommandMessage(command)
 }

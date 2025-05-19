@@ -6,7 +6,7 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
-internal val scriptIntMessageEncoder = handleEncoder(ScriptIntMessage::class) { alloc, message ->
+internal val ScriptIntMessageEncoder = handleEncoder(ScriptIntMessage::class) { alloc, message ->
     val id = message.id
     val value = message.value
 

@@ -7,18 +7,18 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameReader
 
-internal val objectOptionOneMessageDecoder = handleDecoder(254) { frame ->
+internal val ObjectOptionOneMessageDecoder = MessageDecoder(254) { frame ->
     val reader = GameFrameReader(frame)
     val x = reader.getSigned(DataType.SHORT, DataOrder.LITTLE).toInt()
     val id = reader.getSigned(DataType.SHORT, DataTransformation.ADD).toInt()
     val y = reader.getSigned(DataType.SHORT).toInt()
-    return@handleDecoder ObjectOptionOneMessage(x, y, id)
+    return@MessageDecoder ObjectOptionOneMessage(x, y, id)
 }
 
-internal val objectOptionTwoMessageDecoder = handleDecoder(194) { frame ->
+internal val ObjectOptionTwoMessageDecoder = MessageDecoder(194) { frame ->
     val reader = GameFrameReader(frame)
     val y = reader.getSigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
     val x = reader.getSigned(DataType.SHORT, DataOrder.LITTLE).toInt()
     val id = reader.getSigned(DataType.SHORT).toInt()
-    return@handleDecoder ObjectOptionTwoMessage(x, y, id)
+    return@MessageDecoder ObjectOptionTwoMessage(x, y, id)
 }

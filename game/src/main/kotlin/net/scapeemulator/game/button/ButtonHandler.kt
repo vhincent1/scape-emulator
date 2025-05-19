@@ -6,7 +6,7 @@ abstract class ButtonHandler(val id: Int) {
     abstract fun handle(player: Player, slot: Int, parameter: Int)
 }
 
-fun handleButton(buttonId: Int, block: (Player, Int, Int) -> Unit): ButtonHandler {
+fun ButtonHandler(buttonId: Int, block: (Player, Int, Int) -> Unit): ButtonHandler {
     return object : ButtonHandler(buttonId) {
         override fun handle(player: Player, slot: Int, parameter: Int) {
             block(player, slot, parameter)

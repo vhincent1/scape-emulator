@@ -26,9 +26,8 @@ class AttackButtonHandler(private val tab: Int, private val styles: IntArray, pr
         println("ATTACK STYLE:  ${e.style}")
         println("SETTINGS STYLE: ${settings.attackStyle}")
 
-        if (slot == autoRetaliate) {
+        if (slot == autoRetaliate)
             settings.toggleAutoRetaliating()
-        }
 
         if (slot == 8 || slot == 10 || slot == 11)
             settings.setSpecToggle()
