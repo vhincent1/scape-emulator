@@ -196,6 +196,9 @@ class InterfaceSet(private val player: Player) {
 //		PacketRepository.send(Interface.class, new InterfaceContext(player, 549, 2, 378, true));
 //		//PacketRepository.send(Interface.class, new InterfaceContext(player, 549, 3, WEEKLY_MESSAGE.getComponent(), true));
 //
+//    addChild(new InterfaceChild(3, new MessageOfTheWeek(16, 7,
+//    "Spotted a bug? Let the developers know! You can report bugs on the rune-server project thread!")));
+
 //		player.getInterfaceManager().openWindowsPane(new Component(378));
 //	}
 

@@ -4,6 +4,6 @@ import net.scapeemulator.game.msg.HintIconMessage
 
 abstract class Entity() {
     open lateinit var position: Position
-    val attributes = HashMap<String, Any>()
+    val attributes = HashMap<String, Any?>()
     open val hintIcons = arrayOfNulls<HintIconMessage?>(8)
 }

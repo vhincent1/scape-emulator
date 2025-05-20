@@ -37,8 +37,8 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
         }
 
         taskScheduler.tick()
-        // updater.tick()
 
+//        players.processCombat() // WORKS
         players.preprocessPlayers()
         npcs.preprocessNpcs()
         for (player in players) {
@@ -70,11 +70,18 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
             }
             player.walkingQueue.tick()
 
+//            if (player.hitQueue.isNotEmpty()) {
+//                val hq = player.hitQueue
+//                println("HitQueue ${hq.size} hits")
+//                val poll = hq.poll()
+//            }
+
             for (i in 0..2 step 1) {
                 if (player.hitQueue.peek() == null) continue
                 val hit = player.hitQueue.poll()
+                println("Polling: ${hit.damage}")
                 val secondary = i == 1
-                if(secondary) {
+                if (secondary) {
                     player.secondaryHit = hit
                     player.isHit2Updated = true
                 } else {
@@ -85,7 +92,6 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
 
         }
     }
-
 
     private fun ActorList<Npc>.preprocessNpcs() {
         if (isEmpty()) return

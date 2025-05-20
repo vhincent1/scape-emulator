@@ -6,6 +6,7 @@ val LoginPlugin = PluginHandler(
     { event ->
         if (event is LoginEvent) {
             event.player.sendMessage("Welcome to the game!")
+            event.player.sendMessage("World: ${event.player.worldId}")
         }
     }, arrayOf(
         CommandHandler("login") { a, b -> },

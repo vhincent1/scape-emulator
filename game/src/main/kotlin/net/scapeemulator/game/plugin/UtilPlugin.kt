@@ -34,7 +34,7 @@ val spawnItems = setOf(
 fun Int.m(): Int = this * 1_000_000
 
 fun spawnBots(world: World) {
-//    val server = GameServer.INSTANCE
+//    val world = GameServer.INSTANCE.world
     println("Spawning")
     val spawnLocation = Position(3222, 3219)
     val npc = Npc(1).apply { position = Position(3221, 3219) }
@@ -95,7 +95,7 @@ fun UtilPlugin(world: World) = PluginHandler(
                     x + 1
                 }
             }
-            world.npcs.add(npc)
+            //world.npcs.add(npc)
         },
         CommandHandler("cm") { player, arguments ->
 //            player.displayEnter(RunScript.Type.STRING) { player, value ->

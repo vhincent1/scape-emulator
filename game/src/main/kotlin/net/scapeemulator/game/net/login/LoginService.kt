@@ -34,6 +34,7 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
                 pair.session.sendLoginFailure(LoginResponse.STATUS_WORLD_FULL)
             } else {
                 /* send success packet & switch to GameSession */
+                pair.player.worldId = world.worldId
                 pair.session.sendLoginSuccess(LoginResponse.STATUS_OK, pair.player)
             }
         }.also(newPlayers::removeAll)

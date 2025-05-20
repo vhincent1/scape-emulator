@@ -4,14 +4,12 @@ import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
 import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.GameSession
-import net.scapeemulator.game.plugin.CombatTask
 
 //todo Player(world, account, session)
 class Player() : Mob() {
+    var worldId = 0
     var databaseId: Int = 0
     var session: GameSession? = null
-
-    var combatTask: CombatTask? = null
 
     lateinit var username: String
     lateinit var password: String

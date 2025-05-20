@@ -25,3 +25,11 @@ abstract class Task(delay: Int, immediate: Boolean) {
         isRunning = false
     }
 }
+
+fun Task(delay: Int, immediate: Boolean, block: (Int, Boolean) -> Unit): Task {
+    return object : Task(delay, immediate) {
+        override fun execute() {
+            block(delay, immediate)
+        }
+    }
+}

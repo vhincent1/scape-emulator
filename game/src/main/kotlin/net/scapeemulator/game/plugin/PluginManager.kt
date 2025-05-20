@@ -1,7 +1,7 @@
 package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.GameServer
-import net.scapeemulator.game.plugin.CombatPlugin.CombatHandler
+import net.scapeemulator.game.plugin.combat.CombatPlugin.CombatHandler
 
 class PluginManager(val server: GameServer) {
 

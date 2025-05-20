@@ -16,7 +16,6 @@ import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
 import net.scapeemulator.game.plugin.PluginManager
-import net.scapeemulator.game.task.SyncTask
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
 import java.io.FileInputStream
@@ -56,7 +55,6 @@ class GameServer(loginAddress: SocketAddress) {
     val messageDispatcher: MessageDispatcher
     val plugins: PluginManager
 
-    private val syncTask: Set<SyncTask>
 
     // network
     val network: Network
@@ -89,10 +87,11 @@ class GameServer(loginAddress: SocketAddress) {
         loginService = LoginService(serializer)
         updateService = UpdateService()
 
+
         /* load world */
         world = World(1, loginService)
-        syncTask = setOf(world)
 
+        /* load plugins */
         plugins = PluginManager(this)
 
         /* start netty */
@@ -120,12 +119,11 @@ class GameServer(loginAddress: SocketAddress) {
         gameExecutor.scheduleAtFixedRate(
             {
                 if (!world.isOnline) return@scheduleAtFixedRate
+
                 try {
                     val time = measureTimeMillis {
                         ++tick
-                        for (task in syncTask) {
-                            task.sync(tick)
-                        }
+                        world.sync(tick)
                     }
                     val freeMemoryMB = ((Runtime.getRuntime().freeMemory() / 1024) / 1024).toFloat()
                     val totalMemoryMB = ((Runtime.getRuntime().totalMemory() / 1024) / 1024).toFloat()
@@ -146,7 +144,8 @@ class GameServer(loginAddress: SocketAddress) {
     }
 
     private fun shutdown() {
-        world.isOnline = false
+//        world.isOnline = false
+
         //network.shutdown() //world.online=false
         //game.shutdown() //save players
     }

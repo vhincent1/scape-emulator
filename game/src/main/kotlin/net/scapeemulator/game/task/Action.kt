@@ -10,10 +10,10 @@ abstract class Action<T : Mob>(val mob: T, delay: Int, immediate: Boolean) :
     }
 }
 
-fun <T : Mob> Action(mob: T, delay: Int, immediate: Boolean, block: (T, Int, Boolean) -> Unit): Action<T> {
+fun <T : Mob> Action(mob: T, delay: Int, immediate: Boolean, block: (Action<T>, T, Int, Boolean) -> Unit): Action<T> {
     return object : Action<T>(mob, delay, immediate) {
         override fun execute() {
-            block(mob, delay, immediate)
+            block(this, mob, delay, immediate)
         }
     }
 }

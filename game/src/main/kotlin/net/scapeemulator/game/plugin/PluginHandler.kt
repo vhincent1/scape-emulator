@@ -3,7 +3,7 @@ package net.scapeemulator.game.plugin
 import net.scapeemulator.game.button.ButtonHandler
 import net.scapeemulator.game.command.CommandHandler
 
-abstract class PluginHandler : PluginEvent() {
+abstract class PluginHandler : PluginEvent {
     abstract fun handle(event: PluginEvent)
     abstract fun commands(): Array<CommandHandler>
     abstract fun buttons(): Array<ButtonHandler>
