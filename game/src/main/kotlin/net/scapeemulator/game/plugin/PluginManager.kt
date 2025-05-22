@@ -2,17 +2,18 @@ package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.plugin.combat.CombatPlugin.CombatHandler
+import net.scapeemulator.game.plugin.interfaces.EquipmentPlugin
 
 class PluginManager(val server: GameServer) {
-
-    internal val listeners: MutableList<PluginHandler> = ArrayList()
-    private fun addListener(listener: PluginHandler) = listeners.add(listener)
+    internal val plugins: MutableList<PluginHandler> = ArrayList()
+    private fun add(plugin: PluginHandler) = plugins.add(plugin)
 
     init {
-        addListener(LoginPlugin)
-        addListener(UtilPlugin(server.world))
-        addListener(CharDesignPlugin)
-        addListener(CombatHandler(server.world))
+        add(LoginPlugin)
+        add(UtilPlugin(server.world))
+        add(CharDesignPlugin)
+        add(CombatHandler(server.world))
+        add(EquipmentPlugin)
 
 //        var buttonCount = 0
 //        listeners.onEach { buttonCount = it.buttons().size }
@@ -20,9 +21,9 @@ class PluginManager(val server: GameServer) {
     }
 
     //todo check
-    fun notify(event: PluginEvent) = listeners.onEach { listener -> listener.handle(event) }
+    fun notify(event: PluginEvent) = plugins.onEach { listener -> listener.handle(event) }
 
-    private fun bind() = listeners.onEach { listener ->
+    private fun bind() = plugins.onEach { listener ->
         listener.buttons().onEach(server.messageDispatcher.buttonDispatcher::bind)
         listener.commands().onEach(server.messageDispatcher.commandDispatcher::bind)
     }

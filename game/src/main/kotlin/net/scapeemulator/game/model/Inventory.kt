@@ -70,6 +70,7 @@ class Inventory {
         set(slot, null)
     }
 
+    //todo check slots before adding
     @JvmOverloads
     fun add(item: Item, preferredSlot: Int = -1): Item? {
         val id = item.id

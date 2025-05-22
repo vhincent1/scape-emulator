@@ -45,3 +45,5 @@ bin/
 .DS_Store
 
 .idea
+/game/src/main/resources/logs/
+/game/src/main/resources/logs/

@@ -1,3 +1,3 @@
 package net.scapeemulator.game.msg
 
-class MiniMapStatusMessage(val setting: Int) : Message()
+data class MiniMapStatusMessage(val setting: Int) : Message()

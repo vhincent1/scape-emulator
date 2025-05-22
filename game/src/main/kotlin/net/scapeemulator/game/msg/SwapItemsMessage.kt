@@ -1,6 +1,6 @@
 package net.scapeemulator.game.msg
 
-class SwapItemsMessage(
+data class SwapItemsMessage(
     @JvmField val id: Int,
     @JvmField val slot: Int,
     @JvmField val source: Int,

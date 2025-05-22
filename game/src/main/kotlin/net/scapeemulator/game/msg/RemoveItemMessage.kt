@@ -1,6 +1,6 @@
 package net.scapeemulator.game.msg
 
-class RemoveItemMessage(
+data class RemoveItemMessage(
     @JvmField val id: Int,
     @JvmField val slot: Int,
     @JvmField val itemSlot: Int,

@@ -1,6 +1,6 @@
 package net.scapeemulator.game.msg
 
-class DisplayModelMessage(
+data class DisplayModelMessage(
     @JvmField val type: Type,
     @JvmField val nodeId: Int,
     @JvmField val amount: Int,

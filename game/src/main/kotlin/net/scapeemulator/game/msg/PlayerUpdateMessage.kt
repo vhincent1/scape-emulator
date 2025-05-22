@@ -3,7 +3,7 @@ package net.scapeemulator.game.msg
 import net.scapeemulator.game.model.Position
 import net.scapeemulator.game.update.PlayerDescriptor
 
-class PlayerUpdateMessage(
+data class PlayerUpdateMessage(
     @JvmField val lastKnownRegion: Position,
     @JvmField val position: Position,
     @JvmField val localPlayerCount: Int,

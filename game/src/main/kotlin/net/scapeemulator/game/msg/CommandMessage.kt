@@ -1,3 +1,3 @@
 package net.scapeemulator.game.msg
 
-class CommandMessage(@JvmField val command: String) : Message()
+data class CommandMessage(@JvmField val command: String) : Message()

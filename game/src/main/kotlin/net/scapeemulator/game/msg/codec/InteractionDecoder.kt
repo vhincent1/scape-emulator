@@ -24,7 +24,7 @@ const val PLAYER_OPTION_6 = 114
 const val PLAYER_OPTION_7 = 175
 const val MAGIC_ON_PLAYER = 195 // magic on player
 
-typealias type = InteractionMessage.InteractionType
+typealias type = InteractionMessage.Type
 
 // NPC action Attack
 val NpcInteraction = MessageDecoder(3) { frame ->

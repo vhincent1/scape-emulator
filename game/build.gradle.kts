@@ -8,6 +8,7 @@ dependencies {
     api(project(":cache"))
     api(project(":util"))
 
+    // networking
     api(libs.io.netty.netty.transport)
     api(libs.io.netty.netty.handler)
     api(libs.io.netty.netty.codec.http)
@@ -22,11 +23,18 @@ dependencies {
     // json
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
 
+    // command-line
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
+
+    // coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+
     // script engine
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
+//    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
+//    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 }
 description = "ScapeEmulator Game Server"
+
 
 application {
     mainClass.set("net.scapeemulator.game.GameServer")

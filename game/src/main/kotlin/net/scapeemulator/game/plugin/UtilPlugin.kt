@@ -38,8 +38,10 @@ fun spawnBots(world: World) {
 //    val world = GameServer.INSTANCE.world
     println("Spawning")
     val spawnLocation = Position(3222, 3219)
+
     val npc = Npc(1).apply { position = Position(3221, 3219) }
     world.npcs.add(npc)
+
     val playerBot = Player().apply {
         // session = player.session
         lastKnownRegion = spawnLocation
@@ -47,7 +49,7 @@ fun spawnBots(world: World) {
         position = spawnLocation
         mostRecentDirection = Direction.NORTH
 
-        //todo fix player equipment
+        appearance = generateAppearance(Gender.MALE)
         equipment.add(Item(4732), Equipment.HEAD)
         equipment.add(Item(4736), Equipment.BODY)
         equipment.add(Item(4738), Equipment.LEGS)
@@ -81,9 +83,13 @@ fun UtilPlugin(world: World) = PluginHandler(
 
     }, { spawnBots(world) },
     arrayOf(
-        CommandHandler("a") { player, args ->
-
-
+        CommandHandler("bandos") { player, args ->
+            player.equipment.add(Item(11335), Equipment.HEAD)
+            player.equipment.add(Item(6570), Equipment.CAPE)
+            player.equipment.add(Item(11724), Equipment.BODY)
+            player.equipment.add(Item(11726), Equipment.LEGS)
+            player.equipment.add(Item(11732), Equipment.FEET)
+            player.equipment.add(Item(7462), Equipment.HANDS)
         },
         CommandHandler("npc") { player, arguments ->
             if (arguments.size != 1) {

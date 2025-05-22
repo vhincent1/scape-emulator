@@ -199,7 +199,7 @@ object CharDesign {
     }
 }
 
-private fun generateAppearance(gender: Gender = if (Random.nextBoolean()) Gender.MALE else Gender.FEMALE): Appearance {
+fun generateAppearance(gender: Gender = if (Random.nextBoolean()) Gender.MALE else Gender.FEMALE): Appearance {
     return Appearance(
         gender, intArrayOf(
             Body.HEAD.getIds(gender).random(),

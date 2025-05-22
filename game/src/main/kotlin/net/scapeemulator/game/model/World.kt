@@ -79,7 +79,6 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
             for (i in 0..2 step 1) {
                 if (player.hitQueue.peek() == null) continue
                 val hit = player.hitQueue.poll()
-                println("Polling: ${hit.damage}")
                 val secondary = i == 1
                 if (secondary) {
                     player.secondaryHit = hit

@@ -45,6 +45,7 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
             for (i in 0 until 10) {
                 val message = messages.poll() ?: break
                 dispatcher.dispatch(player, message)
+                //todo a better way?
                 server.plugins.notify(MessageEvent(player, message))
             }
             messages.clear()

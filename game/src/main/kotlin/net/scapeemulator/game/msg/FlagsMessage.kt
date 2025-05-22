@@ -1,3 +1,3 @@
 package net.scapeemulator.game.msg
 
-class FlagsMessage(val flags: Int) : Message()
+data class FlagsMessage(val flags: Int) : Message()

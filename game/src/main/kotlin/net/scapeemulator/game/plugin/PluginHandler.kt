@@ -10,8 +10,8 @@ abstract class PluginHandler : PluginEvent {
 }
 
 internal fun PluginHandler(
-    block: (PluginEvent) -> Unit,
-    init: () -> Unit,
+    eventHandler: (PluginEvent) -> Unit,
+    init: () -> Unit = {},
     commandHandlers: Array<CommandHandler> = emptyArray(),
     buttonHandlers: Array<ButtonHandler> = emptyArray(),
 ): PluginHandler {
@@ -20,7 +20,7 @@ internal fun PluginHandler(
             init.invoke()
         }
 
-        override fun handle(event: PluginEvent) = block(event)
+        override fun handle(event: PluginEvent) = eventHandler(event)
         override fun commands(): Array<CommandHandler> = commandHandlers
         override fun buttons(): Array<ButtonHandler> = buttonHandlers
     }
