@@ -8,6 +8,8 @@ pluginManagement {
 include(listOf("cache", "login", "game", "util", "flooder"))
 //include("web")
 //include("application")
+include("game-ktor", "cache-lib")
+
 
 //v1
 //include(listOf("game", "cache", "util"))

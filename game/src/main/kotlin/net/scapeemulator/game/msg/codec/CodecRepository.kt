@@ -76,7 +76,11 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(InterfaceClosedMessageDecoder)//184
         bind(ObjectOptionOneMessageDecoder)
         bind(ObjectOptionTwoMessageDecoder)
+        bind(EnterAmountDecoder)
+        bind(EnterTextDecoder)
+        bind(WeightEncoder)
 
+        bind(NpcInteraction)
         /* encoders */
         bind(RegionChangeEncoder(table))
         bind(InterfaceRootEncoder)
@@ -104,10 +108,6 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(DisplayModelEncoder)
         bind(HintArrowEncoder)
         bind(MinimapStatus)
-        bind(EnterAmountDecoder)
-        bind(EnterTextDecoder)
-
-        bind(NpcInteraction)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix

@@ -21,7 +21,6 @@ internal val MinimapStatus = handleEncoder(MiniMapStatusMessage::class) { alloc,
     return@handleEncoder builder.toGameFrame()
 }
 
-//todo fix: player needs to re-connect
 internal val HintArrowEncoder = handleEncoder(HintIconMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 217)
     builder.put(DataType.BYTE, message.slot shl 6 or message.targetType) //10 player 1 npc 2 loc
@@ -58,5 +57,11 @@ internal val InteractionOptionEncoder = handleEncoder(InteractionOptionMessage::
     builder.put(DataType.BYTE, if (message.position == 0) 1 else 0)
     builder.put(DataType.BYTE, message.position + 1)
     builder.putString(message.name)
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val WeightEncoder = handleEncoder(WeightMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 174)
+    builder.put(DataType.SHORT, message.weight)
     return@handleEncoder builder.toGameFrame()
 }

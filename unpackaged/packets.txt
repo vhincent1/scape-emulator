@@ -1,3 +1,9 @@
+//putS
+builder.put(DataType.BYTE, DataTransformation.SUBTRACT, position.height)
+
+//putA
+builder.put(DataType.BYTE, DataTransformation.ADD, value)
+
 // putIntA
 builder.put(DataType.INT,DataOrder.MIDDLE,  value)
 
@@ -15,3 +21,57 @@ builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, value)
 
 //put((byte) value)
 builder.put(DataType.BYTE, value)
+
+
+
+/* OUTGOING CLIENT PACKETS */
+writeTriByte => unknown
+writeSignedByteA => unknown
+
+writeSmart => builder.put(DataType.SHORT);
+writeQWord => builder.put(DataType.LONG);
+writeBytesA => builder.put(DataType.BYTE, DataTransformation.ADD, 10); //may be wrong
+writeDWord => (int) reader.getSigned(DataType.INT);
+writeByteC => (int) reader.getUnsigned(DataType.BYTE, DataTransformation.NEGATE); //may be wrong
+writeWordBigEndian => (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE);
+writeWordBigEndianA => (int) reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+writeDWordBigEndian => (int) reader.getSigned(DataType.INT, DataOrder.INVERSED_MIDDLE);
+writeSByte =>(int) reader.getUnsigned(DataType.BYTE);
+writeDWord_v2 => (int) reader.getUnsigned(DataType.INT);
+writeDWord_v1 => (int) reader.getUnsigned(DataType.INT, DataOrder.INVERSED_MIDDLE);
+writeWordA => (int) reader.getUnsigned(DataType.SHORT, DataTransformation.ADD);
+writeByte =>  (int) reader.getUnsigned(DataType.BYTE); //check
+writeWord => (int) reader.getUnsigned(DataType.SHORT);
+
+
+/* INCOMING CLIENT PACKETS */
+
+readBytesReverse => unknown
+readSignedWordBigEndian => unknown
+readSignedByteA => unknown
+readTriByteA => unknown
+readSignedByteC => unknown
+readUnsignedByteA => unknown
+readSmart => unknown
+readSmartA => unknown
+readSignedWordA => unknown
+readBytes => unknown //this may not be needed for client->server
+readJAGString => unknown //this may not be needed
+
+readSignedWord => builder.put(DataType.SHORT, DataTransformation.ADD, INTEGER); //maybe be wrong
+readSignedByte => builder.put(DataType.BYTE, DataTransformation.ADD, INTEGER); //maybe wrong
+
+readQWord => builder.put(DataType.LONG, LONG);
+readUnsignedWordA => builder.put(DataType.SHORT, DataTransformation.ADD, INTEGER);
+readDWord_v1 => builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, INTEGER);
+readUnsignedWordBigEndianA => builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, INTEGER);
+readDWord_v2 => builder.put(DataType.INT, DataOrder.MIDDLE, INTEGER);
+readUnsignedByte => builder.put(DataType.BYTE, INTEGER);
+readUnsignedByteC => builder.put(DataType.BYTE, DataTransformation.NEGATE, INTEGER);
+readUnsignedWordBigEndianA => builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, INTEGER);
+readDWordBigEndian => builder.put(DataType.INT, DataOrder.LITTLE, INTEGER);
+readUnsignedWordBigEndian => builder.put(DataType.SHORT, DataOrder.LITTLE, INTEGER);
+readSignedByteS => builder.put(DataType.BYTE, DataTransformation.SUBTRACT, INTEGER);
+readDWord => builder.put(DataType.INT, INTEGER);
+readUnsignedWord => builder.put(DataType.SHORT, INTEGER);
+readString => builder.putString(STRING);

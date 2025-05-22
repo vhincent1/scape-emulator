@@ -39,6 +39,8 @@ object ByteBufUtils {
         buffer.writeByte(0)
     }
 
+    //todo
+    //fun GameFrameBuilder.writeSmart
     fun writeSmart(buffer: ByteBuf, value: Int) {
         if (value < 128) buffer.writeByte(value)
         else buffer.writeShort(32768 + value)
