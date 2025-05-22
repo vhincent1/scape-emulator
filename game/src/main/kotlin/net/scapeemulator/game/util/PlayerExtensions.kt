@@ -1,8 +1,6 @@
 package net.scapeemulator.game.util
 
-import net.scapeemulator.game.model.Entity
-import net.scapeemulator.game.model.Player
-import net.scapeemulator.game.model.RunScript
+import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.HintIconMessage
 import net.scapeemulator.game.msg.InteractionOptionMessage
 import net.scapeemulator.game.msg.ResetMinimapFlagMessage
@@ -25,7 +23,7 @@ fun Player.sendHintIcon(slot: Int?, target: Int, entity: Entity) {
         target = target,//idx
         entity = entity,
     )
-    println("Sending hint icon ${hint.slot}")
+//    println("Sending hint icon ${hint.slot}")
     hintIcons[hint.slot] = hint
     send(hint)
 }
@@ -50,6 +48,22 @@ fun Player.displayEnterPrompt(prompt: String, type: RunScript.Type, block: (Play
     runScript = RunScript(block)
 }
 
-fun Player.appenedHit(damage: Int, type: Int) {
+fun Mob.appendHit(damage: Int, type: HitType) {
+    //todo see how high damage can go
+    hitQueue.add(Hit(damage, type))
+}
 
+fun Mob.playAnim(id: Int, delay: Int = 0) {
+    playAnimation(Animation(id, delay))
+}
+
+fun Mob.playGFX(id: Int, delay: Int = 0, height: Int = 0) {
+    playSpotAnimation(SpotAnimation(id, delay, height))
+}
+
+fun Player.specialBar(amount: Int, add: Boolean) {
+    settings.specialEnergy =
+        if (add) settings.specialEnergy.plus(amount)
+        else
+            settings.specialEnergy.minus(amount)
 }

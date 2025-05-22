@@ -45,7 +45,8 @@ abstract class Mob() : Entity() {
         }
         this.action = action
         //todo
-        GameServer.INSTANCE.world.taskScheduler.schedule(action)
+
+        GameServer.INSTANCE!!.world.taskScheduler.schedule(action)
     }
 
     fun stopAction() {

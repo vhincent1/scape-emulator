@@ -126,7 +126,7 @@ class PlayerSettings(val player: Player) {
         player.send(ConfigMessage(301, if (specialToggled) 1 else 0))
     }
 
-    fun setSpecToggle() {
+    fun toggleSpecialBar() {
         specialToggled = !specialToggled
         refreshSpecialBar()
     }

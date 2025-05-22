@@ -7,7 +7,6 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import net.scapeemulator.game.net.RsChannelInitializer
 import net.scapeemulator.game.net.http.HttpChannelInitializer
-import net.scapeemulator.util.NetworkConstants
 import java.net.InetSocketAddress
 import java.net.SocketAddress
 
@@ -30,11 +29,11 @@ class Network(gameServer: GameServer) {
         serviceBootstrap.childHandler(RsChannelInitializer(gameServer))
     }
 
-    fun start() {
-        httpBind(InetSocketAddress(NetworkConstants.HTTP_PORT))
-        httpBind(InetSocketAddress(NetworkConstants.HTTP_ALT_PORT))
-        serviceBind(InetSocketAddress(NetworkConstants.SSL_PORT))
-        serviceBind(InetSocketAddress(NetworkConstants.GAME_PORT))
+    fun start(game: Int, http: Int) {
+        httpBind(InetSocketAddress(http))
+//        httpBind(InetSocketAddress(NetworkConstants.HTTP_ALT_PORT))
+//        serviceBind(InetSocketAddress(NetworkConstants.SSL_PORT))
+        serviceBind(InetSocketAddress(game))
         logger.info { "Ready for connections." }
     }
 

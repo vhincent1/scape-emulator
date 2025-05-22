@@ -1,6 +1,9 @@
 package net.scapeemulator.game
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.required
 import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
@@ -30,7 +33,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
 
-class GameServer(loginAddress: SocketAddress) {
+class GameServer(worldId: Int, loginAddress: SocketAddress) {
 
     // server socket
     private val executor: ExecutorService = Executors.newCachedThreadPool()
@@ -55,7 +58,6 @@ class GameServer(loginAddress: SocketAddress) {
     val messageDispatcher: MessageDispatcher
     val plugins: PluginManager
 
-
     // network
     val network: Network
 
@@ -65,7 +67,6 @@ class GameServer(loginAddress: SocketAddress) {
         // todo: world list and game settings
 
         /* load landscape keys */
-//        println("Directory: "+System.getProperty("user.dir"))
         landscapeKeyTable = LandscapeKeyTable.open("data/landscape-keys")
 
         /* load game cache */
@@ -87,16 +88,14 @@ class GameServer(loginAddress: SocketAddress) {
         loginService = LoginService(serializer)
         updateService = UpdateService()
 
-
         /* load world */
-        world = World(1, loginService)
+        world = World(worldId, loginService)
 
         /* load plugins */
         plugins = PluginManager(this)
 
         /* start netty */
         network = Network(this)
-        network.start()
     }
 
     private fun start() {
@@ -119,7 +118,6 @@ class GameServer(loginAddress: SocketAddress) {
         gameExecutor.scheduleAtFixedRate(
             {
                 if (!world.isOnline) return@scheduleAtFixedRate
-
                 try {
                     val time = measureTimeMillis {
                         ++tick
@@ -138,13 +136,12 @@ class GameServer(loginAddress: SocketAddress) {
                 } catch (exception: Exception) {
                     logger.error(exception) { "Error occurred during game tick #$tick" }
                 }
-            },
-            600, 600, TimeUnit.MILLISECONDS
+            }, 600, 600, TimeUnit.MILLISECONDS
         )
     }
 
     private fun shutdown() {
-//        world.isOnline = false
+        world.isOnline = false
 
         //network.shutdown() //world.online=false
         //game.shutdown() //save players
@@ -153,7 +150,6 @@ class GameServer(loginAddress: SocketAddress) {
     @Throws(IOException::class, SQLException::class)
     private fun createPlayerSerializer(): PlayerSerializer {
         val properties = Properties()
-
         FileInputStream("data/serializer.conf").use { file ->
             properties.load(file)
         }
@@ -173,18 +169,43 @@ class GameServer(loginAddress: SocketAddress) {
 
     companion object {
         private val logger = KotlinLogging.logger {}
-        val INSTANCE: GameServer = GameServer(InetSocketAddress(NetworkConstants.LOGIN_PORT))
-        //   val plugins: PluginManager = PluginManager(INSTANCE)
+        var INSTANCE: GameServer? = null
 
         @JvmStatic
-        fun main(args: Array<String>) = try {
-            /* start server */
-            INSTANCE.start()
-//            PluginManager(INSTANCE)
-            /* shutdown hook */
-            Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
-        } catch (t: Throwable) {
-            logger.error(t) { "Failed to start server." }
+        fun main(args: Array<String>) {
+            val parser = ArgParser("GameServer")
+            val gamePort by parser.option(
+                ArgType.Int,
+                shortName = "port",
+                fullName = "game_port",
+                description = "The port"
+            ).required()
+            val world by parser.option(
+                ArgType.Int,
+                shortName = "world",
+                fullName = "world_id",
+                description = "The World ID"
+            ).required()
+            val httpPort by parser.option(
+                ArgType.Int,
+                shortName = "http",
+                fullName = "webserver",
+                description = "The http port"
+            ).required()
+            parser.parse(args)
+            try {
+                INSTANCE = GameServer(world, InetSocketAddress(NetworkConstants.LOGIN_PORT))
+                /* start server */
+                INSTANCE?.apply {
+                    start()
+                    network.start(gamePort, httpPort)
+                }
+                /* shutdown hook */
+                Runtime.getRuntime().addShutdownHook(Thread { INSTANCE?.shutdown() })
+            } catch (t: Throwable) {
+                logger.error(t) { "Failed to start server." }
+            }
         }
     }
 }
+

@@ -207,7 +207,6 @@ enum class WeaponClass(val tab: Int, vararg val attackStyles: AttackStyle) {
         fun getAttackStyle(tab: Int, setting: Int): AttackStyle {
             return getWeaponClass(tab).attackStyles[setting]
         }
-
     }
 
 }

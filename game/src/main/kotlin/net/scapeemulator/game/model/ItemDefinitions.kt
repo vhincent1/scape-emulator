@@ -169,15 +169,6 @@ data class ItemDefinition(
         return WeaponClass.UNARMED
     }
 
-    fun getAttackAnimation(style: Int): Int {
-        val anim: Int? = attackAnimations?.get(style)
-        var anims = emptyArray<Int>()
-        if (name.contains("warhammer")) {
-            arrayOf(400, 401)[style]
-        }
-        return anim ?: 424 // unarmed
-    }
-
     fun getStance(): Int {
         if (walkAnimation == 0) return 1426
         return renderAnimation

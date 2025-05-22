@@ -5,10 +5,8 @@ import net.scapeemulator.game.plugin.combat.CombatPlugin.CombatHandler
 
 class PluginManager(val server: GameServer) {
 
-    private val listeners: MutableList<PluginHandler> = ArrayList()
-    private fun addListener(listener: PluginHandler) {
-        listeners.add(listener)
-    }
+    internal val listeners: MutableList<PluginHandler> = ArrayList()
+    private fun addListener(listener: PluginHandler) = listeners.add(listener)
 
     init {
         addListener(LoginPlugin)
@@ -17,17 +15,15 @@ class PluginManager(val server: GameServer) {
         addListener(CombatHandler(server.world))
 
 //        var buttonCount = 0
-//        listeners.forEach { buttonCount = it.buttons().size }
+//        listeners.onEach { buttonCount = it.buttons().size }
         bind()
     }
 
     //todo check
-    fun notify(event: PluginEvent) {
-        listeners.onEach { listener -> listener.handle(event) }
-    }
+    fun notify(event: PluginEvent) = listeners.onEach { listener -> listener.handle(event) }
 
-    private fun bind() = listeners.forEach { listener ->
-        listener.buttons().forEach(server.messageDispatcher.buttonDispatcher::bind)
-        listener.commands().forEach(server.messageDispatcher.commandDispatcher::bind)
+    private fun bind() = listeners.onEach { listener ->
+        listener.buttons().onEach(server.messageDispatcher.buttonDispatcher::bind)
+        listener.commands().onEach(server.messageDispatcher.commandDispatcher::bind)
     }
 }

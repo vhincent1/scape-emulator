@@ -28,10 +28,10 @@ internal fun PluginHandler(
 
 internal fun PluginHandler(
     block: (PluginEvent) -> Unit,
-    cmdBlock: Array<CommandHandler> = emptyArray(),
-    buttonBlock: Array<ButtonHandler> = emptyArray(),
+    commandHandlers: Array<CommandHandler> = emptyArray(),
+    buttonHandlers: Array<ButtonHandler> = emptyArray(),
 ): PluginHandler {
-    return PluginHandler(block, {}, cmdBlock, buttonBlock)
+    return PluginHandler(block, {}, commandHandlers, buttonHandlers)
 }
 
 

@@ -30,8 +30,7 @@ class AttackButtonHandler(private val tab: Int, private val styles: IntArray, pr
             settings.toggleAutoRetaliating()
 
         if (slot == 8 || slot == 10 || slot == 11)
-            settings.setSpecToggle()
-
+            settings.toggleSpecialBar()
     }
 
     fun configureButton(interfaceId: Int, slot: Int) {
