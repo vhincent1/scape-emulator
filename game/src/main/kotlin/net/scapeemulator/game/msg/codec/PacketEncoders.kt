@@ -15,7 +15,7 @@ internal val SystemUpdateEncoder = handleEncoder(SystemUpdateMessage::class) { a
     return@handleEncoder builder.toGameFrame()
 }
 
-internal val MinimapStatus = handleEncoder(MiniMapStatusMessage::class) { alloc, message ->
+internal val MinimapStatusEncoder = handleEncoder(MiniMapStatusMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 192)
     builder.put(DataType.BYTE, message.setting)
     return@handleEncoder builder.toGameFrame()
@@ -60,8 +60,19 @@ internal val InteractionOptionEncoder = handleEncoder(InteractionOptionMessage::
     return@handleEncoder builder.toGameFrame()
 }
 
+//TODO doesn't work
 internal val WeightEncoder = handleEncoder(WeightMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 174)
-    builder.put(DataType.SHORT, message.weight)
+    builder.put(DataType.SHORT, 0.0)
+    return@handleEncoder builder.toGameFrame()
+}
+
+internal val AccessMaskEncoder = handleEncoder(AccessMaskMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 165)
+    builder.put(DataType.SHORT, DataOrder.LITTLE, 0)//packet count
+    builder.put(DataType.SHORT, DataOrder.LITTLE, message.length)
+    builder.put(DataType.INT, message.interfaceId shl 16 or message.child)
+    builder.put(DataType.SHORT, DataTransformation.ADD, message.offset)
+    builder.put(DataType.INT, DataOrder.MIDDLE, message.id)
     return@handleEncoder builder.toGameFrame()
 }

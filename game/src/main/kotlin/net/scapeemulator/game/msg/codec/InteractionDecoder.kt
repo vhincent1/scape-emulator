@@ -15,13 +15,13 @@ import net.scapeemulator.game.net.game.GameFrameReader
 //event.player.send(InteractionOptionMessage(4, "Hi")) //4
 //event.player.send(InteractionOptionMessage(6, "Request Assistance")) // 114 - req assist
 //event.player.send(InteractionOptionMessage(7, "Hi")) //175 whack/control
-const val PLAYER_OPTION_1 = 68 // attack player
-const val PLAYER_OPTION_2 = 106 // player option 2
-const val PLAYER_OPTION_3 = 71 // follow player
-const val PLAYER_OPTION_4 = 180 // trade player
-const val PLAYER_OPTION_5 = 4
-const val PLAYER_OPTION_6 = 114
-const val PLAYER_OPTION_7 = 175
+const val PLAYER_OPTION = 68 // attack player
+const val PLAYER_OPTION_1 = 106 // player option 1
+const val PLAYER_OPTION_2 = 71 // follow player
+const val PLAYER_OPTION_3 = 180 // trade player
+const val PLAYER_OPTION_4 = 4
+const val PLAYER_OPTION_5 = 114
+const val PLAYER_OPTION_6 = 175
 const val MAGIC_ON_PLAYER = 195 // magic on player
 
 typealias type = InteractionMessage.Type
@@ -30,41 +30,41 @@ typealias type = InteractionMessage.Type
 val NpcInteraction = MessageDecoder(3) { frame ->
     val reader = GameFrameReader(frame)
     val target = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD)
-    return@MessageDecoder InteractionMessage(type.NPC, target.toInt(), 1)
+    return@MessageDecoder InteractionMessage(type.NPC, target.toInt(), 0)
 }
 
-val PlayerInteraction1 = MessageDecoder(PLAYER_OPTION_1) { frame ->
+val PlayerInteraction1 = MessageDecoder(PLAYER_OPTION) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
-    return@MessageDecoder InteractionMessage(type.PLAYER, index, 1)
+    return@MessageDecoder InteractionMessage(type.PLAYER, index, 0)
 }
-val PlayerInteraction2 = MessageDecoder(PLAYER_OPTION_2) { frame ->
+val PlayerInteraction2 = MessageDecoder(PLAYER_OPTION_1) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT)
-    return@MessageDecoder InteractionMessage(type.PLAYER, index.toInt(), 2)
+    return@MessageDecoder InteractionMessage(type.PLAYER, index.toInt(), 1)
 }
-val PlayerInteraction3 = MessageDecoder(PLAYER_OPTION_3) { frame ->
+val PlayerInteraction3 = MessageDecoder(PLAYER_OPTION_2) { frame ->
+    val reader = GameFrameReader(frame)
+    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
+    return@MessageDecoder InteractionMessage(type.PLAYER, index, 2)
+}
+val PlayerInteraction4 = MessageDecoder(PLAYER_OPTION_3) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
     return@MessageDecoder InteractionMessage(type.PLAYER, index, 3)
 }
-val PlayerInteraction4 = MessageDecoder(PLAYER_OPTION_4) { frame ->
-    val reader = GameFrameReader(frame)
-    val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
-    return@MessageDecoder InteractionMessage(type.PLAYER, index, 4)
-}
-val PlayerInteraction5 = MessageDecoder(PLAYER_OPTION_5) { frame ->
+val PlayerInteraction5 = MessageDecoder(PLAYER_OPTION_4) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE).toInt()
-    return@MessageDecoder InteractionMessage(type.PLAYER, index, 5)
+    return@MessageDecoder InteractionMessage(type.PLAYER, index, 4)
 }
-val PlayerInteraction6 = MessageDecoder(PLAYER_OPTION_6) { frame ->
+val PlayerInteraction6 = MessageDecoder(PLAYER_OPTION_5) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD).toInt()
-    return@MessageDecoder InteractionMessage(type.PLAYER, index, 6)
+    return@MessageDecoder InteractionMessage(type.PLAYER, index, 5)
 }
-val PlayerInteraction7 = MessageDecoder(PLAYER_OPTION_7) { frame ->
+val PlayerInteraction7 = MessageDecoder(PLAYER_OPTION_6) { frame ->
     val reader = GameFrameReader(frame)
     val index = reader.getUnsigned(DataType.SHORT, DataTransformation.ADD).toInt()
-    return@MessageDecoder InteractionMessage(type.PLAYER, index, 7)
+    return@MessageDecoder InteractionMessage(type.PLAYER, index, 6)
 }

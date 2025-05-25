@@ -1,10 +1,7 @@
 package net.scapeemulator.game.util
 
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.msg.HintIconMessage
-import net.scapeemulator.game.msg.InteractionOptionMessage
-import net.scapeemulator.game.msg.ResetMinimapFlagMessage
-import net.scapeemulator.game.msg.ScriptMessage
+import net.scapeemulator.game.msg.*
 
 fun Player.sendHintIcon(slot: Int?, target: Int, entity: Entity) {
     fun freeSlot(): Int {
@@ -43,7 +40,7 @@ fun Player.sendPlayerOption(slot: Int, option: String) {
     send(InteractionOptionMessage(slot, option))
 }
 
-fun Player.displayEnterPrompt(prompt: String, type: RunScript.Type, block: (Player, Any) -> Unit) {
+fun Player.displayEnterPrompt(prompt: String, type: RunScriptType, block: (Player, Any) -> Unit) {
     send(ScriptMessage(type.id, type.types, prompt))
     runScript = RunScript(block)
 }
@@ -53,17 +50,29 @@ fun Mob.appendHit(damage: Int, type: HitType) {
     hitQueue.add(Hit(damage, type))
 }
 
-fun Mob.playAnim(id: Int, delay: Int = 0) {
+fun Mob.anim(id: Int, delay: Int = 0) {
     playAnimation(Animation(id, delay))
 }
 
-fun Mob.playGFX(id: Int, delay: Int = 0, height: Int = 0) {
+fun Mob.gfx(id: Int, delay: Int = 0, height: Int = 0) {
     playSpotAnimation(SpotAnimation(id, delay, height))
 }
 
-fun Player.specialBar(amount: Int, add: Boolean) {
-    settings.specialEnergy =
-        if (add) settings.specialEnergy.plus(amount)
-        else
-            settings.specialEnergy.minus(amount)
+fun Player.drainSpecial(amount: Int): Boolean {
+    if (!settings.specialToggled) return false
+    settings.toggleSpecialBar()
+    if (amount > settings.specialEnergy) {
+        sendMessage("You do not have enough special attack energy left.");
+        return false
+    }
+    settings.specialEnergy -= amount
+    return true
+}
+
+fun Player.weight(amount: Double) {
+    send(WeightMessage(amount))
+}
+
+fun Player.sendString(id: Int, line: Int, string: String) {
+    send(InterfaceTextMessage(id, line, string))
 }

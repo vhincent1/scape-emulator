@@ -30,9 +30,10 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
         if (player.isChatUpdated) addBlock(ChatPlayerBlock(player))
         if (player.isAnimationUpdated) addBlock(AnimationPlayerBlock(player))
         if (player.isSpotAnimationUpdated) addBlock(SpotAnimationPlayerBlock(player))
-        if (player.isHitUpdated) addBlock(HitBlock(player))
-        if (player.isHit2Updated) addBlock(HitSecondBlock(player))
+        if (player.isHitUpdated) addBlock(PlayerHitBlock(player))
+        if (player.isHit2Updated) addBlock(PlayerHitBlock2(player))
         if (player.isFacingUpdated) addBlock(FaceMobBlock(player))
+        if (player.isForceChatUpdated) addBlock(ForceChatBlock(player))
     }
 
 
@@ -94,12 +95,12 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
 		}	*/
 
             encodeBlock(message, blockBuilder, ChatPlayerBlock::class)
-            encodeBlock(message, blockBuilder, HitBlock::class)
+            encodeBlock(message, blockBuilder, PlayerHitBlock::class)
             encodeBlock(message, blockBuilder, AnimationPlayerBlock::class)
             encodeBlock(message, blockBuilder, AppearancePlayerBlock::class)
             encodeBlock(message, blockBuilder, FaceMobBlock::class)
-
-            encodeBlock(message, blockBuilder, HitSecondBlock::class)
+            encodeBlock(message, blockBuilder, ForceChatBlock::class)
+            encodeBlock(message, blockBuilder, PlayerHitBlock2::class)
             encodeBlock(message, blockBuilder, SpotAnimationPlayerBlock::class)
         }
     }

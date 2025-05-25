@@ -16,7 +16,6 @@ class Appearance(@JvmField val gender: Gender, val style: IntArray, val colours:
         if (gender == Gender.MALE) intArrayOf(2, 5, 8, 11, 14) else intArrayOf(2, 5, 8, 11, 14)
     )
 
-
 //    fun setColour(colour: Colour, value: Int) {
 //        colours[colour.ordinal] = value
 //    }

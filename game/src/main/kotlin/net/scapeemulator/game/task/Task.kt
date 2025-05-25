@@ -26,10 +26,10 @@ abstract class Task(delay: Int, immediate: Boolean) {
     }
 }
 
-fun Task(delay: Int, immediate: Boolean, block: (Int, Boolean) -> Unit): Task {
+fun Task(delay: Int, immediate: Boolean, block: Task.() -> Unit): Task {
     return object : Task(delay, immediate) {
         override fun execute() {
-            block(delay, immediate)
+            block(this)
         }
     }
 }

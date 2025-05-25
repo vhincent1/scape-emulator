@@ -3,7 +3,7 @@ package net.scapeemulator.game.model
 import net.scapeemulator.game.msg.*
 import java.util.*
 
-class InterfaceSet(private val player: Player) {
+class InterfaceSet( val player: Player) {
     enum class InterfaceType(
         private val fixedPanel: Int,
         private val resizablePanel: Int,
@@ -34,6 +34,7 @@ class InterfaceSet(private val player: Player) {
     var fullscreen: Int = -1
         private set
     var displayMode: DisplayMode = DisplayMode.FIXED
+    var current: Int = -1
 
     init {
         Arrays.fill(tabs, -1)
@@ -112,6 +113,7 @@ class InterfaceSet(private val player: Player) {
     }
 
     fun openWindow(id: Int) {
+        current = id
         if (this.displayMode == DisplayMode.FIXED) {
             // TODO: another source uses 16?
             player.send(InterfaceOpenMessage(Interface.FIXED, 11, id, 0))
@@ -124,6 +126,7 @@ class InterfaceSet(private val player: Player) {
     }
 
     fun openOverlay(id: Int) {
+        current = id
         if (this.displayMode == DisplayMode.FIXED) {
             player.send(InterfaceOpenMessage(Interface.FIXED, 5, id, 1))
         } else {
@@ -227,4 +230,32 @@ class InterfaceSet(private val player: Player) {
 //        }
 //
 //    }
+    //    var lastLogin
+//    private fun lastLogin(): String {
+//        var lastLogin
+//        val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+//        val time: Long = lastLogin
+//        var diffDays: Long = -1
+//        if (time != -1L) {
+//            val currentTime = dateFormat.getCalendar().getTime().time
+//            diffDays = (currentTime - time) / (24 * 60 * 60 * 1000)
+//        }
+//        lastLogin = dateFormat.getCalendar().getTime().time
+//        if (diffDays < 0) {
+//            return "Welcome to !"
+//        }
+//        if (diffDays == 0L) {
+//            return "You last logged in <col=ff0000>earlier today."
+//        }
+//        if (diffDays == 1L) {
+//            return "You last logged in <col=ff0000> yesterday."
+//        }
+//        if (diffDays >= 2) {
+//            return "You last logged in <col=ff0000> " + diffDays + " days ago." // <col=000000>
+//            // from:
+//            // "+player.getDetails().getIp() + "
+//        }
+//        return null
+//    }
+
 }

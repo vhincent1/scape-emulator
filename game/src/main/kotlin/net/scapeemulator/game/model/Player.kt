@@ -27,36 +27,6 @@ class Player() : Mob() {
 
     var runScript: RunScript? = null
 
-//    var lastLogin
-//    private fun lastLogin(): String {
-//        var lastLogin
-//        val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-//        val time: Long = lastLogin
-//        var diffDays: Long = -1
-//        if (time != -1L) {
-//            val currentTime = dateFormat.getCalendar().getTime().time
-//            diffDays = (currentTime - time) / (24 * 60 * 60 * 1000)
-//        }
-//        lastLogin = dateFormat.getCalendar().getTime().time
-//        if (diffDays < 0) {
-//            return "Welcome to !"
-//        }
-//        if (diffDays == 0L) {
-//            return "You last logged in <col=ff0000>earlier today."
-//        }
-//        if (diffDays == 1L) {
-//            return "You last logged in <col=ff0000> yesterday."
-//        }
-//        if (diffDays >= 2) {
-//            return "You last logged in <col=ff0000> " + diffDays + " days ago." // <col=000000>
-//            // from:
-//            // "+player.getDetails().getIp() + "
-//        }
-//        return null
-//    }
-
-//    var nextAttack =-1
-
     val appearanceTickets: IntArray = IntArray(World.MAX_PLAYERS)
     var appearanceTicketCounter = 0
     var appearanceTicket: Int = nextAppearanceTicket()
@@ -75,6 +45,7 @@ class Player() : Mob() {
         }
 
     val isChatUpdated: Boolean get() = chatMessage != null
+
     var isRegionChanging: Boolean = false
     var lastKnownRegion: Position? = null
         set(lastKnownRegion) {
@@ -151,7 +122,6 @@ class Player() : Mob() {
 
     override val isRunning: Boolean
         get() = settings.running
-
 
     fun nextAppearanceTicket(): Int {
         if (++appearanceTicketCounter == 0)

@@ -26,6 +26,7 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
 
     //private val updater = PlayerUpdater(this)
 
+
     override fun sync(tick: Int) {
         if (!isOnline) return
         processLoginRequest()
@@ -38,7 +39,6 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
 
         taskScheduler.tick()
 
-//        players.processCombat() // WORKS
         players.preprocessPlayers()
         npcs.preprocessNpcs()
         for (player in players) {
@@ -56,6 +56,21 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
         * within the game logic processing code.
          */
         loginService.registerNewPlayers(this)
+    }
+
+    private fun processHitQueue(mob: Mob) {
+        for (i in 0..2 step 1) {
+            if (mob.hitQueue.peek() == null) continue
+            val hit = mob.hitQueue.poll()
+            val secondary = i == 1
+            if (secondary) {
+                mob.secondaryHit = hit
+                mob.isHit2Updated = true
+            } else {
+                mob.primaryHit = hit
+                mob.isHitUpdated = true
+            }
+        }
     }
 
     private fun ActorList<Player>.preprocessPlayers() {
@@ -76,18 +91,19 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
 //                val poll = hq.poll()
 //            }
 
-            for (i in 0..2 step 1) {
-                if (player.hitQueue.peek() == null) continue
-                val hit = player.hitQueue.poll()
-                val secondary = i == 1
-                if (secondary) {
-                    player.secondaryHit = hit
-                    player.isHit2Updated = true
-                } else {
-                    player.primaryHit = hit
-                    player.isHitUpdated = true
-                }
-            }
+//            for (i in 0..2 step 1) {
+//                if (player.hitQueue.peek() == null) continue
+//                val hit = player.hitQueue.poll()
+//                val secondary = i == 1
+//                if (secondary) {
+//                    player.secondaryHit = hit
+//                    player.isHit2Updated = true
+//                } else {
+//                    player.primaryHit = hit
+//                    player.isHitUpdated = true
+//                }
+//            }
+            processHitQueue(player)
 
         }
     }
@@ -97,6 +113,7 @@ class World(val worldId: Int, val loginService: LoginService) : SyncTask {
         for (npc in this) {
             if (npc == null) continue
             npc.walkingQueue.tick()
+            processHitQueue(npc)
         }
     }
 

@@ -3,36 +3,28 @@ package net.scapeemulator.game.msg
 import net.scapeemulator.game.model.Item
 import net.scapeemulator.game.model.SlottedItem
 
-data class InterfaceVisibleMessage(@JvmField val id: Int, @JvmField val slot: Int, @JvmField val isVisible: Boolean) :
+data class InterfaceVisibleMessage(val id: Int, val slot: Int, val isVisible: Boolean) :
     Message()
 
 class InterfaceClosedMessage : Message()
-data class InterfaceCloseMessage(@JvmField val id: Int, @JvmField val slot: Int) : Message()
+data class InterfaceCloseMessage(val id: Int, val slot: Int) : Message()
 
 //type = isWalkable
 data class InterfaceOpenMessage(
-    @JvmField val id: Int, @JvmField val slot: Int,
-    @JvmField val childId: Int,
-    @JvmField val type: Int
+    val id: Int, val slot: Int, val childId: Int, val type: Int
 ) : Message()
 
-data class InterfaceResetItemsMessage(@JvmField val id: Int, @JvmField val slot: Int) : Message()
-data class InterfaceItemsMessage(
-    @JvmField val id: Int,
-    @JvmField val slot: Int,
-    @JvmField val type: Int,
-    @JvmField val items: Array<Item?>
+data class InterfaceResetItemsMessage(val id: Int, val slot: Int) : Message()
+class InterfaceItemsMessage(
+    val id: Int, val slot: Int, val type: Int, val items: Array<Item?>
 ) : Message()
 
-data class InterfaceRootMessage(@JvmField val id: Int, @JvmField val type: Int) : Message()
-data class InterfaceSlottedItemsMessage(
-    @JvmField val id: Int,
-    @JvmField val slot: Int,
-    @JvmField val type: Int,
-    @JvmField val items: Array<SlottedItem>
+data class InterfaceRootMessage(val id: Int, val type: Int) : Message()
+class InterfaceSlottedItemsMessage(
+    val id: Int, val slot: Int, val type: Int, val items: Array<SlottedItem>
 ) : Message()
 
-data class InterfaceTextMessage(@JvmField val id: Int, @JvmField val slot: Int, @JvmField val text: String) : Message()
+data class InterfaceTextMessage(val id: Int, val slot: Int, val text: String) : Message()
 data class AnimateInterfaceMessage(
-    @JvmField val animationId: Int, @JvmField val interfaceId: Int, @JvmField val childId: Int
+    val animationId: Int, val interfaceId: Int, val childId: Int
 ) : Message()

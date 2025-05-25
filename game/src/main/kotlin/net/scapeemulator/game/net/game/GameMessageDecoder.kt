@@ -12,7 +12,6 @@ class GameMessageDecoder(private val codecs: CodecRepository) : MessageToMessage
     @Throws(IOException::class)
     public override fun decode(ctx: ChannelHandlerContext, frame: GameFrame, out: MessageBuf<Any>) {
         val decoder = codecs.get(frame.opcode)
-
         //TODO check
         if (decoder == null) {
             logger.warn { "No decoder for packet id " + frame.opcode + "." }

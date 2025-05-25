@@ -2,7 +2,6 @@ package net.scapeemulator.game.button
 
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.Tab
-import net.scapeemulator.game.model.WeaponClass
 
 class AttackButtonHandler(private val tab: Int, private val styles: IntArray, private val autoRetaliate: Int) :
     ButtonHandler(tab) {
@@ -21,22 +20,16 @@ class AttackButtonHandler(private val tab: Int, private val styles: IntArray, pr
 
         //INDEX = settings.attackStyle <-- attackSlot
         //attackStyles[INDEX] = AttackStyle(CombatSkill, CombatStyle)
-        val e = WeaponClass.getAttackStyle(tab, settings.attackStyle)
-
-        println("ATTACK STYLE:  ${e.style}")
-        println("SETTINGS STYLE: ${settings.attackStyle}")
+//        val e = WeaponClass.getAttackStyle(tab, settings.attackStyle)
+//
+//        println("ATTACK STYLE:  ${e.style}")
+//        println("SETTINGS STYLE: ${settings.attackStyle}")
 
         if (slot == autoRetaliate)
             settings.toggleAutoRetaliating()
 
         if (slot == 8 || slot == 10 || slot == 11)
             settings.toggleSpecialBar()
-    }
-
-    fun configureButton(interfaceId: Int, slot: Int) {
-        interfaceId
-
-        //  val style = WeaponClass.forTab(tab, slot)
 
 
     }

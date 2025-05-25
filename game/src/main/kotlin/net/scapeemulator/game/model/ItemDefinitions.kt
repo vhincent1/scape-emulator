@@ -60,6 +60,8 @@ object ItemDefinitions {
         }
         return definitions[id]
     }
+
+    fun getDefinitions() = definitions
 }
 
 data class SpecialHandler(val item: Int)
@@ -116,7 +118,8 @@ data class ItemDefinition(
     val renderAnimation: Int,
     val attackAnimations: IntArray?,
     val attackSounds: IntArray?,
-    val maleWornModelId1: Int
+    val maleWornModelId1: Int,
+    val unnoted: Boolean,
 ) {
 
     fun <V> getConfig(key: String, fail: V): V {

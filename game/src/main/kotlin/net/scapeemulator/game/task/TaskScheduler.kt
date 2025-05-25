@@ -30,7 +30,7 @@ class TaskScheduler {
 
     fun tick() {
         lock.lock()
-        var taskz: ArrayList<Task?>?
+        val taskz: ArrayList<Task?>
         try {
             taskz = ArrayList(tasks)
         } finally {

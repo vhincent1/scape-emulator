@@ -30,6 +30,7 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
     }
 
     override fun channelClosed() {
+        println("Channel closed ${player.username}")
         server.loginService.addLogoutRequest(player)
     }
 
@@ -37,11 +38,6 @@ class GameSession(server: GameServer, channel: Channel, private val player: Play
 
     fun processMessageQueue() {
         synchronized(messages) {
-
-//            var message: Message? //todo check
-//            while (messages.poll().also { message = it } != null)
-//                if (message != null) dispatcher.dispatch(player, message)
-
             for (i in 0 until 10) {
                 val message = messages.poll() ?: break
                 dispatcher.dispatch(player, message)

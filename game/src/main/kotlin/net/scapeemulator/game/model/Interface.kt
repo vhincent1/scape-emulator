@@ -12,20 +12,21 @@ object Interface {
     const val WORLD_MAP: Int = 755
 
     /* tabs */
-    const val SKILLS: Int = 320
-    const val QUESTS: Int = 274
     const val INVENTORY: Int = 149
-    const val EQUIPMENT: Int = 387
-    const val PRAYER: Int = 271
+    const val LOGOUT: Int = 182
+    const val MUSIC: Int = 187
     const val MAGIC: Int = 192
-    const val SUMMONING: Int = 662
+    const val SETTINGS: Int = 261
+    const val PRAYER: Int = 271
+    const val QUESTS: Int = 274
+    const val SKILLS: Int = 320
+    const val EQUIPMENT: Int = 387
+    const val EMOTES: Int = 464
     const val FRIENDS: Int = 550
     const val IGNORES: Int = 551
     const val CLAN: Int = 589
-    const val SETTINGS: Int = 261
-    const val EMOTES: Int = 464
-    const val MUSIC: Int = 187
-    const val LOGOUT: Int = 182
+    const val SUMMONING: Int = 662
+
 
     /* attack tabs */
     const val ATTACK_AXE: Int = 75
@@ -49,13 +50,53 @@ object Interface {
     const val ATTACK_WHIP: Int = 93
 
     /* orbs */
+    const val SUMMONING_ORB: Int = 747
     const val HITPOINTS_ORB: Int = 748
     const val PRAYER_ORB: Int = 749
     const val ENERGY_ORB: Int = 750
-    const val SUMMONING_ORB: Int = 747
 
     /* windows */
     const val DISPLAY_SETTINGS: Int = 742
     const val AUDIO_SETTINGS: Int = 743
 
 }
+//fun main() {
+//    val attackTabs = arrayOf(
+//        SKILLS,
+//        QUESTS,
+//        INVENTORY,
+//        EQUIPMENT,
+//        PRAYER,
+//        MAGIC,
+//        SUMMONING,
+//        FRIENDS,
+//        IGNORES,
+//        CLAN,
+//        SETTINGS,
+//        EMOTES,
+//        MUSIC,
+//        LOGOUT
+//    )
+//    println(attackTabs.sorted())
+//
+//
+//    val map = LinkedHashMap<String, Int>()
+//    Interface::class.memberProperties.map {
+////        println(it.name)
+////        println(it.call(it))
+//        val name = it.name
+//        val value = it.getter.call() as Int
+//        if (attackTabs.contains(value)) map.put(name, value)
+//    }
+//
+//    val sortedMap = map.toSortedMap()
+//    println(sortedMap)
+//
+//    // Sort by values
+//    val sortedByValue = map.toList().sortedBy { it.second }
+//    println("\nSorted by value:")
+//    sortedByValue.forEach { (key, value) ->
+//        println("const val $key: Int = $value")
+//    }
+//
+//}

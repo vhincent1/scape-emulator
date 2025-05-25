@@ -2,7 +2,7 @@ package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.plugin.combat.CombatPlugin.CombatHandler
-import net.scapeemulator.game.plugin.interfaces.EquipmentPlugin
+import net.scapeemulator.game.plugin.rsinterface.EquipmentPlugin
 
 class PluginManager(val server: GameServer) {
     internal val plugins: MutableList<PluginHandler> = ArrayList()
@@ -13,7 +13,7 @@ class PluginManager(val server: GameServer) {
         add(UtilPlugin(server.world))
         add(CharDesignPlugin)
         add(CombatHandler(server.world))
-        add(EquipmentPlugin)
+        add(EquipmentPlugin.plugin)
 
 //        var buttonCount = 0
 //        listeners.onEach { buttonCount = it.buttons().size }

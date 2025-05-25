@@ -7,8 +7,6 @@ import java.util.*
 abstract class Mob() : Entity() {
     @JvmField
     var index: Int = 0
-    var isTeleporting: Boolean = false
-        protected set
 
     @JvmField
     val walkingQueue: WalkingQueue = WalkingQueue(this)
@@ -16,21 +14,39 @@ abstract class Mob() : Entity() {
     var secondDirection: Direction = Direction.NONE
         protected set
     var mostRecentDirection: Direction = Direction.SOUTH
-//        protected set
 
     @JvmField
     val skillSet: SkillSet = SkillSet()
+
+    /* update masks */
+    var isTeleporting: Boolean = false
+        protected set
     var animation: Animation? = null
         protected set
     var spotAnimation: SpotAnimation? = null
         protected set
-
     var hitQueue: Queue<Hit> = LinkedList()
     var primaryHit: Hit? = null
     var secondaryHit: Hit? = null
+    val isAnimationUpdated: Boolean get() = animation != null
+    val isSpotAnimationUpdated: Boolean get() = spotAnimation != null
+    var isHitUpdated = false
 
+    //        get() = primaryHit != null
+    var isHit2Updated = false
+
+    //        get() = secondaryHit != null
+    var focus: Mob? = null
+        set(value) {
+            field = value
+            isFacingUpdated = true
+        }
+    var isFacingUpdated: Boolean = false
+    var forceChat: String = ""
+    val isForceChatUpdated: Boolean get() = forceChat.isNotEmpty()
+
+    /**/
     protected var action: Action<*>? = null
-
     fun resetId() {
         this.index = 0
     }
@@ -44,9 +60,7 @@ abstract class Mob() : Entity() {
             stopAction()
         }
         this.action = action
-        //todo
-
-        GameServer.INSTANCE!!.world.taskScheduler.schedule(action)
+        GameServer.INSTANCE.world.taskScheduler.schedule(action)
     }
 
     fun stopAction() {
@@ -66,29 +80,9 @@ abstract class Mob() : Entity() {
     fun setDirections(firstDirection: Direction, secondDirection: Direction) {
         this.firstDirection = firstDirection
         this.secondDirection = secondDirection
-
         if (secondDirection != Direction.NONE) mostRecentDirection = secondDirection
         else if (firstDirection != Direction.NONE) mostRecentDirection = firstDirection
     }
-
-    val isAnimationUpdated: Boolean
-        get() = animation != null
-
-    val isSpotAnimationUpdated: Boolean
-        get() = spotAnimation != null
-
-    var isHitUpdated = false
-
-    //        get() = primaryHit != null
-    var isHit2Updated = false
-//        get() = secondaryHit != null
-
-    var face: Mob? = null
-        set(value) {
-            field = value
-            isFacingUpdated = true
-        }
-    var isFacingUpdated: Boolean = false
 
     fun playAnimation(animation: Animation?) {
         this.animation = animation

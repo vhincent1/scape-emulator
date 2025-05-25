@@ -198,14 +198,14 @@ enum class WeaponClass(val tab: Int, vararg val attackStyles: AttackStyle) {
         //tab, settings.attackStyle
         val logger = KotlinLogging.logger {}
 
-        fun getWeaponClass(tab: Int): WeaponClass {
+        fun getClass(tab: Int): WeaponClass {
             //todo log unknown
             val find = entries.find { it.tab == tab }
             return find ?: UNARMED
         }
 
-        fun getAttackStyle(tab: Int, setting: Int): AttackStyle {
-            return getWeaponClass(tab).attackStyles[setting]
+        fun getStyle(tab: Int, setting: Int): AttackStyle {
+            return getClass(tab).attackStyles[setting]
         }
     }
 

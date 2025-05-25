@@ -85,7 +85,8 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
 
         if (oldPlayers.isEmpty()) return@synchronized
         oldPlayers.onEach { player ->
-            val rem = world.players.remove(player)//check
+            println("Logging out ${player.username}")
+            world.players.remove(player)//todo check
             player.resetId()
 //            println("Remove $rem index=${player.index}")
 //                connectionList.remove((player.session.channel.remoteAddress() as InetSocketAddress).address.toString())

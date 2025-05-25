@@ -37,10 +37,8 @@ object Equipment {
         val originalWeapon = equipment.get(WEAPON)
         val lastSlot = slot
 
-        val item = inventory.get(slot)
-        if (item == null) return
-        val def = item.definition
-        if (def == null) return
+        val item = inventory.get(slot) ?: return
+        val def = item.definition ?: return
 
         val targetSlot = def.equipmentSlot
         val unequipShield = def.equipmentSlot == WEAPON
@@ -110,6 +108,7 @@ object Equipment {
 //        println("WeaponChanged ATK STYLE: " + player.settings.attackStyle)
 //        player.settings.attackStyle = 0
         openAttackTab(player)
+        //todo Combat Handler
     }
 
     fun openAttackTab(player: Player) {
@@ -121,9 +120,6 @@ object Equipment {
         if (weapon != null && def != null) {
             name = def.name
             weaponClass = def.getWeaponClass()
-
-            //special bar
-//            player.settings.refreshSpecialBar()
             player.send(
                 InterfaceVisibleMessage(
                     weaponClass.tab,
@@ -131,17 +127,14 @@ object Equipment {
                     def.hasSpecial
                 )
             )
-
         } else {
             name = "Unarmed"
             weaponClass = WeaponClass.UNARMED
         }
+        player.settings.weaponClass = weaponClass
 
         val tab = weaponClass.tab
-//        println("WeaponClass: " + weaponClass.name)
-//        println("TAB: " + tab)
         player.interfaceSet.openTab(Tab.ATTACK, tab)
         player.send(InterfaceTextMessage(tab, 0, name))
-
     }
 }

@@ -67,8 +67,6 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
             GameMessageDecoder(server.codecRepository)
         )
 
-
-
         if (displayMode == 0 || displayMode == 1)
             player.interfaceSet.displayMode = InterfaceSet.DisplayMode.FIXED
         else
@@ -85,7 +83,6 @@ class LoginSession(server: GameServer, channel: Channel) : Session(server, chann
 //        Player(account, world, session)
         //world.requestLogin
         player.login()
-
         /* plugin event */
         server.plugins.notify(LoginEvent(player))
     }

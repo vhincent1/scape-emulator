@@ -12,6 +12,6 @@ val EnterAmountDecoder = MessageDecoder(23) { frame ->
 
 val EnterTextDecoder = MessageDecoder(244) { frame ->
     val value = GameFrameReader(frame).getSigned(DataType.LONG)
+    //length < 6 crashes
     return@MessageDecoder RunScriptMessage(Base37Utils.decodeBase37(value))
 }
-

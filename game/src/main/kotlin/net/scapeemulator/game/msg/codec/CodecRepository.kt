@@ -44,8 +44,6 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(IdleLogoutMessageDecoder)
         bind(ButtonMessageDecoder)
         bind(ExtendedButtonMessageDecoder)
-
-
         bind(PlayerInteraction1)
         bind(PlayerInteraction2)
         bind(PlayerInteraction3)
@@ -53,10 +51,7 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(PlayerInteraction5)
         bind(PlayerInteraction6)
         bind(PlayerInteraction7)
-
 //        bind(InterfaceOptionMessageDecoder())
-
-
         bind(walkMessageDecoder(39))
         bind(walkMessageDecoder(77))
         bind(walkMessageDecoder(215))
@@ -78,16 +73,15 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(ObjectOptionTwoMessageDecoder)
         bind(EnterAmountDecoder)
         bind(EnterTextDecoder)
-        bind(WeightEncoder)
-
         bind(NpcInteraction)
+
         /* encoders */
         bind(RegionChangeEncoder(table))
-        bind(InterfaceRootEncoder)
-        bind(InterfaceOpenEncoder)// 155 sendInterface
-        bind(InterfaceCloseEncoder)
-        bind(InterfaceVisibleEncoder)//21, interfaceConfig
-        bind(InterfaceTextEncoder)
+        bind(RootInterfaceEncoder)
+        bind(OpenInterfaceEncoder)// 155 sendInterface
+        bind(CloseInterfaceEncoder)
+        bind(VisibleInterfaceEncoder)//21, interfaceConfig
+        bind(TextInterfaceEncoder)
         bind(InterfaceItemsMessageEncoder)
         bind(InterfaceSlottedItemsEncoder)
         bind(InterfaceResetItemsEncoder)
@@ -107,7 +101,9 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(ScriptIntMessageEncoder)
         bind(DisplayModelEncoder)
         bind(HintArrowEncoder)
-        bind(MinimapStatus)
+        bind(MinimapStatusEncoder)
+        bind(WeightEncoder)
+        bind(AccessMaskEncoder)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix

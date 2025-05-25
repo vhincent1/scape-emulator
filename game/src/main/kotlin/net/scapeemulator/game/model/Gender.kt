@@ -17,6 +17,9 @@ enum class Body(val maleIds: IntArray, private val femaleIds: IntArray) {
 
             // 244 bald?
 //            269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280
+
+            //484 spikes
+            //todo find new hairstyles
         )
     ),
     FACIAL(

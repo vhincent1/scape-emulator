@@ -80,13 +80,11 @@ Body:-
 NEED TO DO.
 
 */
+
+//TODO disable minimap walking on fullscreen interface
 object CharDesign {
 
     private val attributes: MutableMap<String, Any> = HashMap()
-
-    fun <T> getAttribute(username: String, key: String, default: T): T {
-        return (attributes[username + key] ?: default) as T
-    }
 
     fun open(player: Player) {
         println("Open")
@@ -98,10 +96,12 @@ object CharDesign {
     }
 
     //TODO: fix
-    private fun updateLook(player: Player, body: Body, increment: Boolean) {
+    private fun updateLook(player: Player, body: Body, increment: Boolean = true, randomise: Boolean = false) {
         val type = "char-design:look" + body.ordinal
         println("TYPE: $type")
+
         val max = body.getIds(player.appearance.gender).size - 1
+
         println("Max: $max")
         println("Incr: increment: $increment")
 //        var value: Int = player.appearance.getBody(body) + (if (increment) 1 else -1)
@@ -112,26 +112,24 @@ object CharDesign {
             value = max
         else if (value > max)
             value = 0
+
+
         println("Index: $value")
 
         val bodyIds = body.getIds(player.appearance.gender)
-        val bodyPart = bodyIds[value]
+        val bodyPart = if (randomise) bodyIds.random() else bodyIds[value]
 
         println("${body.name}=${bodyPart}")
 
         attributes.put(player.username + body.name, bodyPart)
         attributes.put(player.username + type, value)
-
-        player.appearance = player.appearance.apply {
-            setBody(body, bodyPart)
-        }
+        player.appearance = player.appearance.apply { setBody(body, bodyPart) }
     }
 
     fun handleButtons(player: Player, buttonId: Int) {
         when (buttonId) {
-            37, 40 -> {
-                player.settings.toggleTwoButtonMouse()
-            }
+            // mouse buttons
+            37, 40 -> player.settings.toggleTwoButtonMouse()
             // gender
             49, 52 -> {
                 val female = buttonId == 52
@@ -140,33 +138,19 @@ object CharDesign {
                 player.send(ConfigMessage(1262, if (female) 8 else 1))
             }
             // head
-            92, 93 -> {
-                updateLook(player, Body.HEAD, buttonId == 93)
-            }
+            92, 93 -> updateLook(player, Body.HEAD, buttonId == 93)
             // beard
-            97, 98 -> {
-                updateLook(player, Body.FACIAL, buttonId == 98)
-            }
+            97, 98 -> updateLook(player, Body.FACIAL, buttonId == 98)
             // torso
-            341, 342 -> {
-                updateLook(player, Body.TORSO, buttonId == 342)
-            }
+            341, 342 -> updateLook(player, Body.TORSO, buttonId == 342)
             // arms
-            345, 346 -> {
-                updateLook(player, Body.ARMS, buttonId == 346)
-            }
+            345, 346 -> updateLook(player, Body.ARMS, buttonId == 346)
             //hands
-            349, 350 -> {
-                updateLook(player, Body.HANDS, buttonId == 350)
-            }
+            349, 350 -> updateLook(player, Body.HANDS, buttonId == 350)
             // legs
-            353, 354 -> {
-                updateLook(player, Body.LEGS, buttonId == 354)
-            }
+            353, 354 -> updateLook(player, Body.LEGS, buttonId == 354)
             // feet
-            357, 358 -> {
-                updateLook(player, Body.FEET, buttonId == 358)
-            }
+            357, 358 -> updateLook(player, Body.FEET, buttonId == 358)
             // accept design
             362 -> {
                 player.interfaceSet.close()
@@ -182,13 +166,13 @@ object CharDesign {
 //                }
             }
 
-            169 -> {
-                //randomise head
-            }
+            //randomise head
+            169 -> updateLook(player, Body.HEAD, true)
+
             // randomise
             321 -> {
                 player.appearance = generateAppearance()
-                player.send(ConfigMessage(1260, 0)) //0 off 1 on
+                player.send(ConfigMessage(1260, 1)) //0 off 1 on
             }
 
             else -> {
@@ -221,22 +205,16 @@ fun copy(player: Player, newAppearance: Appearance) {
 private val charDesign = CharDesign
 val CharDesignPlugin = PluginHandler(
     { event ->
-        if (event is MessageEvent) {
-            if (event.message is ExtendedButtonMessage) {
-                charDesign.handleButtons(event.player, event.message.slot)
-            }
-        }
-        if (event is LoginEvent) {
-            event.player.appearance = Appearance(Gender.FEMALE)
-//            copy(event.player, FEMALE_APPEARANCE) //generateAppearance()
-        }
-
+        if (event is LoginEvent) event.player.appearance = Appearance(Gender.FEMALE)
+        if (event !is MessageEvent) return@PluginHandler
+        if (event.message !is ExtendedButtonMessage) return@PluginHandler
+        charDesign.handleButtons(event.player, event.message.slot)
     }, arrayOf(
         CommandHandler("char") { player, args ->
             charDesign.open(player)
         },
         CommandHandler("c") { player, args ->
-            println(charDesign.getAttribute(player.username, "char-design:look0", 0))
+            //       println(charDesign.getAttribute(player.username, "char-design:look0", 0))
         },
         CommandHandler("gender") { player, args ->
             player.appearance = if (player.appearance.gender == Gender.MALE)
@@ -266,11 +244,11 @@ val CharDesignPlugin = PluginHandler(
 //            player.appearance.setBody(Body.HEAD, value)
         },
         CommandHandler("gc") { player, args ->
-            Body.values().forEach { body ->
+            Body.entries.forEach { body ->
                 val i = player.appearance.getBody(body)
                 println("style[${body.name}] = ${i}")
             }
-            Colour.values().forEach { color ->
+            Colour.entries.forEach { color ->
                 val i = player.appearance.getColor(color)
 //                println("style[${body.name}] = ${value}")
             }

@@ -4,6 +4,7 @@ import net.scapeemulator.game.msg.ConfigMessage
 import net.scapeemulator.game.msg.ScriptMessage
 
 class PlayerSettings(val player: Player) {
+    var weaponClass: WeaponClass? = null
     var attackStyle = 0
         set(value) {
             field = value
