@@ -17,7 +17,7 @@ fun Combat.autoRetaliate() {
     if (target is Player) {
         if (target.settings.autoRetaliating) {
             if (target.combat() == null)
-                target.setCombat(Combat(target, source))
+                target.setCombat(Combat(target, source!!))
         }
     }
 }

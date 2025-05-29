@@ -39,7 +39,6 @@ object CombatPlugin {
                     if (isEmpty()) return
                     for (player in this) {
                         if (player == null) continue
-//                        combat(player)?.tick()
                         player.combat()?.tick()
                     }
                 }
@@ -65,7 +64,7 @@ object CombatPlugin {
                     }
 
                     // reset facing
-                    is WalkMessage -> if (player.focus != null) player.focus = null
+                    is WalkMessage -> if (player.faceMob != null) player.faceMob = null
 
                     /* equipment change */
                     is ButtonMessage -> {//--------------
@@ -86,10 +85,10 @@ object CombatPlugin {
             },
             commands = arrayOf(CommandHandler("c") { player, strings ->
                 combat(player)?.stop()
-                world.players.filter { it != null }.onEach { p ->
+                world.players.onEach { p ->
                     println("${p?.username}=${p?.index}")
                 }
-                world.npcs.filter { it != null }.onEach { npc ->
+                world.npcs.onEach { npc ->
                     println("NPC=${npc?.index} loc=${npc?.position?.x} ${npc?.position?.y}")
                 }
             })

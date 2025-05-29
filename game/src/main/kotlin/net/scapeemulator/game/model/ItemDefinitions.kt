@@ -1,78 +1,83 @@
 package net.scapeemulator.game.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
+import net.scapeemulator.cache.Archive
+import net.scapeemulator.cache.Cache
+import net.scapeemulator.cache.Container
+import net.scapeemulator.cache.ReferenceTable
 import java.io.File
+import java.io.IOException
 import java.util.*
 
+//todo item durability
 object ItemDefinitions {
     private val logger = KotlinLogging.logger {}
-    private lateinit var definitions: MutableMap<Int, ItemDefinition>
 
-//    @JvmStatic
-//    @Throws(IOException::class)
-//    fun init(cache: Cache) {
-//        var count = 0
-//
-//        val tableContainer = Container.decode(cache.store.read(255, 19))
-//        val table = ReferenceTable.decode(tableContainer.getData())
-//
-//        val files = table.capacity()
-////        definitions = arrayOfNulls(files * 256)
-//
-//        for (file in 0..<files) {
-//            val entry = table.getEntry(file)
-//            if (entry == null) continue
-//
-//            val archive = Archive.decode(cache.read(19, file).getData(), entry.size())
-//            var nonSparseMember = 0
-//            for (member in 0..<entry.capacity()) {
-//                val childEntry = entry.getEntry(member)
-//                if (childEntry == null) continue
-//
-//                val id = file * 256 + member
-//                val definition = ItemDefinition.decode(archive.getEntry(nonSparseMember++)!!)
-//
-//                definitions[id] = definition
-//                count++
-//            }
-//        }
-//        logger.info { "Loaded $count item definitions." }
-//    }
+    //    private lateinit var definitions: MutableMap<Int, ItemDefinition>
+    private lateinit var definitions: Array<ItemDefinition>
+
+    @JvmStatic
+    @Throws(IOException::class)
+    fun initi(cache: Cache) {
+        var count = 0
+        val tableContainer = Container.decode(cache.store.read(255, 19))
+        val table = ReferenceTable.decode(tableContainer.getData())
+        val files = table.capacity()
+//        definitions = arrayOfNulls(files * 256)
+
+        for (file in 0..<files) {
+            val entry = table.getEntry(file) ?: continue
+
+            val archive = Archive.decode(cache.read(19, file).getData(), entry.size())
+            var nonSparseMember = 0
+            for (member in 0..<entry.capacity()) {
+                val childEntry = entry.getEntry(member) ?: continue
+
+                val id = file * 256 + member
+                val definition =
+                    net.scapeemulator.cache.def.ItemDefinition.decode(id, archive.getEntry(nonSparseMember++)!!)
+
+//                definitions[id] = definition(id)
+                count++
+            }
+        }
+        logger.info { "Loaded $count item definitions." }
+    }
 
     fun init(file: File) {
         val mapper: ObjectMapper = jacksonObjectMapper()
-        val map: MutableMap<Int, ItemDefinition> =
-            mapper.readValue(
-                file,
-                object : TypeReference<MutableMap<Int, ItemDefinition>>() {}
-            )
+//        val map: MutableMap<Int, ItemDefinition> =
+//            mapper.readValue(file, object : TypeReference<MutableMap<Int, ItemDefinition>>() {})
+        //        definitions = map
+        val map: Array<ItemDefinition> = mapper.readValue(file, object : TypeReference<Array<ItemDefinition>>() {})
         definitions = map
         logger.info { "Loaded ${definitions.size} item definitions" }
     }
 
     fun forId(id: Int): ItemDefinition? {
-        if (definitions[id] == null) {
-            logger.debug { "Unknown item definition $id" }
-        }
-        return definitions[id]
+        val find = definitions.find { it.id == id }
+        if (find == null) logger.debug { "Unknown item definition $id" }
+        return find
     }
 
     fun getDefinitions() = definitions
 }
 
-data class SpecialHandler(val item: Int)
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ItemDefinition(
-    val id: Integer,
+    val id: Int,
     val name: String,
     val examine: String,
     val options: Set<String>,
-    val configurations: Map<String, Object>,
+//    val configurations: Map<String, Object>,
     val stackable: Boolean,
     val value: Int,
     val membersOnly: Boolean,
@@ -83,69 +88,76 @@ data class ItemDefinition(
     val inventoryOptions: Set<String>,
     val maxValue: Int,
     val minValue: Int,
-    private val tradeable: Boolean,
-    private val isFullHelm: Boolean,
-    private val isFullMask: Boolean,
-    private val isFullBody: Boolean,
+    var tradeable: Boolean?,
+    var isFullHelm: Boolean?,
+    var isFullMask: Boolean?,
+    var isFullBody: Boolean?,
     val lendable: Boolean,
     val highAlchemy: Int,
     val lowAlchemy: Int,
     val destroyable: Boolean,
-    val shopPrice: Int,
-    val grandExchangePrice: Int,
     val weight: Double,
     val bonuses: IntArray?,
     val absorb: IntArray?,
     val isTwoHand: Boolean,
     val equipmentSlot: Int,
-    val attackSpeed: Int,
-    val standAnimation: Int,
-    val standTurnAnimation: Int,
-    val walkAnimation: Int?,
-    val runAnimation: Int,
-    val turn180Animation: Int,
-    val turn90CWAnimation: Int,
-    val turn90CCWAnimation: Int,
-    val weaponInterface: Int,
+    var attackSpeed: Int?,
+    var standAnimation: Int?,
+    var standTurnAnimation: Int?,
+    var walkAnimation: Int?,
+    var runAnimation: Int?,
+    var turn180Animation: Int?,
+    var turn90CWAnimation: Int?,
+    var turn90CCWAnimation: Int?,
+    var weaponInterface: Int?,
     val hasSpecial: Boolean,
     val destroyMessage: String?,
-    val grandExchangeLimit: Int,
-    val defenseAnimation: Int,
-    val pointPrice: Int,
-    val tradeOverride: Boolean,
+    var shopPrice: Int?,
+    var grandExchangePrice: Int?,
+    var grandExchangeLimit: Int?,
+    var defenceAnimation: Int?,
+    var pointPrice: Int?,
+    var tradeOverride: Boolean?,
     val tokkulPrice: Int,
     val funWeapon: Boolean,
-    val renderAnimation: Int,
+    var renderAnimation: Int?,
     val attackAnimations: IntArray?,
     val attackSounds: IntArray?,
     val maleWornModelId1: Int,
     val unnoted: Boolean,
+    var alchemizable: Boolean?,
+    var defence_anim: Int?,
+    var equipSound: Int?
 ) {
 
-    fun <V> getConfig(key: String, fail: V): V {
-        val value = configurations[key] as V
-        return value ?: fail
-    }
+//    fun <V> getConfig(key: String, fail: V): V {
+//        val value = configurations[key] as V
+//        return value ?: fail
+//    }
 
-    fun isTradable(): Boolean {
-        return tradeable && getConfig(CONFIG_TRADEABLE, false)
-    }
+//    fun isTradable(): Boolean {
+//        return tradeable && getConfig(CONFIG_TRADEABLE, false)
+//    }
 
-    fun isFullHelm(): Boolean {
+    @JsonIgnore
+    fun isFullHelms(): Boolean {
         check(equipmentSlot == Equipment.HEAD)
-        return isFullHelm
+        return isFullHelm!!
     }
 
-    fun isFullMask(): Boolean {
+    @JsonIgnore
+    fun isFullMasks(): Boolean {
         check(equipmentSlot == Equipment.HEAD)
-        return isFullMask
+        return isFullMask!!
     }
 
-    fun isFullBody(): Boolean {
+    @JsonIgnore
+    fun isFullBodys(): Boolean {
         check(equipmentSlot == Equipment.BODY)
-        return isFullBody
+        return isFullBody!!
     }
 
+    @JsonIgnore
     fun getWeaponClass(): WeaponClass {
         check(equipmentSlot == Equipment.WEAPON)
         val name = name.lowercase(Locale.getDefault())
@@ -172,96 +184,112 @@ data class ItemDefinition(
         return WeaponClass.UNARMED
     }
 
+    @JsonIgnore
     fun getStance(): Int {
         if (walkAnimation == 0) return 1426
-        return renderAnimation
+        return renderAnimation!!
     }
 
-    companion object {
-        val CONFIG_TRADEABLE = "tradeable"
-        val CONFIG_LENDABLE = "lendable"
-        val CONFIG_DESTROY = "destroy"
-        val CONFIG_TWO_HANDED = "two_handed"
-        val CONFIG_HIGH_ALCHEMY = "high_alchemy"
-        val CONFIG_LOW_ALCHEMY = "low_alchemy"
-        val CONFIG_SHOP_PRICE = "shop_price"
-        val CONFIG_GE_PRICE = "grand_exchange_price"
-        val CONFIG_EXAMINE = "examine"
-        val CONFIG_WEIGHT = "weight"
-        val CONFIG_BONUS = "bonuses"
-        val CONFIG_ABSORB = "absorb"
-        val CONFIG_EQUIP_SLOT = "equipment_slot"
-        val CONFIG_ATTACK_SPEED = "attack_speed"
-
-        val CONFIG_STAND_ANIM = "stand_anim" //Animation.class
-        val CONFIG_STAND_TURN_ANIM = "stand-turn_anim"
-        val CONFIG_WALK_ANIM = "walk_anim"
-        val CONFIG_RUN_ANIM = "run_anim"
-        val CONFIG_TURN180_ANIM = "turn180_anim"
-        val CONFIG_TURN90CW_ANIM = "turn90cw_anim"
-        val CONFIG_TURN90CCW_ANIM = "turn90ccw_anim"
-        val CONFIG_WEAPON_INTERFACE = "weapon_interface"
-        val CONFIG_HAS_SPECIAL = "has_special"
-        val CONFIG_ATTACK_ANIMS = "attack_anims"
-        val CONFIG_DESTROY_MESSAGE = "destroy_message"
-        val CONFIG_REQUIREMENTS = "requirements"
-        val CONFIG_GE_LIMIT = "ge_buy_limit"
-        val CONFIG_DEFENCE_ANIMATION = "defence_anim"
-        val CONFIG_ATTACK_AUDIO = "attack_audios"
-        val CONFIG_POINT_PRICE = "point_price"
-        val CONFIG_SPAWNABLE = "spawnable"
-        val CONFIG_BANKABLE = "bankable"
-        val CONFIG_RARE_ITEM = "rare_item"
-        val CONFIG_TOKKUL_PRICE = "tokkul_price"
-
-        val CONFIG_RENDER_ANIM_ID = "render_anim"
-
+//    companion object {
+//        val CONFIG_TRADEABLE = "tradeable"
+//        val CONFIG_LENDABLE = "lendable"
+//        val CONFIG_DESTROY = "destroy"
+//        val CONFIG_TWO_HANDED = "two_handed"
+//        val CONFIG_HIGH_ALCHEMY = "high_alchemy"
+//        val CONFIG_LOW_ALCHEMY = "low_alchemy"
+//        val CONFIG_SHOP_PRICE = "shop_price"
+//        val CONFIG_GE_PRICE = "grand_exchange_price"
+//        val CONFIG_EXAMINE = "examine"
+//        val CONFIG_WEIGHT = "weight"
+//        val CONFIG_BONUS = "bonuses"
+//        val CONFIG_ABSORB = "absorb"
+//        val CONFIG_EQUIP_SLOT = "equipment_slot"
+//        val CONFIG_ATTACK_SPEED = "attack_speed"
+//
+//        val CONFIG_STAND_ANIM = "stand_anim" //Animation.class
+//        val CONFIG_STAND_TURN_ANIM = "stand-turn_anim"
+//        val CONFIG_WALK_ANIM = "walk_anim"
+//        val CONFIG_RUN_ANIM = "run_anim"
+//        val CONFIG_TURN180_ANIM = "turn180_anim"
+//        val CONFIG_TURN90CW_ANIM = "turn90cw_anim"
+//        val CONFIG_TURN90CCW_ANIM = "turn90ccw_anim"
+//        val CONFIG_WEAPON_INTERFACE = "weapon_interface"
+//        val CONFIG_HAS_SPECIAL = "has_special"
+//        val CONFIG_ATTACK_ANIMS = "attack_anims"
+//        val CONFIG_DESTROY_MESSAGE = "destroy_message"
+//        val CONFIG_REQUIREMENTS = "requirements"
+//        val CONFIG_GE_LIMIT = "ge_buy_limit"
+//        val CONFIG_DEFENCE_ANIMATION = "defence_anim"
+//        val CONFIG_ATTACK_AUDIO = "attack_audios"
+//        val CONFIG_POINT_PRICE = "point_price"
+//        val CONFIG_SPAWNABLE = "spawnable"
+//        val CONFIG_BANKABLE = "bankable"
+//        val CONFIG_RARE_ITEM = "rare_item"
+//        val CONFIG_TOKKUL_PRICE = "tokkul_price"
+//
+//        val CONFIG_RENDER_ANIM_ID = "render_anim"
+//
 //        @Suppress("unused")
 //        fun decode(buffer: ByteBuffer): ItemDefinition {
-//            def.groundOptions = arrayOf(null, null, "take", null, null)
-//            def.inventoryOptions = arrayOf(null, null, null, null, "drop")
+//
+//            var groundOptions = arrayOf(null, null, "take", null, null)
+//            var inventoryOptions = arrayOf(null, null, null, null, "drop")
 //            while (true) {
 //                val opcode = buffer.get().toInt() and 0xFF
 //                if (opcode == 0) break
-//                if (opcode == 1) def.inventoryModelId = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 2) def.name = getJagexString(buffer)
-//                else if (opcode == 4) def.modelZoom = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 5) def.modelRotation1 = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 6) def.modelRotation2 = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 7) {
-//                    def.modelOffset1 = buffer.getShort().toInt() and 0xFFFF
-//                    if (def.modelOffset1 > 32767) def.modelOffset1 -= 65536
-//                    def.modelOffset1 = def.modelOffset1 shl 0
+//                if (opcode == 1) {
+//                    val inventoryModelId = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 2) {
+//                    val name = getJagexString(buffer)
+//                } else if (opcode == 4) {
+//                    val modelZoom = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 5) {
+//                    val modelRotation1 = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 6) {
+//                    val modelRotation2 = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 7) {
+//                    var modelOffset1 = buffer.getShort().toInt() and 0xFFFF
+//                    if (modelOffset1 > 32767) modelOffset1 -= 65536
+//                    modelOffset1 = modelOffset1 shl 0
 //                } else if (opcode == 8) {
-//                    def.modelOffset2 = buffer.getShort().toInt() and 0xFFFF
-//                    if (def.modelOffset2 > 32767) def.modelOffset2 -= 65536
-//                    def.modelOffset2 = def.modelOffset2 shl 0
-//                } else if (opcode == 11) def.isStackable = true
-//                else if (opcode == 12) def.value = buffer.getInt()
-//                else if (opcode == 16) def.isMembersOnly = true
-//                else if (opcode == 18) {
+//                    var modelOffset2 = buffer.getShort().toInt() and 0xFFFF
+//                    if (modelOffset2 > 32767) modelOffset2 -= 65536
+//                    modelOffset2 = modelOffset2 shl 0
+//                } else if (opcode == 11) {
+//                    val isStackable = true
+//                } else if (opcode == 12) {
+//                    val value = buffer.getInt()
+//                } else if (opcode == 16) {
+//                    val isMembersOnly = true
+//                } else if (opcode == 18) {
 //                    val i = buffer.getShort().toInt() and 0xFFFF
-//                } else if (opcode == 23) def.maleWearModel1 = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 24) def.femaleWearModel1 = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 25) def.maleWearModel2 = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode == 26) def.femaleWearModel2 = buffer.getShort().toInt() and 0xFFFF
-//                else if (opcode >= 30 && opcode < 35) def.groundOptions[opcode - 30] = getJagexString(buffer)
-//                else if (opcode >= 35 && opcode < 40) def.inventoryOptions[opcode - 35] = getJagexString(buffer)
-//                else if (opcode == 40) {
+//                } else if (opcode == 23) {
+//                    val maleWearModel1 = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 24) {
+//                    val femaleWearModel1 = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 25) {
+//                    val maleWearModel2 = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode == 26) {
+//                    val femaleWearModel2 = buffer.getShort().toInt() and 0xFFFF
+//                } else if (opcode >= 30 && opcode < 35) {
+//                    groundOptions[opcode - 30] = getJagexString(buffer)
+//                } else if (opcode >= 35 && opcode < 40) {
+//                    inventoryOptions[opcode - 35] = getJagexString(buffer)
+//                } else if (opcode == 40) {
 //                    val length = buffer.get().toInt() and 0xFF
-//                    def.originalModelColors = ShortArray(length)
-//                    def.modifiedModelColors = ShortArray(length)
+//                    var originalModelColors = ShortArray(length)
+//                    var modifiedModelColors = ShortArray(length)
 //                    for (index in 0..<length) {
-//                        def.originalModelColors[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
-//                        def.modifiedModelColors[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
+//                        originalModelColors[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
+//                        modifiedModelColors[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
 //                    }
 //                } else if (opcode == 41) {
 //                    val length = buffer.get().toInt() and 0xFF
-//                    def.textureColour1 = ShortArray(length)
-//                    def.textureColour2 = ShortArray(length)
+//                    var textureColour1 = ShortArray(length)
+//                    var textureColour2 = ShortArray(length)
 //                    for (index in 0..<length) {
-//                        def.textureColour1[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
-//                        def.textureColour2[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
+//                        textureColour1[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
+//                        textureColour2[index] = (buffer.getShort().toInt() and 0xFFFF).toShort()
 //                    }
 //                } else if (opcode == 42) {
 //                    val length = buffer.get().toInt() and 0xFF
@@ -269,11 +297,11 @@ data class ItemDefinition(
 //                        val i = buffer.get().toInt()
 //                    }
 //                } else if (opcode == 65) {
-//                    def.isUnnoted = true
+//                    val isUnnoted = true
 //                } else if (opcode == 78) {
-//                    def.colourEquip1 = buffer.getShort().toInt() and 0xFFFF
+//                    val colourEquip1 = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 79) {
-//                    def.colourEquip2 = buffer.getShort().toInt() and 0xFFFF
+//                    val colourEquip2 = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 90) {
 //                    val i = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 91) {
@@ -287,16 +315,16 @@ data class ItemDefinition(
 //                } else if (opcode == 96) {
 //                    val i = buffer.get().toInt() and 0xFF
 //                } else if (opcode == 97) {
-//                    def.notedId = buffer.getShort().toInt() and 0xFFFF
+//                    val notedId = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 98) {
-//                    def.notedTemplateId = buffer.getShort().toInt() and 0xFFFF
+//                    val notedTemplateId = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode >= 100 && opcode < 110) {
-//                    if (def.stackableIds == null) {
-//                        def.stackableIds = IntArray(10)
-//                        def.stackableAmounts = IntArray(10)
-//                    }
-//                    def.stackableIds!![opcode - 100] = buffer.getShort().toInt() and 0xFFFF
-//                    def.stackableAmounts[opcode - 100] = buffer.getShort().toInt() and 0xFFFF
+////                    if (def.stackableIds == null) {
+//                    val stackableIds = IntArray(10)
+//                    val stackableAmounts = IntArray(10)
+////                    }
+//                    stackableIds[opcode - 100] = buffer.getShort().toInt() and 0xFFFF
+//                    stackableAmounts[opcode - 100] = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 110) {
 //                    val i = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 111) {
@@ -308,11 +336,11 @@ data class ItemDefinition(
 //                } else if (opcode == 114) {
 //                    val i = buffer.get() * 5
 //                } else if (opcode == 115) {
-//                    def.teamId = buffer.get().toInt() and 0xFF
+//                    val teamId = buffer.get().toInt() and 0xFF
 //                } else if (opcode == 121) {
-//                    def.lendId = buffer.getShort().toInt() and 0xFFFF
+//                    val lendId = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 122) {
-//                    def.lendTemplateId = buffer.getShort().toInt() and 0xFFFF
+//                    val lendTemplateId = buffer.getShort().toInt() and 0xFFFF
 //                } else if (opcode == 125) {
 //                    val i = buffer.get().toInt() shl 0
 //                    val i2 = buffer.get().toInt() shl 0
@@ -349,7 +377,7 @@ data class ItemDefinition(
 //            }
 //            return def
 //        }
-    }
+//    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -369,19 +397,68 @@ data class ItemDefinition(
 fun dump() {
     val mapper: ObjectMapper = jacksonObjectMapper()
     // Load from a File
-    val file = File("./data/itemDefinitions.json")
+    val path = "./game/src/main/resources/data"
+    val file = File("$path/itemDefinitionsOLD.json")
     val map: MutableMap<Int, ItemDefinition> =
-        mapper.readValue(
-            file,
-            object : TypeReference<MutableMap<Int, ItemDefinition>>() {}
-        )
-//    definitions = map
-//        val print = ObjectMapper().writeValueAsString(map[5698])
-//        println(print)
+        mapper.readValue(file, object : TypeReference<MutableMap<Int, ItemDefinition>>() {})
     KotlinLogging.logger { }.info { "Loaded ${map.size} item definitions" }
+
+    val copy = map
+
+    //configs
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    class ItemConfig {
+        val id: Int = 0
+        val alchemizable: Boolean? = null
+        val defence_anim: Int? = null
+        val equip_audio: Int? = null
+        val shop_price: Int? = null
+        val ge_buy_limit: Int? = null
+        val grand_exchange_price: Int? = null
+        val tradeable: Boolean? = null
+
+        val remove_head: Boolean? = null
+        val remove_beard: Boolean? = null
+        val remove_sleeves: Boolean? = null
+    }
+
+    val file2 = File("$path/item_configs.json")
+    val itemConfigs: Array<ItemConfig> =
+        mapper.readValue(file2, object : TypeReference<Array<ItemConfig>>() {})
+    KotlinLogging.logger { }.info { "Loaded ${itemConfigs.size} item definitions" }
+
+    //modify
+    map.onEach { def ->
+        copy[def.key] = def.value.also { it ->
+            if (it.attackSpeed == 0) it.attackSpeed = null
+            if (it.shopPrice == 0) it.shopPrice = null
+            if (it.pointPrice == 0) it.pointPrice = null
+            it.grandExchangeLimit = itemConfigs.find { it.id == def.key }?.ge_buy_limit
+            it.grandExchangePrice = itemConfigs.find { it.id == def.key }?.grand_exchange_price
+            it.alchemizable = itemConfigs.find { it.id == def.key }?.alchemizable
+            it.defenceAnimation = itemConfigs.find { it.id == def.key }?.defence_anim
+            it.shopPrice = itemConfigs.find { it.id == def.key }?.shop_price
+            it.equipSound = itemConfigs.find { it.id == def.key }?.equip_audio
+            it.tradeable = itemConfigs.find { it.id == def.key }?.tradeable
+
+            it.isFullHelm = itemConfigs.find { it.id == def.key }?.remove_head
+            it.isFullBody = itemConfigs.find { it.id == def.key }?.remove_sleeves
+            it.isFullMask = itemConfigs.find { it.id == def.key }?.remove_beard
+        }
+    }
+
+//write
+    val writer = mapper.writer(DefaultPrettyPrinter())
+    writer?.writeValue(File("$path/itemDefinitions.json"), copy.values.toTypedArray())
+
+//    val file3 = File("$path/itemDefs-new.json")
+//    val newItems: Array<ItemDefinition> = mapper.readValue(file3, object : TypeReference<Array<ItemDefinition>>() {})
+//    KotlinLogging.logger { }.info { "Loaded ${newItems.size} item definitions" }
+
 }
 
 fun main() {
-    dump()
+//    dump()
 }
 

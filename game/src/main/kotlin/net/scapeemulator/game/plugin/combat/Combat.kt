@@ -10,6 +10,12 @@ import net.scapeemulator.game.plugin.combat.CombatPlugin.setCombat
 class Combat(val source: Mob, val target: Mob) {
     private var combatTimeout = 0
 
+    // todo: clean this
+    private fun getAttacker(): Mob? = if (source is Npc)
+        GameServer.INSTANCE.world.npcs[source.index]
+    else
+        GameServer.INSTANCE.world.players[source!!.index]
+
     private fun getVictim(): Mob? = if (target is Npc)
         GameServer.INSTANCE.world.npcs[target.index]
     else
@@ -42,14 +48,19 @@ class Combat(val source: Mob, val target: Mob) {
     }
 
     internal fun tick() {
-        //todo fix when target dies/respawns /isOnline
-        val target = getVictim()
+        //todo fix when target dies/respawns /isOnline/ Logsout
+        val victim = getVictim()
         val handler = getHandler() ?: return
 
         val nextAttack = CombatPlugin.nextAttack(source)
         if (CombatPlugin.DEBUG) print("next=$nextAttack ")
 
-        if (!handler.canHit(source, target!!)) {
+        if (victim == null) {
+            stop()
+            return
+        }
+
+        if (!handler.canHit(source, victim)) {
             print("timeout=$combatTimeout ")
             if (combatTimeout++ > 10) stop()
             return
@@ -62,15 +73,15 @@ class Combat(val source: Mob, val target: Mob) {
 //isAttacking =true ?
         CombatPlugin.setNextAttack(source, nextAttack - 1)
         if (nextAttack < 1) {
-            source.focus = target
+            source.faceMob = victim
 
-            val speed = handler.attack(source, target)
-            handler.visualImpact(source, target)
+            val speed = handler.attack(source, victim)
+            handler.visualImpact(source, victim)
             CombatPlugin.setNextAttack(source, speed)
         }
 
         if (nextAttack <= 0) {
-            val damage = handler.impact(source, target)
+            val damage = handler.impact(source, victim)
 //            target.appendHit(damage, HitType.NONE)
             println("---------------------------------")
             autoRetaliate() // move down
@@ -78,10 +89,11 @@ class Combat(val source: Mob, val target: Mob) {
     }
 
     internal fun stop() {
+        if (source == null) return
         if (CombatPlugin.DEBUG) println("STOPPING COMBAT")
         CombatPlugin.setNextAttack(source, -1)
         CombatPlugin.setIsAttacking(source, false)
         source.setCombat(null)
-        source.focus = null
+        source.faceMob = null
     }
 }

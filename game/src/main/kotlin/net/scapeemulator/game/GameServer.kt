@@ -8,16 +8,16 @@ import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
 import net.scapeemulator.game.cache.LandscapeKeyTable
+import net.scapeemulator.game.cache.ObjectDefinitions
 import net.scapeemulator.game.io.DummyPlayerSerializer
 import net.scapeemulator.game.io.JdbcPlayerSerializer
 import net.scapeemulator.game.io.PlayerSerializer
-import net.scapeemulator.game.model.EquipmentDefinition
-import net.scapeemulator.game.model.ItemDefinitions
-import net.scapeemulator.game.model.World
+import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.codec.CodecRepository
 import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
+import net.scapeemulator.game.pathfinder.TraversalMap
 import net.scapeemulator.game.plugin.PluginManager
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -56,6 +56,10 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
     val landscapeKeyTable: LandscapeKeyTable
     val codecRepository: CodecRepository
     val messageDispatcher: MessageDispatcher
+
+    val regionManager = RegionManager()
+    val traversalMap = TraversalMap(regionManager)
+
     val plugins: PluginManager
 
     // network
@@ -72,11 +76,19 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
         /* load game cache */
         cache = Cache(FileStore.open("data/cache"))
         checksumTable = cache.createChecksumTable()
-//        MapSet.init(cache, landscapeKeyTable)
 
         /* load item definitions */
         ItemDefinitions.init(File("./data/itemDefinitions.json"))
         EquipmentDefinition.init()
+        ObjectDefinitions.init(cache)
+        NPCDefinitions.init(cache)
+
+        /* load map */
+//        val mapSet = MapSet()
+//        mapSet.listeners.add(RegionMapListener(regionManager))
+//        mapSet.listeners.add(TraversalMapListener(traversalMap))
+//        mapSet.init(cache, landscapeKeyTable)
+//        MapSet.init(cache, landscapeKeyTable)
 
         /* load message codecs and dispatcher */
         codecRepository = CodecRepository(landscapeKeyTable)
@@ -203,7 +215,7 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
                 /* shutdown hook */
                 Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
             } catch (t: Throwable) {
-                logger.error(t) { "Failed to start server." }
+//                logger.error(t) { "Failed to start server." }
             }
         }
     }

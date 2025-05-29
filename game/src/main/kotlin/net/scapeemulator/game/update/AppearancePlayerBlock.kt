@@ -76,7 +76,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         var fullBody = false
         item = equipment.get(Equipment.BODY)
         if (item != null) //TODO fix proper values
-            fullBody = item.definition!!.isFullBody()
+            fullBody = item.definition!!.isFullBodys()
 
         if (!fullBody) {
             propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.ARMS))
@@ -96,8 +96,8 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         item = equipment.get(Equipment.HEAD)
         if (item != null) {
             //TODO fix proper values
-            fullHelm = item.definition!!.isFullHelm()
-            fullMask = item.definition!!.isFullMask()
+            fullHelm = item.definition!!.isFullHelms()
+            fullMask = item.definition!!.isFullMasks()
         }
         if (!fullHelm && !fullMask) {
             propertiesBuilder.put(DataType.SHORT, 0x100 or appearance.getBody(Body.HEAD))

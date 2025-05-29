@@ -71,4 +71,30 @@ class Position {
         if (y != obj2.y) return false
         return true
     }
+
+    /* pathfinder */
+
+    fun getLocalX(): Int {
+        return getLocalX(centralRegionX)
+    }
+
+    fun getLocalY(): Int {
+        return getLocalY(centralRegionY)
+    }
+
+    fun getBaseLocalX(): Int {
+        return getBaseLocalX(centralRegionX)
+    }
+
+    fun getBaseLocalY(): Int {
+        return getBaseLocalY(centralRegionY)
+    }
+
+    fun getBaseLocalX(centralRegionX: Int): Int {
+        return (centralRegionX - 6) * 8
+    }
+
+    fun getBaseLocalY(centralRegionY: Int): Int {
+        return (centralRegionY - 6) * 8
+    }
 }

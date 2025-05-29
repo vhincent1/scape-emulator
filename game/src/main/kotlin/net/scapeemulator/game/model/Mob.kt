@@ -5,17 +5,16 @@ import net.scapeemulator.game.task.Action
 import java.util.*
 
 abstract class Mob() : Entity() {
-    @JvmField
+
     var index: Int = 0
 
-    @JvmField
+    protected var action: Action<*>? = null
     val walkingQueue: WalkingQueue = WalkingQueue(this)
     var firstDirection: Direction = Direction.NONE
     var secondDirection: Direction = Direction.NONE
         protected set
     var mostRecentDirection: Direction = Direction.SOUTH
 
-    @JvmField
     val skillSet: SkillSet = SkillSet()
 
     /* update masks */
@@ -36,17 +35,24 @@ abstract class Mob() : Entity() {
     var isHit2Updated = false
 
     //        get() = secondaryHit != null
-    var focus: Mob? = null
+    var faceMob: Mob? = null
         set(value) {
             field = value
             isFacingUpdated = true
         }
     var isFacingUpdated: Boolean = false
+
+
+    var facePosition: Position? = null
+    val isFacePositionUpdated
+        get() = facePosition != null
+
     var forceChat: String = ""
-    val isForceChatUpdated: Boolean get() = forceChat.isNotEmpty()
+    val isForceChatUpdated: Boolean
+        get() = forceChat.isNotEmpty()
 
     /**/
-    protected var action: Action<*>? = null
+
     fun resetId() {
         this.index = 0
     }

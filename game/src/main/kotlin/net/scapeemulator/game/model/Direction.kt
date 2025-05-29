@@ -1,5 +1,9 @@
 package net.scapeemulator.game.model
 
+import net.scapeemulator.game.GameServer
+import net.scapeemulator.game.pathfinder.TraversalMap
+
+
 enum class Direction(private val intValue: Int) {
     NONE(-1), NORTH(1),
     NORTH_EAST(2), EAST(4),
@@ -43,6 +47,32 @@ enum class Direction(private val intValue: Int) {
             }
 
             throw IllegalArgumentException()
+        }
+
+        fun projectileClipping(from: Position, to: Position): Boolean {
+            val traversalMap: TraversalMap = GameServer.INSTANCE.traversalMap//World.getWorld().getTraversalMap()
+            val direction = between(from, to)
+            return when (direction) {
+                NORTH -> traversalMap.isTraversableNorth(from.height, from.x, from.y, true)
+                SOUTH -> traversalMap.isTraversableSouth(from.height, from.x, from.y, true)
+                EAST -> traversalMap.isTraversableEast(from.height, from.x, from.y, true)
+                WEST -> traversalMap.isTraversableWest(from.height, from.x, from.y, true)
+                NORTH_EAST -> traversalMap.isTraversableNorthEast(from.height, from.x, from.y, true)
+                NORTH_WEST -> traversalMap.isTraversableNorthWest(
+                    from.height, from.x, from.y, true
+                )
+
+                SOUTH_EAST -> traversalMap.isTraversableSouthEast(
+                    from.height, from.x, from.y, true
+                )
+
+                SOUTH_WEST -> traversalMap.isTraversableSouthWest(
+                    from.height, from.x, from.y, true
+                )
+
+                NONE -> true
+                else -> throw RuntimeException("unknown type")
+            }
         }
     }
 }

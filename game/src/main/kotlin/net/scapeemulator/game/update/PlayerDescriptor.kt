@@ -26,38 +26,31 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
                 addBlock(AppearancePlayerBlock(player))
             }
         }
-
         if (player.isChatUpdated) addBlock(ChatPlayerBlock(player))
         if (player.isAnimationUpdated) addBlock(AnimationPlayerBlock(player))
         if (player.isSpotAnimationUpdated) addBlock(SpotAnimationPlayerBlock(player))
         if (player.isHitUpdated) addBlock(PlayerHitBlock(player))
         if (player.isHit2Updated) addBlock(PlayerHitBlock2(player))
-        if (player.isFacingUpdated) addBlock(FaceMobBlock(player))
+        if (player.isFacingUpdated) addBlock(PlayerFaceBlock(player))
         if (player.isForceChatUpdated) addBlock(ForceChatBlock(player))
+        if(player.isFacePositionUpdated) addBlock(PlayerFacePositionBlock(player))
     }
 
+    private fun addBlock(block: PlayerBlock) = blocks.put(block::class, block)
 
-    private fun addBlock(block: PlayerBlock) {
-        blocks.put(block::class, block)
-    }
-
-    val isBlockUpdatedRequired: Boolean
-        get() = !blocks.isEmpty()
+    val isBlockUpdatedRequired: Boolean get() = blocks.isNotEmpty()
 
     fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder, blockBuilder: GameFrameBuilder) {
         encodeDescriptor(message, builder, blockBuilder)
-
         if (this.isBlockUpdatedRequired) {
             var flags = 0
             for (block in blocks.values) flags = flags or block.flag
-
             if (flags > 0xFF) {
                 flags = flags or 0x10
                 blockBuilder.put(DataType.SHORT, DataOrder.LITTLE, flags)
             } else {
                 blockBuilder.put(DataType.BYTE, flags)
             }
-
             //ordering matter
             /*
         if (flags.isChatTextUpdateRequired()) {
@@ -93,15 +86,15 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
 		if (flags.isFaceLocationUpdateRequired()) {
 			mask |= 0x40;
 		}	*/
-
             encodeBlock(message, blockBuilder, ChatPlayerBlock::class)
             encodeBlock(message, blockBuilder, PlayerHitBlock::class)
             encodeBlock(message, blockBuilder, AnimationPlayerBlock::class)
             encodeBlock(message, blockBuilder, AppearancePlayerBlock::class)
-            encodeBlock(message, blockBuilder, FaceMobBlock::class)
+            encodeBlock(message, blockBuilder, PlayerFaceBlock::class)
             encodeBlock(message, blockBuilder, ForceChatBlock::class)
             encodeBlock(message, blockBuilder, PlayerHitBlock2::class)
             encodeBlock(message, blockBuilder, SpotAnimationPlayerBlock::class)
+            encodeBlock(message, blockBuilder, PlayerFacePositionBlock::class)
         }
     }
 
@@ -121,7 +114,6 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
         fun create(player: Player, tickets: IntArray): PlayerDescriptor {
             val firstDirection = player.firstDirection
             val secondDirection = player.secondDirection
-
             return if (firstDirection == Direction.NONE) IdlePlayerDescriptor(player, tickets)
             else if (secondDirection == Direction.NONE) WalkPlayerDescriptor(player, tickets)
             else RunPlayerDescriptor(player, tickets)

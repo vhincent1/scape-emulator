@@ -29,6 +29,8 @@ dependencies {
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
+    // Kotlin standard-lib
+    runtimeOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
     // script engine
 //    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")

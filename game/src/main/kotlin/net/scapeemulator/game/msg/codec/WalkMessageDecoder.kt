@@ -9,6 +9,7 @@ internal fun walkMessageDecoder(opcode: Int) = MessageDecoder(opcode) { frame ->
     val reader = GameFrameReader(frame)
     val anticheat = frame.opcode == 39
     val stepCount = (reader.length - (if (anticheat) 19 else 5)) / 2 + 1
+//    val minimapFlagId = reader.getUnsigned(DataType.BYTE, DataTransformation.SUBTRACT).toInt()
     val running = reader.getUnsigned(DataType.BYTE, DataTransformation.ADD) == 1L
     val x = reader.getUnsigned(DataType.SHORT).toInt()
     val y = reader.getUnsigned(DataType.SHORT, DataTransformation.ADD).toInt()
@@ -20,5 +21,5 @@ internal fun walkMessageDecoder(opcode: Int) = MessageDecoder(opcode) { frame ->
         val stepY = y + reader.getSigned(DataType.BYTE, DataTransformation.SUBTRACT).toInt()
         steps[i] = WalkMessage.Step(stepX, stepY)
     }
-    return@MessageDecoder WalkMessage(steps, running)
+    return@MessageDecoder WalkMessage(WalkMessage.Step(x, y), steps, running, 0)
 }

@@ -1,56 +1,53 @@
-//package net.scapeemulator.cache.tools;
-//
-//import net.scapeemulator.cache.Container;
-//import net.scapeemulator.cache.FileStore;
-//import net.scapeemulator.cache.ReferenceTable;
-//import net.scapeemulator.cache.ReferenceTable.Entry;
-//
-//import java.io.IOException;
-//import java.nio.ByteBuffer;
-//import java.util.zip.CRC32;
-//
-//public final class CacheVerifier {
-//
-//	public static void main(String[] args) throws IOException {
-//		try (FileStore store = FileStore.open("../game/data/cache/")) {
-//			for (int type = 0; type < store.getFileCount(255); type++) {
-//				ReferenceTable table = ReferenceTable.decode(Container.decode(store.read(255, type)).getData());
-//				for (int file = 0; file < table.capacity(); file++) {
-//					Entry entry = table.getEntry(file);
-//					if (entry == null)
-//						continue;
-//
-//					ByteBuffer buffer;
-//					try {
-//						buffer = store.read(type, file);
-//					} catch (IOException ex) {
-//						System.out.println(type+":"+file+ " error");
-//						continue;
-//					}
-//
-//					if (buffer.capacity() <= 2) {
-//						System.out.println(type+":"+file+ " missing");
-//						continue;
-//					}
-//
-//					byte[] bytes = new byte[buffer.limit() - 2]; // last two bytes are the version and shouldn't be included
-//					buffer.position(0);
-//					buffer.get(bytes, 0, bytes.length);
-//
-//					CRC32 crc = new CRC32();
-//					crc.update(bytes, 0, bytes.length);
-//
-//					if ((int) crc.getValue() != entry.getCrc()) {
-//						System.out.println(type+":"+file+ " corrupt");
-//					}
-//
-//					buffer.position(buffer.limit() - 2);
-//					if ((buffer.getShort() & 0xFFFF) != entry.getVersion()) {
-//						System.out.println(type+":"+file+ " out of date");
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//}
+package net.scapeemulator.cache.tools
+
+import net.scapeemulator.cache.Container.Companion.decode
+import net.scapeemulator.cache.FileStore.Companion.open
+import net.scapeemulator.cache.ReferenceTable
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.util.zip.CRC32
+
+object CacheVerifier {
+    @Throws(IOException::class)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        open("../game/data/cache/").use { store ->
+            for (type in 0 until store.getFileCount(255)) {
+                val table = ReferenceTable.decode(decode(store.read(255, type)).getData())
+                for (file in 0 until table.capacity()) {
+                    val entry = table.getEntry(file) ?: continue
+
+                    var buffer: ByteBuffer
+                    try {
+                        buffer = store.read(type, file)
+                    } catch (ex: IOException) {
+                        println("$type:$file error")
+                        continue
+                    }
+
+                    if (buffer.capacity() <= 2) {
+                        println("$type:$file missing")
+                        continue
+                    }
+
+                    val bytes =
+                        ByteArray(buffer.limit() - 2) // last two bytes are the version and shouldn't be included
+                    buffer.position(0)
+                    buffer[bytes, 0, bytes.size]
+
+                    val crc = CRC32()
+                    crc.update(bytes, 0, bytes.size)
+
+                    if (crc.value.toInt() != entry.crc) {
+                        println("$type:$file corrupt")
+                    }
+
+                    buffer.position(buffer.limit() - 2)
+                    if ((buffer.getShort().toInt() and 0xFFFF) != entry.version) {
+                        println("$type:$file out of date")
+                    }
+                }
+            }
+        }
+    }
+}

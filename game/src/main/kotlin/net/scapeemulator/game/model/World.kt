@@ -13,7 +13,7 @@ import net.scapeemulator.game.update.PlayerDescriptor.Companion.create
 //sync task
 
 //world id
-class World(val worldId: Int, val loginService: LoginService) : SyncTask {
+class World(val worldId: Int, private val loginService: LoginService) : SyncTask {
     companion object {
         const val MAX_PLAYERS: Int = 2000
         const val MAX_NPCS: Int = 2000

@@ -52,7 +52,6 @@ class Melee : CombatHandler() {
                     }
 
                     GRANITE_MAUL -> {
-//                        CombatPlugin.combat(attacker)?.instantSpec()
                         attacker.combat()?.instantSpec()
                     }
 

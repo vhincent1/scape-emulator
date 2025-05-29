@@ -148,8 +148,10 @@ class Cache
             entry = ReferenceTable.Entry()
             table.putEntry(file, entry)
         }
-        entry.setVersion(container.getVersion())
-        entry.setCrc(crc.getValue().toInt())
+//        entry.setVersion(container.getVersion())
+//        entry.setCrc(crc.getValue().toInt())
+        entry.version = container.getVersion()
+        entry.crc = crc.value.toInt()
 
         /* calculate and update the whirlpool digest if we need to */
         if ((table.getFlags() and ReferenceTable.FLAG_WHIRLPOOL) != 0) {
