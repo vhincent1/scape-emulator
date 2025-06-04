@@ -26,7 +26,9 @@ class LoginService(private val serializer: PlayerSerializer) : Runnable {
     private fun processLoginRequests(world: World) = synchronized(newPlayers) {
         if (newPlayers.isEmpty()) return@synchronized
         newPlayers.take(LOGIN_REQUESTS).onEach { pair ->
-            if (world.getPlayerByName(pair.player.username) != null) {
+            if (pair.player.username.isEmpty()) {
+                pair.session.sendLoginFailure(LoginResponse.STATUS_UNVALIDATED_ACCOUNT)
+            } else if (world.getPlayerByName(pair.player.username) != null) {
                 /* player is already online */
                 pair.session.sendLoginFailure(LoginResponse.STATUS_ALREADY_ONLINE)
             } else if (!world.players.add(pair.player)) { // add player
