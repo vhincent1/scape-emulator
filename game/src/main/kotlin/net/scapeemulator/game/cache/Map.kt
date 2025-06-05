@@ -56,7 +56,6 @@ class Map(val x: Int, val y: Int, private val tiles: Array<Array<Array<Tile>>>) 
                 for (localX in 0..63) {
                     for (localY in 0..63) {
                         val position = Position(x * 64 + localX, y * 64 + localY, plane);
-
                         tiles[localX][localY][plane] =
                             decodeTile(listeners, tiles, localX, localY, plane, position, buffer)
                     }
@@ -97,18 +96,12 @@ class Map(val x: Int, val y: Int, private val tiles: Array<Array<Array<Tile>>>) 
 //                    tile.overlay = buffer.get().toInt() and 0xFF
 //                    tile.shape = (config - 2) / 4
 //                    tile.shapeRotation = (config - 2) % 4
-                   val overlay  = buffer.get().toInt() and 0xFF
-                  val shape = (config - 2) / 4
+                    val overlay = buffer.get().toInt() and 0xFF
+                    val shape = (config - 2) / 4
                     val shapeRotation = (config - 2) % 4
                 } else if (config <= 81) {
                     tile.flags = config - 49
-//                    if (tile.flags == Tile.FLAG_MEMBERS) {
-//                        println("Members: " + tile.flags)
-//                        println("Location: $x $y $plane")
-//                    }
-
                 } else {
-//                    tile.underlay = config - 81
                     val underlay = config - 81
                 }
             }

@@ -11,8 +11,8 @@ import net.scapeemulator.game.net.game.GameFrameBuilder
 //    }
 //}
 
-internal val ResetMinimapFlagMessageEncoder = handleEncoder(ResetMinimapFlagMessage::class) { alloc, message ->
+internal val ResetMinimapFlagMessageEncoder = MessageEncoder(ResetMinimapFlagMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 153)
     //  int minimapFlagId = (int) reader.getUnsigned(DataType.BYTE, DataTransformation.SUBTRACT); //todo check
-    return@handleEncoder builder.toGameFrame()
+    return@MessageEncoder builder.toGameFrame()
 }

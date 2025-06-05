@@ -21,7 +21,6 @@ import net.scapeemulator.game.cache.MapListener
 import net.scapeemulator.game.model.GameObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
-import net.scapeemulator.game.model.RegionManager
 
 class RegionMapListener(private val manager: RegionManager) : MapListener {
     override fun tileDecoded(flags: Int, position: Position) {
@@ -32,9 +31,10 @@ class RegionMapListener(private val manager: RegionManager) : MapListener {
     }
 
     override fun objectDecoded(id: Int, rotation: Int, type: ObjectType, position: Position) {
-        if (!manager.isRegionInitialized(position)) manager.initializeRegion(position)
+        if (!manager.isRegionInitialized(position))
+            manager.initializeRegion(position)
 
-        val region = manager.getRegion(position)
+        val region = manager.getRegion(position.x, position.y)
         region!!.addObject(GameObject(id, type.id, position, rotation))
     }
 }

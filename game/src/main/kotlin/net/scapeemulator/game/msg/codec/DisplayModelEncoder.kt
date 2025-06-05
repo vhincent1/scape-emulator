@@ -7,7 +7,7 @@ import net.scapeemulator.game.net.game.DataTransformation
 import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
-internal val DisplayModelEncoder = handleEncoder(DisplayModelMessage::class) { alloc, message ->
+internal val DisplayModelEncoder = MessageEncoder(DisplayModelMessage::class) { alloc, message ->
     var builder: GameFrameBuilder
     val value = message.interfaceId shl 16 or message.childId
     when (message.type) {
@@ -16,14 +16,14 @@ internal val DisplayModelEncoder = handleEncoder(DisplayModelMessage::class) { a
             builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, 0) //packet count
             // putIntA
             builder.put(DataType.INT, DataOrder.MIDDLE, value)
-            return@handleEncoder builder.toGameFrame()
+            return@MessageEncoder builder.toGameFrame()
         }
 
         Type.NPC -> {
             builder = GameFrameBuilder(alloc, 73)
             builder.put(DataType.SHORT, DataTransformation.ADD, message.nodeId)
             builder.put(DataType.INT, DataOrder.LITTLE, value)
-            return@handleEncoder builder.toGameFrame()
+            return@MessageEncoder builder.toGameFrame()
         }
 
         Type.ITEM -> {
@@ -33,15 +33,15 @@ internal val DisplayModelEncoder = handleEncoder(DisplayModelMessage::class) { a
             builder.put(DataType.INT, DataOrder.BIG, value)
             builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.nodeId)
             builder.put(DataType.SHORT, DataOrder.LITTLE, 0) //packet count
-            return@handleEncoder builder.toGameFrame()
+            return@MessageEncoder builder.toGameFrame()
         }
 
         Type.MODEL -> {
             builder = GameFrameBuilder(alloc, 67)
             builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.nodeId)
             builder.put(DataType.INT, DataOrder.LITTLE, value)
-            return@handleEncoder builder.toGameFrame()
+            return@MessageEncoder builder.toGameFrame()
         }
     }
-    return@handleEncoder builder.toGameFrame()
+    return@MessageEncoder builder.toGameFrame()
 }

@@ -11,7 +11,6 @@ class Npc(val type: Int) : Mob() {
     override fun logout() {
         //despawn
     }
-
     override fun getClientIndex(): Int = index
 
 

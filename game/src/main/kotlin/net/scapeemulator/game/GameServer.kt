@@ -8,16 +8,19 @@ import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
 import net.scapeemulator.game.cache.LandscapeKeyTable
+import net.scapeemulator.game.cache.MapSet
 import net.scapeemulator.game.cache.ObjectDefinitions
 import net.scapeemulator.game.io.DummyPlayerSerializer
 import net.scapeemulator.game.io.JdbcPlayerSerializer
 import net.scapeemulator.game.io.PlayerSerializer
-import net.scapeemulator.game.model.*
+import net.scapeemulator.game.model.EquipmentDefinition
+import net.scapeemulator.game.model.ItemDefinitions
+import net.scapeemulator.game.model.NPCDefinitions
+import net.scapeemulator.game.model.World
 import net.scapeemulator.game.msg.codec.CodecRepository
 import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
-import net.scapeemulator.game.pathfinder.TraversalMap
 import net.scapeemulator.game.plugin.PluginManager
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -32,6 +35,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
+const val PATHFINDING_ENABLED = false
 
 class GameServer(worldId: Int, loginAddress: SocketAddress) {
 
@@ -57,9 +61,7 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
     val codecRepository: CodecRepository
     val messageDispatcher: MessageDispatcher
 
-    val regionManager = RegionManager()
-    val traversalMap = TraversalMap(regionManager)
-
+    val mapSet = MapSet()
     val plugins: PluginManager
 
     // network
@@ -83,11 +85,6 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
         ObjectDefinitions.init(cache)
         NPCDefinitions.init(cache)
 
-        /* load map */
-//        val mapSet = MapSet()
-//        mapSet.listeners.add(RegionMapListener(regionManager))
-//        mapSet.listeners.add(TraversalMapListener(traversalMap))
-//        mapSet.init(cache, landscapeKeyTable)
 //        MapSet.init(cache, landscapeKeyTable)
 
         /* load message codecs and dispatcher */
@@ -102,6 +99,10 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
 
         /* load world */
         world = World(worldId, loginService)
+
+        /* load map */
+        if (PATHFINDING_ENABLED) mapSet.init(cache, landscapeKeyTable)
+        //mapSet.init(cache, landscapeKeyTable)
 
         /* load plugins */
         plugins = PluginManager(this)

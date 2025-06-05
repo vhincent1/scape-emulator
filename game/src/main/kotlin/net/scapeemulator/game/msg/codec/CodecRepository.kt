@@ -1,6 +1,7 @@
 package net.scapeemulator.game.msg.codec
 
 import net.scapeemulator.game.cache.LandscapeKeyTable
+import net.scapeemulator.game.msg.GroundItem
 import net.scapeemulator.game.msg.Message
 import kotlin.reflect.KClass
 
@@ -104,12 +105,21 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(MinimapStatusEncoder)
         bind(WeightEncoder)
         bind(AccessMaskEncoder)
+        bind(PlacementCoordsEncoder)
+
+        //ground items
+        bind(GroundItem.ItemDrop)
+        bind(GroundItem.ItemCreate)
+        bind(GroundItem.ItemRemove)
+        bind(GroundItem.ItemUpdate)
+        bind(GroundItem.ItemOption1)
+        bind(GroundItem.ItemOption2)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix
     fun <T : Message> get(clazz: KClass<T>): MessageEncoder<*>? = outCodecs[clazz]
-    fun bind(decoder: MessageDecoder<*>) = decoder.also { inCodecs[decoder.opcode] = it }
-    fun bind(encoder: MessageEncoder<*>) = encoder.also { outCodecs[encoder.clazz] = it }
+    private fun bind(decoder: MessageDecoder<*>) = decoder.also { inCodecs[decoder.opcode] = it }
+    private fun bind(encoder: MessageEncoder<*>) = encoder.also { outCodecs[encoder.clazz] = it }
 
     fun bind(encoder: MessageEncoder<*>, opcode: Int) = encoder.also { outCodecs[encoder.clazz] = it }
     fun bind(encoders: Map<KClass<*>, MessageEncoder<*>>) = encoders.forEach { entry -> bind(entry.value) }

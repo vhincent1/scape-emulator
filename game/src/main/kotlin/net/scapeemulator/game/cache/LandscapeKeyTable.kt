@@ -20,9 +20,7 @@ class LandscapeKeyTable {
         private val EMPTY_KEY_ARRAY = IntArray(4)
 
         @Throws(IOException::class)
-        fun open(dir: String): LandscapeKeyTable {
-            return open(File(dir))
-        }
+        fun open(dir: String): LandscapeKeyTable = open(File(dir))
 
         @Throws(IOException::class)
         fun open(dir: File): LandscapeKeyTable {
@@ -34,7 +32,7 @@ class LandscapeKeyTable {
                     table.keys[region] = readKeys(f)
                 }
             }
-            logger.info("Loaded " + table.keys.size + " landscape keys.")
+            logger.info { "Loaded " + table.keys.size + " landscape keys." }
             return table
         }
 
@@ -42,9 +40,8 @@ class LandscapeKeyTable {
         private fun readKeys(f: File): IntArray {
             BufferedReader(FileReader(f)).use { reader ->
                 val keys = IntArray(4)
-                for (i in keys.indices) {
+                for (i in keys.indices)
                     keys[i] = reader.readLine().toInt()
-                }
                 return keys
             }
         }

@@ -195,7 +195,7 @@ class TraversalMap(private val regionManager: RegionManager) {
         val localX = x and 0x3f
         val localY = y and 0x3f
 
-        val region = regionManager.getRegion(position) ?: return
+        val region = regionManager.getRegion(x, y) ?: return
 
         var modifiedPlane = plane
         if ((region.getTile(1, localX, localY)!!.flags() and Tile.BRIDGE) != 0) {
@@ -502,7 +502,6 @@ class TraversalMap(private val regionManager: RegionManager) {
 
     fun set(plane: Int, x: Int, y: Int, flag: Int) {
         val region = regionManager.getRegion(x, y) ?: return
-
         region.getTile(plane, x and 0x3f, y and 0x3f)!!.set(flag)
     }
 

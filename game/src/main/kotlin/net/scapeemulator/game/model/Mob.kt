@@ -4,7 +4,7 @@ import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.task.Action
 import java.util.*
 
-abstract class Mob() : Entity() {
+abstract class Mob : Entity() {
 
     var index: Int = 0
 

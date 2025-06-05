@@ -50,7 +50,7 @@ enum class Direction(private val intValue: Int) {
         }
 
         fun projectileClipping(from: Position, to: Position): Boolean {
-            val traversalMap: TraversalMap = GameServer.INSTANCE.traversalMap//World.getWorld().getTraversalMap()
+            val traversalMap: TraversalMap = GameServer.INSTANCE.world.traversalMap//World.getWorld().getTraversalMap()
             val direction = between(from, to)
             return when (direction) {
                 NORTH -> traversalMap.isTraversableNorth(from.height, from.x, from.y, true)

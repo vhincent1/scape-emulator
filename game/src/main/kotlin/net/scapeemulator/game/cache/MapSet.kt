@@ -8,13 +8,15 @@ import net.scapeemulator.cache.util.ByteBufferUtils
 import net.scapeemulator.cache.util.StringUtils
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
+import net.scapeemulator.game.pathfinder.Tile
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 
 class MapSet {
     private val logger = KotlinLogging.logger {}
-    val listeners: MutableList<MapListener> = mutableListOf()
+    private val listeners: MutableList<MapListener> = mutableListOf()
+    fun addListener(listener: MapListener) = listeners.add(listener)
 
     @Throws(IOException::class)
     fun init(cache: Cache, keyTable: LandscapeKeyTable) {
@@ -24,23 +26,18 @@ class MapSet {
             for (y in 0..255) {
                 val landscapeFile = "l" + x + "_" + y
                 val mapFile = "m" + x + "_" + y
-                val npc = "n" + x + "_" + y //todo check
-
+                val npc = "n" + x + "_" + y
                 val landscapeIdentifier = StringUtils.hash(landscapeFile)
                 val mapIdentifier = StringUtils.hash(mapFile)
                 val npcId = StringUtils.hash(npc)
-
                 for (id in 0..<rt.capacity()) {
-                    val entry = rt.getEntry(id)
-                    if (entry == null) continue
-
+                    val entry = rt.getEntry(id) ?: continue
                     try {
-                        if (entry.identifier == landscapeIdentifier)
-                            readLandscape(cache, keyTable, x, y, id)
-                        else if (entry.identifier == mapIdentifier)
-                            readMap(cache, x, y, id)
-                        else if (entry.identifier == npcId)
-                            readNpc(cache, x, y, id)
+                        when (entry.identifier) {
+                            landscapeIdentifier -> readLandscape(cache, keyTable, x, y, id)
+                            mapIdentifier -> readMap(cache, x, y, id)
+                            npcId -> readNpc(cache, x, y, id)
+                        }
                     } catch (ex: Exception) {
                         logger.debug(ex) { "Failed to read map/landscape file $x, $y." }
                     }
@@ -59,10 +56,8 @@ class MapSet {
 
     @Throws(IOException::class)
     private fun readMap2(cache: Cache, x: Int, y: Int, id: Int) {
-//        val buffer = cache.read(5, id).getData()
-//        Map.decode(listeners, x, y, buffer)
-//        println("Map:") //ape toll
-//        println(map.getTile(2801, 2704, 0).flags)
+        val buffer = cache.read(5, id).getData()
+        Map.decode(listeners, x, y, buffer)
     }
 
     private fun readLandscape(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, fileId: Int) {
@@ -95,9 +90,7 @@ class MapSet {
                 val rotation = temp and 0x3
 
                 val position = Position(x * 64 + localX, y * 64 + localY, height)
-                for (listener in listeners) {
-                    listener.objectDecoded(id, rotation, ObjectType.forId(type), position)
-                }
+                listeners.forEach { it.objectDecoded(id, rotation, ObjectType.forId(type), position) }
             }
         }
     }
@@ -110,26 +103,32 @@ class MapSet {
                 for (localY in 0..63) {
                     val position = Position(x * 64 + localX, y * 64 + localY, plane)
                     var flags = 0
-
+                    val tile = Tile()
                     while (true) {
                         val config = buffer.get().toInt() and 0xFF
 
                         if (config == 0) {
-                            for (listener in listeners) {
-                                listener.tileDecoded(flags, position)
-                            }
+                            listeners.forEach { it.tileDecoded(flags, position) }
                             break
                         } else if (config == 1) {
-                            buffer.get()
+                            var height = buffer.get().toInt() and 0xFF
+                            if (height == 1) height = 0
 
-                            for (listener in listeners) {
-                                listener.tileDecoded(flags, position)
-                            }
+//                            if (plane == 0)
+//                                tile.height = -height * 8
+//                            else
+//                                tile.height = tiles[x][y][plane - 1].height - height * 8
+
+                            listeners.forEach { it.tileDecoded(flags, position) }
                             break
                         } else if (config <= 49) {
-                            buffer.get()
+                            val overlay = buffer.get().toInt() and 0xFF
+                            val shape = (config - 2) / 4
+                            val shapeRotation = (config - 2) % 4
                         } else if (config <= 81) {
                             flags = config - 49
+                        } else {
+                            val underlay = config - 81
                         }
                     }
                 }
@@ -147,9 +146,17 @@ class MapSet {
             val localY = compressedData and 63
             val npcId = buffer.getShort().toInt()
 
-//            val npc: net.scapeemulator.game.model.npc.NPC = NormalNPC(npcId)
-//            npc.setPosition(Position((x * 64) + localX, (y * 64) + localY, height))
-//            World.getWorld().addNpc(npc)
+            val pos = Position((x * 64) + localX, (y * 64) + localY, height)
+//            println("NPC $npcId : $localX : $localY : $height")
+//            println("Position: ${pos.x} ${pos.y}")
+//
+////            val npc: net.scapeemulator.game.model.npc.NPC = NormalNPC(npcId)
+////            npc.setPosition(Position((x * 64) + localX, (y * 64) + localY, height))
+////            World.getWorld().addNpc(npc)
+//            val npc = Npc(npcId).apply {
+//                position = pos
+//            }
+//            GameServer.INSTANCE.world.npcs.add(npc)
         }
     }
 }

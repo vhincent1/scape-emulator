@@ -1,44 +1,61 @@
 package net.scapeemulator.game.model
 
+import net.scapeemulator.game.GameServer
+import net.scapeemulator.game.PATHFINDING_ENABLED
 import net.scapeemulator.game.msg.NpcUpdateMessage
 import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.msg.ResetMinimapFlagMessage
 import net.scapeemulator.game.net.login.LoginService
+import net.scapeemulator.game.pathfinder.RegionManager
+import net.scapeemulator.game.pathfinder.RegionMapListener
+import net.scapeemulator.game.pathfinder.TraversalMap
+import net.scapeemulator.game.pathfinder.TraversalMapListener
 import net.scapeemulator.game.task.SyncTask
 import net.scapeemulator.game.task.TaskScheduler
 import net.scapeemulator.game.update.*
 import net.scapeemulator.game.update.PlayerDescriptor.Companion.create
 
-//sync task
 
 //world id
 class World(val worldId: Int, private val loginService: LoginService) : SyncTask {
     companion object {
         const val MAX_PLAYERS: Int = 2000
         const val MAX_NPCS: Int = 2000
+        const val MAX_GROUND_ITEMS: Int = 2000
     }
 
     var isOnline = false
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)
     val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
+    //    val ground_items = EntityList<GroundItem>(100)
     val taskScheduler: TaskScheduler = TaskScheduler()
 
-    //private val updater = PlayerUpdater(this)
+    val groundItemManager = GroundItems()
 
+    val regionManager = RegionManager()
+    val traversalMap = TraversalMap(regionManager)
+
+    init {
+        if (PATHFINDING_ENABLED) {
+            GameServer.INSTANCE.mapSet.apply {
+                addListener(RegionMapListener(regionManager))
+                addListener(TraversalMapListener(traversalMap))
+            }
+        }
+    }
+    //private val updater = PlayerUpdater(this)
 
     override fun sync(tick: Int) {
         if (!isOnline) return
         processLoginRequest()
-
         for (player in players) {
             if (player == null) continue
             val session = player.session
             session?.processMessageQueue()
         }
-
         taskScheduler.tick()
-
+        groundItemManager.tick()
         players.preprocessPlayers()
         npcs.preprocessNpcs()
         for (player in players) {
@@ -84,27 +101,7 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
                 player.send(RegionChangeMessage(position))
             }
             player.walkingQueue.tick()
-
-//            if (player.hitQueue.isNotEmpty()) {
-//                val hq = player.hitQueue
-//                println("HitQueue ${hq.size} hits")
-//                val poll = hq.poll()
-//            }
-
-//            for (i in 0..2 step 1) {
-//                if (player.hitQueue.peek() == null) continue
-//                val hit = player.hitQueue.poll()
-//                val secondary = i == 1
-//                if (secondary) {
-//                    player.secondaryHit = hit
-//                    player.isHit2Updated = true
-//                } else {
-//                    player.primaryHit = hit
-//                    player.isHitUpdated = true
-//                }
-//            }
             processHitQueue(player)
-
         }
     }
 

@@ -18,12 +18,12 @@ import net.scapeemulator.game.net.game.GameFrameBuilder
 //    }
 //}
 
-internal val SkillMessageEncoder = handleEncoder(SkillMessage::class) { alloc, message ->
+internal val SkillMessageEncoder = MessageEncoder(SkillMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 38)
     //putA ?
     builder.put(DataType.BYTE, DataTransformation.ADD, message.level)
     //putIntA
     builder.put(DataType.INT, DataOrder.MIDDLE, message.experience)
     builder.put(DataType.BYTE, message.skill)
-    return@handleEncoder builder.toGameFrame()
+    return@MessageEncoder builder.toGameFrame()
 }

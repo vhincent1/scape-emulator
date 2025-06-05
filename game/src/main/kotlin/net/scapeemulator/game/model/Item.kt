@@ -1,6 +1,6 @@
 package net.scapeemulator.game.model
 
-class Item(id: Int, amount: Int = 1) {
+open class Item(id: Int, amount: Int = 1) : Node() {
     val id: Int
     val amount: Int
 
@@ -9,6 +9,8 @@ class Item(id: Int, amount: Int = 1) {
         this.id = id
         this.amount = amount
     }
+
+    override var index = -1
 
     override fun hashCode(): Int {
         val prime = 31

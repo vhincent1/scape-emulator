@@ -11,6 +11,7 @@ class DummyPlayerSerializer : PlayerSerializer() {
         player.password = password
         player.rights = 2
         player.position = Position(3222, 3222)
+        player.databaseId = player.username.length
         return SerializeResult(LoginResponse.STATUS_OK, player)
     }
 

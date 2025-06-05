@@ -262,11 +262,13 @@ class Inventory {
         for (listener in listeners) listener.capacityExceeded(this)
     }
 
+    fun verify(slot: Int, item: Int): Boolean = get(slot) != null && get(slot)?.id == item
+
     private fun isStackable(item: Item): Boolean {
         if (stackMode == StackMode.ALWAYS) return true
-
-        return item.definition!!.stackable //TODO check
+        return item.definition?.stackable ?: false //TODO check
     }
+
 
     private fun checkSlot(slot: Int) {
         if (slot < 0 || slot >= items.size) throw IndexOutOfBoundsException("slot out of range")

@@ -5,6 +5,7 @@ import net.scapeemulator.game.button.ButtonDispatcher
 import net.scapeemulator.game.command.CommandDispatcher
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.*
+import net.scapeemulator.game.msg.GroundItem.ItemDropHandler
 import kotlin.reflect.KClass
 
 class MessageDispatcher() {
@@ -31,7 +32,6 @@ class MessageDispatcher() {
 
         /* command handler */
         handlers[CommandMessage::class] = commandDispatcher
-
         handlers[SwapItemsMessage::class] = SwapItemsMessageHandler
         handlers[EquipItemMessage::class] = EquipItemMessageHandler
         handlers[RemoveItemMessage::class] = RemoveItemMessageHandler
@@ -51,6 +51,7 @@ class MessageDispatcher() {
         }
 
         handlers[RunScriptMessage::class] = RunScriptHandler
+        handlers[ItemDropMessage::class] = ItemDropHandler
     }
 
 //    fun <T : Message> handlers[clazz: KClass<T>, handler: MessageHandler<T>) {

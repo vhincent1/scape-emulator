@@ -4,8 +4,9 @@ import net.scapeemulator.game.cache.LandscapeKeyTable
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.net.game.*
 
+// UpdateSceneGraph
 internal fun RegionChangeEncoder(table: LandscapeKeyTable) =
-    handleEncoder(RegionChangeMessage::class) { alloc, message ->
+    MessageEncoder(RegionChangeMessage::class) { alloc, message ->
         val builder = GameFrameBuilder(alloc, 162, GameFrame.Type.VARIABLE_SHORT)
 
         val position = message.position
@@ -16,7 +17,6 @@ internal fun RegionChangeEncoder(table: LandscapeKeyTable) =
         val centralMapY = position.centralRegionY / 8
 
         if ((centralMapX == 48 || centralMapX == 49) && centralMapY == 48) force = false
-
         if (centralMapX == 48 && centralMapY == 148) force = false
 
         for (mapX in ((position.centralRegionX - 6) / 8)..((position.centralRegionX + 6) / 8)) {
@@ -32,7 +32,7 @@ internal fun RegionChangeEncoder(table: LandscapeKeyTable) =
         builder.put(DataType.SHORT, position.centralRegionX)
         builder.put(DataType.SHORT, DataTransformation.ADD, position.centralRegionY)
         builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalY(position.centralRegionY))
-        return@handleEncoder builder.toGameFrame()
+        return@MessageEncoder builder.toGameFrame()
     }
 
 //class RegionChangeMessageEncoder(private val table: LandscapeKeyTable) :

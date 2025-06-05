@@ -123,7 +123,7 @@ class Player() : Mob() {
     override val isRunning: Boolean
         get() = settings.running
 
-    fun nextAppearanceTicket(): Int {
+    private fun nextAppearanceTicket(): Int {
         if (++appearanceTicketCounter == 0)
             appearanceTicketCounter = 1
         return appearanceTicketCounter

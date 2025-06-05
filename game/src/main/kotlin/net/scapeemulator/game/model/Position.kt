@@ -17,23 +17,32 @@ class Position {
         this.height = height
     }
 
-    fun getLocalX(centralRegionX: Int): Int {
-        return x - ((centralRegionX - 6) * 8)
-    }
+    //    fun getChunkOffsetX(): Int {
+//        val x = getLocalX()
+//        return x - ((x / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
+//    }
+//    fun getChunkOffsetY(): Int {
+//        val y = getLocalY()
+//        return y - ((y / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
+//    }
+//    fun getChunkBase(): Position = Position(getRegionX() shl 3, getRegionY() shl 3, z)
+//    fun getRegionX(): Int = x shr 3
+//    fun getRegionY(): Int = y shr 3
+//    fun getLocalX(): Int = x - ((x shr 6) shl 6)
+//    fun getLocalY(): Int = y - ((y shr 6) shl 6)
+//    fun getSceneX(): Int = x - ((getRegionX() - 6) shl 3)
+//    fun getSceneY(): Int = y - ((getRegionY() - 6) shl 3)
+//    fun getSceneX(loc: Position): Int = x - ((loc.getRegionX() - 6) shl 3)
+//    fun getSceneY(loc: Position): Int = y - ((loc.getRegionY() - 6) * 8)
+    fun getRegionId(): Int = (x shr 6) shl 8 or (y shr 6)
 
-    fun getLocalY(centralRegionY: Int): Int {
-        return y - ((centralRegionY - 6) * 8)
-    }
+    fun getLocalX(centralRegionX: Int): Int = x - ((centralRegionX - 6) * 8)
+    fun getLocalY(centralRegionY: Int): Int = y - ((centralRegionY - 6) * 8)
 
-    val centralRegionX: Int
-        get() = x / 8
+    val centralRegionX: Int get() = x / 8
+    val centralRegionY: Int get() = y / 8
 
-    val centralRegionY: Int
-        get() = y / 8
-
-    fun isWithinDistance(position: Position): Boolean {
-        return isWithinDistanceArea(position, 15)
-    }
+    fun isWithinDistance(position: Position): Boolean = isWithinDistanceArea(position, 15)
 
     fun isWithinDistanceArea(position: Position, distance: Int): Boolean {
         val deltaX: Int = position.x - x
@@ -48,6 +57,7 @@ class Position {
         return deltaX <= dist && deltaX >= -dist && deltaY <= dist && deltaY >= -dist
     }
 
+    // script message
     fun toPackedInt(): Int {
         return (height shl 28) or (x shl 14) or y
     }

@@ -11,7 +11,7 @@ abstract class MessageEncoder<T : Message>(@JvmField val clazz: KClass<T>) {
     abstract fun encode(alloc: ByteBufAllocator, message: T): GameFrame
 }
 
-fun <T : Message> handleEncoder(
+fun <T : Message> MessageEncoder(
 //    vararg opcodes: Int?,
     klass: KClass<T>,
     block: (alloc: ByteBufAllocator, message: T) -> GameFrame

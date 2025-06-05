@@ -17,6 +17,10 @@ class RegisterSession(server: GameServer, channel: Channel) : Session(server, ch
 
             is RegisterUsernameRequest -> {
                 println("register username ${message.username}")
+                val regex = "^[A-Za-z]*$".toRegex()
+                if (message.username.matches(regex)) {
+//                    println("Username: ${pair.player.username}")
+                }
             }
 
             is RegisterCommitRequest -> {

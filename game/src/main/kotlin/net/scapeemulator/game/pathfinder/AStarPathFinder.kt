@@ -59,7 +59,6 @@ class AStarPathFinder : PathFinder() {
         val width = radius * 2
         val length = width * 2
 
-
         /* Move our coordinates to the center so we don't run into bounds issues */
         srcX += radius
         srcY += radius
@@ -67,20 +66,16 @@ class AStarPathFinder : PathFinder() {
         dstY += radius
 
         if (dstX < 0 || dstY < 0 || dstX >= width || dstY >= length) {
+            println("Out of range")
             return null // out of range
         }
 
-        val map: TraversalMap = GameServer.INSTANCE.traversalMap
+        val map: TraversalMap = GameServer.INSTANCE.world.traversalMap
 
         open.clear()
         closed.clear()
 
-        nodes = Array(width) {
-            arrayOfNulls(length)
-        }
-//        nodes = Array(width){
-//
-//        }
+        nodes = Array(width) { arrayOfNulls(length) }
         for (x in 0 until width) {
             for (y in 0 until length) {
                 nodes[x][y] = Node(x, y)
@@ -100,46 +95,22 @@ class AStarPathFinder : PathFinder() {
             val y = current!!.y
 
             // south
-            if (y > 0 && map.isTraversableSouth(
-                    position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
-                    size
-                )
-            ) {
+            if (y > 0 && map.isTraversableSouth(position.height, position.x + x - radius, position.y + y - radius, size)) {
                 val n = nodes[x][y - 1]
                 examineNode(n)
             }
             // west
-            if (x > 0 && map.isTraversableWest(
-                    position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
-                    size
-                )
-            ) {
+            if (x > 0 && map.isTraversableWest(position.height, position.x + x - radius, position.y + y - radius, size)) {
                 val n = nodes[x - 1][y]
                 examineNode(n)
             }
             // north
-            if (y < length - 1 && map.isTraversableNorth(
-                    position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
-                    size
-                )
-            ) {
+            if (y < length - 1 && map.isTraversableNorth(position.height, position.x + x - radius, position.y + y - radius, size)) {
                 val n = nodes[x][y + 1]
                 examineNode(n)
             }
             // east
-            if (x < width - 1 && map.isTraversableEast(
-                    position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
-                    size
-                )
-            ) {
+            if (x < width - 1 && map.isTraversableEast(position.height, position.x + x - radius, position.y + y - radius, size)) {
                 val n = nodes[x + 1][y]
                 examineNode(n)
             }

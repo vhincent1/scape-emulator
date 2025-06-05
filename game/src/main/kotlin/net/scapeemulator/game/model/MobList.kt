@@ -102,3 +102,45 @@ class ActorList<T>(
         fun <T> createMutableList(size: Int): MutableList<T?> = (arrayOfNulls<Any?>(size) as Array<T?>).toMutableList()
     }
 }
+
+
+class NodeList<T>(
+    private val initialCapacity: Int,
+    private val entities: MutableList<T?> = createMutableList<T?>(initialCapacity)
+) : List<T?> by entities {
+    override val size: Int get() = entities.count { it != null }
+    val indices: IntRange get() = entities.indices
+    val capacity: Int get() = entities.size
+
+    @Suppress("UNCHECKED_CAST")
+    fun add(node: Node): Boolean {
+        val index = entities.freeIndex()
+        if (index == INVALID_INDEX) return false
+        entities[index] = node as T
+        node.index = index
+        return entities[node.index] != null
+    }
+
+    fun remove(node: Node): Boolean = when {
+        node.index == INVALID_INDEX -> false
+        entities[node.index] != node -> false
+        else -> {
+            entities[node.index] = null
+            entities.removeAt(node.index)
+            node.index = 0//reset
+            entities[node.index] == null
+        }
+    }
+
+    override fun isEmpty(): Boolean = size == 0
+
+    private fun <T> List<T>.freeIndex(): Int = (INDEX_PADDING until indices.last).firstOrNull { this[it] == null } ?: INVALID_INDEX
+
+    private companion object {
+        const val INVALID_INDEX = -1 //0?
+        const val INDEX_PADDING = 1
+
+        @Suppress("UNCHECKED_CAST")
+        fun <T> createMutableList(size: Int): MutableList<T?> = (arrayOfNulls<Any>(size) as Array<T?>).toMutableList()
+    }
+}

@@ -1,6 +1,7 @@
 package net.scapeemulator.game.util
 
 import net.scapeemulator.game.model.*
+import net.scapeemulator.game.model.GroundItem
 import net.scapeemulator.game.msg.*
 
 fun Player.sendHintIcon(slot: Int?, target: Int, entity: Entity) {
@@ -75,4 +76,18 @@ fun Player.weight(amount: Double) {
 
 fun Player.sendString(id: Int, line: Int, string: String) {
     send(InterfaceTextMessage(id, line, string))
+}
+
+fun Player.sendCoords(x: Int, y: Int) {
+    val l = lastKnownRegion ?: return
+    val localX = position.getLocalX(l.centralRegionX) and 0xfff8
+    val localY = position.getLocalY(l.centralRegionY) and 0xfff8
+    send(PlacementCoordsMessage(localX, localY))
+//        send(GroundItemCreateMessage(Item(995, 1), position))
+//    send(GroundItemCreateMessage(removed!!, position))
+}
+
+fun Player.sendGroundItem(groundItem: GroundItem){
+    sendCoords(position.x, position.y)
+    send(GroundItemCreateMessage(groundItem, position))
 }
