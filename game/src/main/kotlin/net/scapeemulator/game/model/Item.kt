@@ -30,13 +30,8 @@ open class Item(id: Int, amount: Int = 1) : Node() {
         return true
     }
 
-    override fun toString(): String {
-        return Item::class.java.simpleName + " [id=" + id + ", amount=" + amount + "]"
-    }
+    override fun toString(): String = Item::class.java.simpleName + " [id=" + id + ", amount=" + amount + "]"
 
-    val definition: ItemDefinition?
-        get() = ItemDefinitions.forId(id)
-
-    val equipmentDefinition: EquipmentDefinition?
-        get() = EquipmentDefinition.forId(id)
+    val definition: ItemDefinition? get() = ItemDefinitions.forId(id)
+    val equipmentDefinition: EquipmentDefinition? get() = EquipmentDefinition.forId(id)
 }

@@ -11,7 +11,7 @@ internal val ServerMessageEncoder = MessageEncoder(ServerMessage::class) { alloc
 
 internal val SystemUpdateEncoder = MessageEncoder(SystemUpdateMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 85)
-    builder.put(DataType.SHORT, message.time)
+    builder.put(DataType.SHORT, message.time) //time * 50 / 30
     return@MessageEncoder builder.toGameFrame()
 }
 
@@ -77,9 +77,19 @@ internal val AccessMaskEncoder = MessageEncoder(AccessMaskMessage::class) { allo
     return@MessageEncoder builder.toGameFrame()
 }
 
+//Update Area Position
 internal val PlacementCoordsEncoder = MessageEncoder(PlacementCoordsMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 26)
     builder.put(DataType.BYTE, DataTransformation.NEGATE, message.x)
     builder.put(DataType.BYTE, message.y)
+    return@MessageEncoder builder.toGameFrame()
+}
+
+internal val UpdateAreaEncoder = MessageEncoder(PlacementCoordsMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 230, GameFrame.Type.VARIABLE_SHORT)
+//    val x: Int = base.getSceneX(player.getPlayerFlags().getLastSceneGraph())
+//    val y: Int = base.getSceneY(player.getPlayerFlags().getLastSceneGraph())
+//    builder.put(DataType.BYTE, DataTransformation.ADD, x)
+//    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, y)
     return@MessageEncoder builder.toGameFrame()
 }

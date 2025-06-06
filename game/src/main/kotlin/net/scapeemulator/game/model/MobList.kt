@@ -92,7 +92,8 @@ class ActorList<T>(
 
     override fun isEmpty(): Boolean = size == 0
 
-    private fun <T> List<T>.freeIndex(): Int = (INDEX_PADDING until indices.last).firstOrNull { this[it] == null } ?: INVALID_INDEX
+    private fun <T> List<T>.freeIndex(): Int =
+        (INDEX_PADDING until indices.last).firstOrNull { this[it] == null } ?: INVALID_INDEX
 
     private companion object {
         const val INVALID_INDEX = -1 //0?
@@ -134,7 +135,8 @@ class NodeList<T>(
 
     override fun isEmpty(): Boolean = size == 0
 
-    private fun <T> List<T>.freeIndex(): Int = (INDEX_PADDING until indices.last).firstOrNull { this[it] == null } ?: INVALID_INDEX
+    private fun <T> List<T>.freeIndex(): Int =
+        (INDEX_PADDING until indices.last).firstOrNull { this[it] == null } ?: INVALID_INDEX
 
     private companion object {
         const val INVALID_INDEX = -1 //0?
@@ -143,4 +145,20 @@ class NodeList<T>(
         @Suppress("UNCHECKED_CAST")
         fun <T> createMutableList(size: Int): MutableList<T?> = (arrayOfNulls<Any>(size) as Array<T?>).toMutableList()
     }
+}
+
+data class ItemTest(val id: Int, var amount: Int) : Node()
+
+fun main() {
+    val list = NodeList<ItemTest>(10)
+    val item = ItemTest(1, 10)
+    list.add(item)
+
+    println("Size: ${list.size}")
+    val updated = list.find { it == item }.apply {
+        item.amount = 30
+    }
+
+    list.filterNotNull().forEach { itemList -> println(itemList) }
+
 }

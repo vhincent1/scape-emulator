@@ -2,30 +2,38 @@ package net.scapeemulator.game.model
 
 import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.util.sendGroundItem
+import net.scapeemulator.game.util.sendGroundItemRemoval
+import net.scapeemulator.game.util.sendGroundItemUpdate
 
 //class GroundItem(override var position: Position, val item: Item, val owner: String) : Entity()
 
-class GroundItem(id: Int, amount: Int, var position: Position, var owner: Player? = null) : Item(id, amount) {
+class GroundItem(val id: Int, var amount: Int, pos: Position, var owner: Player? = null) : Node() {
     var private = false
     var expire: Int = 0
     var removed = false
+    var previousAmount = amount
 
     init {
+        super.position = pos
         resetTimer()
     }
 
+    override var position: Position = pos
+        set(value) { /* ignore */ }
 
-//    override var position: Position
-//        get() = super.position
-//        set(position) {
-//            // Don't allow modification of the position
-//        }
-
+    fun toItem() = Item(id, amount)
 
     fun resetTimer() {
         expire = if (private) 100 else 200
     }
 
+    override fun equals(other: Any?): Boolean {
+        other as GroundItem
+        if (id != other.id) return false
+        if (owner != other.owner) return false
+        if (position != other.position) return false
+        return true
+    }
 }
 
 /**
@@ -307,36 +315,68 @@ class GroundItem(id: Int, amount: Int, var position: Position, var owner: Player
 //    }
 //}
 
-class GroundItems {
+class GroundItems(val list: NodeList<GroundItem>) {
 
-    val ground_items = NodeList<GroundItem>(World.MAX_GROUND_ITEMS)
+    companion object {}
 
-    companion object {
-    }
+    fun tick() = list.tick()
 
-    fun tick() = ground_items.tick()
-
-    fun create(groundItem: GroundItem) {
-        if (groundItem.definition?.tradeable!!) groundItem.private = true
+    fun create(item: GroundItem) {
         //todo item plugins
-        if (ground_items.add(groundItem)) return
-        //item lookup
 
-        if (!groundItem.private) {
-            GameServer.INSTANCE.world.players.forEach { p ->
-                p?.sendGroundItem(groundItem)
+        val def = ItemDefinitions.forId(item.id)
+        if (def?.tradeable!!) item.private = false
+
+
+        // update ground item
+        if (def.stackable) {
+            //todo isOwner
+            val updated = list.find { it == item }?.apply {
+                println("Stack idx=$index: $amount to ${amount + item.amount}")
+                previousAmount = amount
+                println("Prev: $previousAmount")
+                amount += item.amount
+                println("New amount: $amount")
+                resetTimer()
+                //todo send new amount
             }
-        } else {
-            groundItem.owner?.sendGroundItem(groundItem)
+//            println("Found ${updated?.item}")
+            if (updated != null) {
+                //todo fix previous amount
+                item.owner?.sendGroundItemUpdate(updated.toItem(), updated)
+                return
+            }
+        }
+        //---------
+
+        if (!list.add(item)) return
+
+        item.apply {
+            if (owner != null && private) {
+                println("PRIVATE")
+                owner?.sendGroundItem(this)
+            } else {
+
+                println("PUBLIC")
+                GameServer.INSTANCE.world.players.forEach { player ->
+                    player?.sendGroundItem(this)
+                }
+            }
         }
     }
 
-    private fun NodeList<GroundItem>.tick() {
-        for (item in this) {
-            if (item != null) item.expire--
-        }
-    }
+    private fun NodeList<GroundItem>.tick() = this.forEach { item ->
+        item?.apply {
+            if (expire-- <= 195) {
+//                removed = true
+            }
 
+            if (removed) {
+                if (owner != null) owner?.sendGroundItemRemoval(this.toItem(), item.position)
+            }
+        }
+
+    }
 }
 
 abstract class GroundItemListener {

@@ -31,6 +31,8 @@ dependencies {
 
     // Kotlin standard-lib
     runtimeOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+
+    implementation("org.rsmod:pathfinder:1.2.4")
     // script engine
 //    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
 //    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")

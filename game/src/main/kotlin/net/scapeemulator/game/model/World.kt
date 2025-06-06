@@ -26,12 +26,12 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
     }
 
     var isOnline = false
-    val players: ActorList<Player> = ActorList(MAX_PLAYERS)
-    val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
-    //    val ground_items = EntityList<GroundItem>(100)
     val taskScheduler: TaskScheduler = TaskScheduler()
 
-    val groundItemManager = GroundItems()
+    val players: ActorList<Player> = ActorList(MAX_PLAYERS)
+    val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
+    private val groundItems = NodeList<GroundItem>(MAX_GROUND_ITEMS)
+    val groundItemManager = GroundItems(groundItems)
 
     val regionManager = RegionManager()
     val traversalMap = TraversalMap(regionManager)

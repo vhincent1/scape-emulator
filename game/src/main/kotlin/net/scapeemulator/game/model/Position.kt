@@ -1,5 +1,7 @@
 package net.scapeemulator.game.model
 
+import net.scapeemulator.game.pathfinder.RegionManager
+
 class Position {
     val x: Int
     val y: Int
@@ -17,23 +19,28 @@ class Position {
         this.height = height
     }
 
-    //    fun getChunkOffsetX(): Int {
-//        val x = getLocalX()
-//        return x - ((x / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
-//    }
-//    fun getChunkOffsetY(): Int {
-//        val y = getLocalY()
-//        return y - ((y / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
-//    }
-//    fun getChunkBase(): Position = Position(getRegionX() shl 3, getRegionY() shl 3, z)
-//    fun getRegionX(): Int = x shr 3
-//    fun getRegionY(): Int = y shr 3
-//    fun getLocalX(): Int = x - ((x shr 6) shl 6)
+    fun getChunkBase() = Position(getRegionX() shl 3, getRegionY() shl 3, height)
+
+    fun getChunkOffsetX(): Int {
+        val x = x - ((x shr 6) shl 6)
+        return x - ((x / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
+    }
+
+    fun getChunkOffsetY(): Int {
+        val y = y - ((y shr 6) shl 6)
+        return y - ((y / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
+    }
+
+    //    fun getChunkBase(): Position = Position(getRegionX() shl 3, getRegionY() shl 3, z)
+    fun getRegionX(): Int = x shr 3
+    fun getRegionY(): Int = y shr 3
+
+    //    fun getLocalX(): Int = x - ((x shr 6) shl 6)
 //    fun getLocalY(): Int = y - ((y shr 6) shl 6)
 //    fun getSceneX(): Int = x - ((getRegionX() - 6) shl 3)
 //    fun getSceneY(): Int = y - ((getRegionY() - 6) shl 3)
-//    fun getSceneX(loc: Position): Int = x - ((loc.getRegionX() - 6) shl 3)
-//    fun getSceneY(loc: Position): Int = y - ((loc.getRegionY() - 6) * 8)
+    fun getSceneX(pos: Position): Int = x - ((pos.getRegionX() - 6) shl 3)
+    fun getSceneY(pos: Position): Int = y - ((pos.getRegionY() - 6) * 8)
     fun getRegionId(): Int = (x shr 6) shl 8 or (y shr 6)
 
     fun getLocalX(centralRegionX: Int): Int = x - ((centralRegionX - 6) * 8)

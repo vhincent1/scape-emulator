@@ -28,7 +28,7 @@ val spawnItems = setOf(
     Item(4736),
     Item(4738),
     Item(4734),
-    Item(995, 69.m()),
+    Item(995, 69),
     Item(4153)
 )
 
