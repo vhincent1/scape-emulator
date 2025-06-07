@@ -29,6 +29,15 @@ builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, value)
 //put((byte) value)
 builder.put(DataType.BYTE, value)
 
+//putByteC
+builder.put(DataType.BYTE, DataTransformation.NEGATE, value)
+
+//getLEShortA
+reader.getUnsigned(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD);
+
+//getShort
+reader.getUnsigned(DataType.SHORT);
+
 
 /* OUTGOING CLIENT PACKETS */
 writeTriByte => unknown
