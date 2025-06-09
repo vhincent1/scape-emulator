@@ -8,5 +8,4 @@ data class NpcUpdateMessage(
     @JvmField val position: Position,
     @JvmField val localNpcCount: Int,
     @JvmField val descriptors: List<NpcDescriptor>
-) :
-    Message()
+) : Message

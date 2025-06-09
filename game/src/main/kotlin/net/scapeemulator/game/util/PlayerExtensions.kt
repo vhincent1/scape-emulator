@@ -1,7 +1,6 @@
 package net.scapeemulator.game.util
 
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.model.GroundItem
 import net.scapeemulator.game.msg.*
 
 fun Player.sendHintIcon(slot: Int?, target: Int, entity: Entity) {
@@ -78,58 +77,27 @@ fun Player.sendString(id: Int, line: Int, string: String) {
     send(InterfaceTextMessage(id, line, string))
 }
 
-fun Player.sendCoords(x: Int, y: Int) {
-    val l = lastKnownRegion ?: return
-    val localX = position.getLocalX(l.centralRegionX) and 0xfff8
-    val localY = position.getLocalY(l.centralRegionY) and 0xfff8
-    send(PlacementCoordsMessage(localX, localY))
-//        send(GroundItemCreateMessage(Item(995, 1), position))
-//    send(GroundItemCreateMessage(removed!!, position))
+fun Player.sendAreaUpdate(pos: Position) {
+    val chunk = pos.getChunkBase()
+    val x: Int = chunk.getRegionX(lastKnownRegion!!)
+    val y: Int = chunk.getRegionY(lastKnownRegion!!)
+    send(UpdateAreaMessage(x, y))
 }
 
-fun Player.sendPlacementCoords(pos: Position) {
-    val localX = pos.getLocalX(position.centralRegionX) and 0xfff8
-    val localY = pos.getLocalY(position.centralRegionY) and 0xfff8
-    send(PlacementCoordsMessage(localX, localY))
-}
-
-fun Player.sendCoords3(pos: Position) {
-    val x: Int = pos.getSceneX(lastKnownRegion!!)
-    val y: Int = pos.getSceneY(lastKnownRegion!!)
-    send(PlacementCoordsMessage(x, y))
-}
-
-fun Player.sendCoords2(l: Position) {
-//    val l = lastKnownRegion ?: return
-    val localX = position.getLocalX(l.centralRegionX) and 0xfff8
-    val localY = position.getLocalY(l.centralRegionY) and 0xfff8
-    send(PlacementCoordsMessage(localX, localY))
-//        send(GroundItemCreateMessage(Item(995, 1), position))
-//    send(GroundItemCreateMessage(removed!!, position))
-}
-
-//fun sendCoords(location: com.xeno.model.Location) {
-//    val spb: StaticPacketBuilder = StaticPacketBuilder().setId(26)
-//    val regionX: Int = player.getUpdateFlags().getLastRegion().getRegionX()
-//    val regionY: Int = player.getUpdateFlags().getLastRegion().getRegionY()
-//    spb.addByteC((location.getX() - ((regionX - 6) * 8)).toByte().toInt())
-//    spb.addByte((location.getY() - ((regionY - 6) * 8)).toByte())
-//    player.getSession().write(spb.toPacket())
-//}
-
-fun Player.sendGroundItem(item: GroundItem) {
-//    sendCoords(position.x, position.y)
-    sendCoords3(item.position.getChunkBase())
+fun Player.sendGroundItemCreate(item: GroundItem) {
+    sendAreaUpdate(item.position)
     send(GroundItemCreateMessage(item.toItem(), item.position))
 }
 
-fun Player.sendGroundItemUpdate(new: Item, old: GroundItem) {
-    println("Updated ${new.amount} : old=${old.amount}")
-    sendCoords(new.position.x, new.position.y)
-//    send(GroundItemUpdateMessage(new, old.item, position))
-    send(GroundItemUpdateMessage(new.id, new.amount, old.position, old.previousAmount))
+fun Player.sendGroundItemUpdate(new: GroundItem, previousAmount: Int) {
+    println("Updated ${new.amount} : old=${previousAmount}")
+//    println("New Pos: ${new.position.x}")
+    sendAreaUpdate(new.position)
+    send(GroundItemUpdateMessage(new.toItem(), new.position, previousAmount))
+//    send(GroundItemUpdateMessage(new.id, new.amount, old.position, old.previousAmount))
 }
 
-fun Player.sendGroundItemRemoval(item: Item, position: Position) {
+fun Player.sendGroundItemRemoval(item: Int, position: Position) {
+    sendAreaUpdate(position)
     send(GroundItemRemoveMessage(item, position))
 }

@@ -1,7 +1,6 @@
 package net.scapeemulator.game.msg.codec
 
 import net.scapeemulator.game.cache.LandscapeKeyTable
-import net.scapeemulator.game.msg.GroundItem
 import net.scapeemulator.game.msg.Message
 import kotlin.reflect.KClass
 
@@ -15,13 +14,14 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(IdleLogoutMessageDecoder)
         bind(ButtonMessageDecoder)
         bind(ExtendedButtonMessageDecoder)
-        bind(PlayerInteraction1)
-        bind(PlayerInteraction2)
-        bind(PlayerInteraction3)
-        bind(PlayerInteraction4)
-        bind(PlayerInteraction5)
-        bind(PlayerInteraction6)
-        bind(PlayerInteraction7)
+//        bind(NpcInteractionDecoder)
+//        bind(PlayerInteraction1)
+//        bind(PlayerInteraction2)
+//        bind(PlayerInteraction3)
+//        bind(PlayerInteraction4)
+//        bind(PlayerInteraction5)
+//        bind(PlayerInteraction6)
+//        bind(PlayerInteraction7)
 //        bind(InterfaceOptionMessageDecoder())
         bind(walkMessageDecoder(39))
         bind(walkMessageDecoder(77))
@@ -40,11 +40,14 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(FlagsMessageDecoder)
         bind(SequenceNumberMessageDecoder)
         bind(InterfaceClosedMessageDecoder)//184
-        bind(ObjectOptionOneMessageDecoder)
-        bind(ObjectOptionTwoMessageDecoder)
+//        bind(ObjectOption1)
+//        bind(ObjectOption2)
         bind(EnterAmountDecoder)
         bind(EnterTextDecoder)
-        bind(NpcInteraction)
+
+        InteractionDecoders.forEach(this::bind)
+        ExamineDecoders.forEach(this::bind)
+        ObjectDecoders.forEach(this::bind)
 
         /* encoders */
         bind(RegionChangeEncoder(table))
@@ -75,16 +78,11 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(MinimapStatusEncoder)
         bind(WeightEncoder)
         bind(AccessMaskEncoder)
-        bind(PlacementCoordsEncoder)
+        bind(UpdateAreaEncoder)
 
         //ground items
-        bind(GroundItem.ItemDrop)
-        bind(GroundItem.ItemCreate)
-        bind(GroundItem.ItemRemove)
-        bind(GroundItem.ItemUpdate)
-        bind(GroundItem.ItemOption1)
-        bind(GroundItem.ItemOption2)
-        bind(ExamineItem)
+        ItemDecoders.forEach(this::bind)
+        ItemEncoders.forEach(this::bind)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix

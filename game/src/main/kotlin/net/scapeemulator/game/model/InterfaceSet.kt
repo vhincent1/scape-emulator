@@ -3,7 +3,7 @@ package net.scapeemulator.game.model
 import net.scapeemulator.game.msg.*
 import java.util.*
 
-class InterfaceSet( val player: Player) {
+class InterfaceSet(val player: Player) {
     enum class InterfaceType(
         private val fixedPanel: Int,
         private val resizablePanel: Int,
@@ -162,8 +162,8 @@ class InterfaceSet( val player: Player) {
 
     fun openWorldMap() {
         openFullscreen(Interface.WORLD_MAP)
-        player.send(ScriptIntMessage(622, player.position.toPackedInt())) // map center
-        player.send(ScriptIntMessage(674, player.position.toPackedInt())) // player position
+        player.send(ScriptIntMessage(622, player.position.packed)) // map center
+        player.send(ScriptIntMessage(674, player.position.packed)) // player position
     }
 
     //TODO: Lobby screen

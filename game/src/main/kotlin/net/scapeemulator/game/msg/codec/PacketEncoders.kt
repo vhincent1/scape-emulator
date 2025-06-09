@@ -78,18 +78,18 @@ internal val AccessMaskEncoder = MessageEncoder(AccessMaskMessage::class) { allo
 }
 
 //Update Area Position
-internal val PlacementCoordsEncoder = MessageEncoder(PlacementCoordsMessage::class) { alloc, message ->
+internal val UpdateAreaEncoder = MessageEncoder(UpdateAreaMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 26)
     builder.put(DataType.BYTE, DataTransformation.NEGATE, message.x)
     builder.put(DataType.BYTE, message.y)
     return@MessageEncoder builder.toGameFrame()
 }
 
-internal val UpdateAreaEncoder = MessageEncoder(PlacementCoordsMessage::class) { alloc, message ->
-    val builder = GameFrameBuilder(alloc, 230, GameFrame.Type.VARIABLE_SHORT)
-//    val x: Int = base.getSceneX(player.getPlayerFlags().getLastSceneGraph())
-//    val y: Int = base.getSceneY(player.getPlayerFlags().getLastSceneGraph())
-//    builder.put(DataType.BYTE, DataTransformation.ADD, x)
-//    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, y)
-    return@MessageEncoder builder.toGameFrame()
-}
+//internal val UpdateAreaEncoder = MessageEncoder(UpdateAreaMessage::class) { alloc, message ->
+//    val builder = GameFrameBuilder(alloc, 230, GameFrame.Type.VARIABLE_SHORT)
+////    val x: Int = base.getSceneX(player.getPlayerFlags().getLastSceneGraph())
+////    val y: Int = base.getSceneY(player.getPlayerFlags().getLastSceneGraph())
+////    builder.put(DataType.BYTE, DataTransformation.ADD, x)
+////    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, y)
+//    return@MessageEncoder builder.toGameFrame()
+//}

@@ -6,4 +6,4 @@ data class SwapItemsMessage(
     @JvmField val source: Int,
     @JvmField val destination: Int,
     val type: Int
-) : Message()
+) : Message

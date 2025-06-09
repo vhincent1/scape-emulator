@@ -6,7 +6,7 @@ data class DisplayModelMessage(
     @JvmField val amount: Int,
     @JvmField val interfaceId: Int,
     @JvmField val childId: Int
-) : Message() {
+) : Message {
 
     enum class Type {
         PLAYER, NPC, ITEM, MODEL

@@ -106,7 +106,7 @@ internal val InterfaceResetItemsEncoder = MessageEncoder(InterfaceResetItemsMess
     return@MessageEncoder builder.toGameFrame()
 }
 
-internal val AnimateInterfaceEncoder = MessageEncoder(AnimateInterfaceMessage::class) { alloc, message ->
+internal val AnimateInterfaceEncoder = MessageEncoder(InterfaceAnimateMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 36)
     builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, (message.interfaceId shl 16) + message.childId)
     builder.put(DataType.SHORT, DataOrder.LITTLE, message.animationId)

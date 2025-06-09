@@ -2,10 +2,10 @@ package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
-import net.scapeemulator.game.msg.AnimateInterfaceMessage
 import net.scapeemulator.game.msg.ConfigMessage
 import net.scapeemulator.game.msg.DisplayModelMessage
 import net.scapeemulator.game.msg.ExtendedButtonMessage
+import net.scapeemulator.game.msg.InterfaceAnimateMessage
 import kotlin.random.Random
 
 /*
@@ -91,7 +91,7 @@ object CharDesign {
         player.sendMessage("Open")
         player.appearance = player.appearance
         player.send(DisplayModelMessage(771, 79))
-        player.send(AnimateInterfaceMessage(9806, 771, 79))
+        player.send(InterfaceAnimateMessage(9806, 771, 79))
         player.interfaceSet.openWindow(771) //{ close event}
     }
 

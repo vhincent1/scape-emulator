@@ -12,4 +12,5 @@ abstract class Entity {
 abstract class Node {
     open var index = 0
     open lateinit var position: Position
+
 }

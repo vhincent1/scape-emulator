@@ -30,8 +30,7 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
 
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)
     val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
-    private val groundItems = NodeList<GroundItem>(MAX_GROUND_ITEMS)
-    val groundItemManager = GroundItems(groundItems)
+    val groundItemManager = GroundItems(NodeList<GroundItem>(MAX_GROUND_ITEMS))
 
     val regionManager = RegionManager()
     val traversalMap = TraversalMap(regionManager)

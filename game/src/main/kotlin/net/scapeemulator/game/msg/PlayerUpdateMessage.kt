@@ -9,5 +9,4 @@ data class PlayerUpdateMessage(
     @JvmField val localPlayerCount: Int,
     @JvmField val selfDescriptor: PlayerDescriptor,
     @JvmField val descriptors: List<PlayerDescriptor>
-) :
-    Message()
+) : Message

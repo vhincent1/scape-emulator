@@ -1,11 +1,21 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.pathfinder.RegionManager
-
 class Position {
     val x: Int
     val y: Int
     val height: Int
+
+//    private val regionId: Int get() = (x shr 6) shl 8 or (y shr 6)
+//    private val regionId: Int get() = (regionX / 8 shl 8) + regionY / 8
+
+    private val regionX: Int get() = x shr 3
+    private val regionY: Int get() = y shr 3
+
+    val centralRegionX: Int get() = x / 8
+    val centralRegionY: Int get() = y / 8
+
+    // script message
+    val packed: Int get() = (height shl 28) or (x shl 14) or y
 
     constructor(x: Int, y: Int) {
         this.x = x
@@ -19,35 +29,26 @@ class Position {
         this.height = height
     }
 
-    fun getChunkBase() = Position(getRegionX() shl 3, getRegionY() shl 3, height)
+    fun getChunkBase() = Position(regionX shl 3, regionY shl 3, height)
 
-    fun getChunkOffsetX(): Int {
-        val x = x - ((x shr 6) shl 6)
-        return x - ((x / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
-    }
-
-    fun getChunkOffsetY(): Int {
-        val y = y - ((y shr 6) shl 6)
-        return y - ((y / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
-    }
-
+    //    fun getChunkOffsetX(): Int {
+//        val x = x - ((x shr 6) shl 6)
+//        return x - ((x / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
+//    }
+//
+//    fun getChunkOffsetY(): Int {
+//        val y = y - ((y shr 6) shl 6)
+//        return y - ((y / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
+//    }
     //    fun getChunkBase(): Position = Position(getRegionX() shl 3, getRegionY() shl 3, z)
-    fun getRegionX(): Int = x shr 3
-    fun getRegionY(): Int = y shr 3
-
     //    fun getLocalX(): Int = x - ((x shr 6) shl 6)
 //    fun getLocalY(): Int = y - ((y shr 6) shl 6)
 //    fun getSceneX(): Int = x - ((getRegionX() - 6) shl 3)
 //    fun getSceneY(): Int = y - ((getRegionY() - 6) shl 3)
-    fun getSceneX(pos: Position): Int = x - ((pos.getRegionX() - 6) shl 3)
-    fun getSceneY(pos: Position): Int = y - ((pos.getRegionY() - 6) * 8)
-    fun getRegionId(): Int = (x shr 6) shl 8 or (y shr 6)
-
+    fun getRegionX(position: Position): Int = x - ((position.regionX - 6) shl 3)
+    fun getRegionY(position: Position): Int = y - ((position.regionY - 6) * 8)
     fun getLocalX(centralRegionX: Int): Int = x - ((centralRegionX - 6) * 8)
     fun getLocalY(centralRegionY: Int): Int = y - ((centralRegionY - 6) * 8)
-
-    val centralRegionX: Int get() = x / 8
-    val centralRegionY: Int get() = y / 8
 
     fun isWithinDistance(position: Position): Boolean = isWithinDistanceArea(position, 15)
 
@@ -64,9 +65,10 @@ class Position {
         return deltaX <= dist && deltaX >= -dist && deltaY <= dist && deltaY >= -dist
     }
 
-    // script message
-    fun toPackedInt(): Int {
-        return (height shl 28) or (x shl 14) or y
+    fun isWithinScene(position: Position): Boolean {
+        val deltaX: Int = position.x - x
+        val deltaY: Int = position.y - y
+        return deltaX >= -52 && deltaX <= 51 && deltaY >= -52 && deltaY <= 51
     }
 
     override fun hashCode(): Int {
@@ -89,7 +91,7 @@ class Position {
         return true
     }
 
-    /* pathfinder */
+    /* pathfinder todo cleanup*/
 
     fun getLocalX(): Int {
         return getLocalX(centralRegionX)
@@ -113,5 +115,9 @@ class Position {
 
     fun getBaseLocalY(centralRegionY: Int): Int {
         return (centralRegionY - 6) * 8
+    }
+
+    override fun toString(): String {
+        return "Position(x=$x, y=$y, height=$height)"
     }
 }

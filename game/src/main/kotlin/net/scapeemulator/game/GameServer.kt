@@ -183,6 +183,7 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
     companion object {
         private val logger = KotlinLogging.logger {}
         lateinit var INSTANCE: GameServer
+        lateinit var WORLD: World
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -208,11 +209,15 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
             parser.parse(args)
             try {
                 INSTANCE = GameServer(world, InetSocketAddress(NetworkConstants.LOGIN_PORT))
+
                 /* start server */
                 INSTANCE.apply {
                     start()
                     network.start(gamePort, httpPort)
+
+                    WORLD = this.world
                 }
+
                 /* shutdown hook */
                 Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
             } catch (t: Throwable) {

@@ -1,3 +1,3 @@
 package net.scapeemulator.game.msg
 
-class RegionChangedMessage : Message()
+class RegionChangedMessage : Message

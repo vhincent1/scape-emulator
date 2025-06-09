@@ -15,8 +15,9 @@ class Player() : Mob() {
     lateinit var password: String
     var rights: Int = 0
 
-    val localPlayers: MutableList<Player> = ArrayList<Player>()
+    val localPlayers: MutableList<Player> = ArrayList()
     val localNpcs: MutableList<Npc> = ArrayList()
+    val localItems: MutableList<GroundItem> = ArrayList()
 
     val inventory: Inventory = Inventory(28)
     val equipment: Inventory = Inventory(14)

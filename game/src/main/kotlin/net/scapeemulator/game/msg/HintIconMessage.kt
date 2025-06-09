@@ -5,9 +5,7 @@ import net.scapeemulator.game.model.Npc
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.model.Position
 
-data class HintIconMessage(
-    var slot: Int, val targetType: Int, val targetId: Int, val entity: Entity?,
-) : Message() {
+data class HintIconMessage(var slot: Int, val targetType: Int, val targetId: Int, val entity: Entity?) : Message {
     val arrowId = 1 // -1 remove 0 full 1 hollow
     var modelId = 65535
     var position: Position? = null
