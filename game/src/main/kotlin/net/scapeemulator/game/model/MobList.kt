@@ -107,7 +107,7 @@ class ActorList<T>(
 
 class NodeList<T>(
     private val initialCapacity: Int,
-    private val entities: MutableList<T?> = createMutableList<T?>(initialCapacity)
+    internal val entities: MutableList<T?> = createMutableList<T?>(initialCapacity)
 ) : List<T?> by entities {
     override val size: Int get() = entities.count { it != null }
     val indices: IntRange get() = entities.indices
@@ -126,8 +126,8 @@ class NodeList<T>(
         node.index == INVALID_INDEX -> false
         entities[node.index] != node -> false
         else -> {
+            println("REMOVING NODE")
             entities[node.index] = null
-            entities.removeAt(node.index)
             node.index = 0//reset
             entities[node.index] == null
         }
@@ -150,15 +150,19 @@ class NodeList<T>(
 data class ItemTest(val id: Int, var amount: Int) : Node()
 
 fun main() {
-    val list = NodeList<ItemTest>(10)
-    val item = ItemTest(1, 10)
-    list.add(item)
-
+    val list = NodeList<ItemTest>(5)
+    for (i in 0..20) list.add(ItemTest(1, i))
     println("Size: ${list.size}")
-    val updated = list.find { it == item }.apply {
-        item.amount = 30
-    }
+//    val updated = list.find { it == item }.apply {
+//        item.amount = 30
+//    }
+    val t = ItemTest(1, 69)
+    println(list.add(t) == true)
+    println(list.contains(t))
 
-    list.filterNotNull().forEach { itemList -> println(itemList) }
+    println(list.toMutableList().add(t))
+//    list.add()
+
+//    list.filterNotNull().forEach { itemList -> println(itemList) }
 
 }

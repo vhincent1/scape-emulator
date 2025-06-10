@@ -30,7 +30,7 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
 
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)
     val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
-    val groundItemManager = GroundItems(NodeList<GroundItem>(MAX_GROUND_ITEMS))
+    val groundItemManager = GroundItemManager(NodeList(MAX_GROUND_ITEMS))
 
     val regionManager = RegionManager()
     val traversalMap = TraversalMap(regionManager)
@@ -43,7 +43,6 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
             }
         }
     }
-    //private val updater = PlayerUpdater(this)
 
     override fun sync(tick: Int) {
         if (!isOnline) return
@@ -118,15 +117,12 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
         val lastKnownRegion = player.lastKnownRegion
         val position = player.position
         val tickets = player.appearanceTickets
-
-        val selfDescriptor: PlayerDescriptor
-        if (player.isTeleporting) selfDescriptor = TeleportPlayerDescriptor(player, tickets)
-        else selfDescriptor = create(player, tickets)
-
+        val selfDescriptor: PlayerDescriptor =
+            if (player.isTeleporting) TeleportPlayerDescriptor(player, tickets)
+            else create(player, tickets)
         val descriptors: MutableList<PlayerDescriptor> = ArrayList()
         val localPlayers = player.localPlayers
         val localPlayerCount = localPlayers.size
-
         val it: MutableIterator<Player> = localPlayers.iterator()
         while (it.hasNext()) {
             val p = it.next()
@@ -137,7 +133,6 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
                 descriptors.add(create(p, tickets))
             }
         }
-
         for (p in this) {
             if (p == null) continue
             if (localPlayers.size >= 255) break
@@ -154,11 +149,9 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
         if (player == null) return
         val lastKnownRegion = player.lastKnownRegion
         val position = player.position
-
-        val descriptors: MutableList<NpcDescriptor> = ArrayList<NpcDescriptor>()
+        val descriptors: MutableList<NpcDescriptor> = ArrayList()
         val localNpcs = player.localNpcs
         val localNpcCount = localNpcs.size
-
         val it: MutableIterator<Npc> = localNpcs.iterator()
         while (it.hasNext()) {
             val n = it.next()
@@ -166,7 +159,7 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
                 it.remove()
                 descriptors.add(RemoveNpcDescriptor(n))
             } else {
-                descriptors.add(NpcDescriptor.Companion.create(n))
+                descriptors.add(NpcDescriptor.create(n))
             }
         }
         for (n in this) {
@@ -207,10 +200,8 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
     private fun isRegionChangeRequired(player: Player): Boolean {
         val lastKnownRegion = player.lastKnownRegion
         val position = player.position
-
         val deltaX = position.getLocalX(lastKnownRegion!!.centralRegionX)
         val deltaY = position.getLocalY(lastKnownRegion.centralRegionY)
-
         return deltaX < 16 || deltaX >= 88 || deltaY < 16 || deltaY >= 88
     }
 

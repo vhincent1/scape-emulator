@@ -122,20 +122,20 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 di.onEach {
                     it.expire = (5..10).random()
 //                    it.remainPrivate = true
-                    world.groundItemManager.create(it)
+                    world.groundItemManager.create(it) {}
                 }
 //                val coins = GroundItem(995, 1000000, player.position, player)
 ////                coins.private = true
 //                coins.expire = 5
 //                world.groundItemManager.create(coins)
             }, CommandHandler("rd") { player, arguments ->
-                val coins = GroundItem(4151, 1, player.position, playerBot)
+                val coins = GroundItem(4151, 1, player.position)
 //                coins.remainPrivate = true
                 coins.expire = 5
-                world.groundItemManager.create(coins)
+                world.groundItemManager.create(coins) {}
             }, CommandHandler("d") { player, arguments ->
                 println("List:")
-                world.groundItemManager.groundItems.forEach { println(it) }
+                world.groundItemManager.nodes.forEach { println(it) }
             },
             CommandHandler("search") { player, arguments ->
                 player.displayEnterPrompt("pickup Item", RunScriptType.STRING) { player, value ->

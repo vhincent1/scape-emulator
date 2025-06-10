@@ -84,6 +84,7 @@ fun Player.sendAreaUpdate(pos: Position) {
     send(UpdateAreaMessage(x, y))
 }
 
+//
 fun Player.sendGroundItemCreate(item: GroundItem) {
     sendAreaUpdate(item.position)
     send(GroundItemCreateMessage(item.toItem(), item.position))
@@ -91,10 +92,8 @@ fun Player.sendGroundItemCreate(item: GroundItem) {
 
 fun Player.sendGroundItemUpdate(new: GroundItem, previousAmount: Int) {
     println("Updated ${new.amount} : old=${previousAmount}")
-//    println("New Pos: ${new.position.x}")
     sendAreaUpdate(new.position)
     send(GroundItemUpdateMessage(new.toItem(), new.position, previousAmount))
-//    send(GroundItemUpdateMessage(new.id, new.amount, old.position, old.previousAmount))
 }
 
 fun Player.sendGroundItemRemoval(item: Int, position: Position) {
