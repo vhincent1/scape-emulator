@@ -25,7 +25,7 @@ object ItemDefinitions {
 
     @JvmStatic
     @Throws(IOException::class)
-    fun initi(cache: Cache) {
+    fun init(cache: Cache) {
         var count = 0
         val tableContainer = Container.decode(cache.store.read(255, 19))
         val table = ReferenceTable.decode(tableContainer.getData())

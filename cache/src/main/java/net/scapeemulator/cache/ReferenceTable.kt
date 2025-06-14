@@ -746,8 +746,8 @@ class ReferenceTable {
      * @param name The name of the entry.
      * @return The entry id or `-1` if the entry does not exist.
      */
-    fun getEntryId(name: String?): Int {
-        val hash = StringUtils.hash(name!!)
+    fun getEntryId(name: String): Int {
+        val hash = StringUtils.hash(name)
         if (!namedEntries.containsKey(hash)) {
             return -1
         }

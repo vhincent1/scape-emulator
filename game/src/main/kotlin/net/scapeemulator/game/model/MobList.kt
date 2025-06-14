@@ -107,7 +107,7 @@ class ActorList<T>(
 
 class NodeList<T>(
     private val initialCapacity: Int,
-    internal val entities: MutableList<T?> = createMutableList<T?>(initialCapacity)
+    private val entities: MutableList<T?> = createMutableList<T?>(initialCapacity)
 ) : List<T?> by entities {
     override val size: Int get() = entities.count { it != null }
     val indices: IntRange get() = entities.indices

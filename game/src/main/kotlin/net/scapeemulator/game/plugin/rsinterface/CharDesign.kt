@@ -1,4 +1,4 @@
-package net.scapeemulator.game.plugin
+package net.scapeemulator.game.plugin.rsinterface
 
 import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
@@ -6,6 +6,9 @@ import net.scapeemulator.game.msg.ConfigMessage
 import net.scapeemulator.game.msg.DisplayModelMessage
 import net.scapeemulator.game.msg.ExtendedButtonMessage
 import net.scapeemulator.game.msg.InterfaceAnimateMessage
+import net.scapeemulator.game.plugin.LoginEvent
+import net.scapeemulator.game.plugin.MessageEvent
+import net.scapeemulator.game.plugin.PluginHandler
 import kotlin.random.Random
 
 /*
@@ -78,6 +81,8 @@ Head:-
 
 Body:-
 NEED TO DO.
+
+https://rune-server.org/threads/525-530-character-design.488248/
 
 */
 
@@ -208,10 +213,10 @@ val CharDesignPlugin = PluginHandler(
         if (event is LoginEvent) event.player.appearance = Appearance(Gender.FEMALE)
         if (event !is MessageEvent) return@PluginHandler
         if (event.message !is ExtendedButtonMessage) return@PluginHandler
-        charDesign.handleButtons(event.player, event.message.slot)
+        CharDesign.handleButtons(event.player, event.message.slot)
     }, arrayOf(
         CommandHandler("char") { player, args ->
-            charDesign.open(player)
+            CharDesign.open(player)
         },
         CommandHandler("c") { player, args ->
             //       println(charDesign.getAttribute(player.username, "char-design:look0", 0))

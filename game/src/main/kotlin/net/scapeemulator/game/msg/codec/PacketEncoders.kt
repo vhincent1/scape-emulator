@@ -93,3 +93,11 @@ internal val UpdateAreaEncoder = MessageEncoder(UpdateAreaMessage::class) { allo
 ////    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, y)
 //    return@MessageEncoder builder.toGameFrame()
 //}
+
+internal val SoundEncoder = MessageEncoder(SoundMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 172)
+    builder.put(DataType.SHORT, message.id)
+    builder.put(DataType.BYTE, message.volume)
+    builder.put(DataType.SHORT, message.delay)
+    return@MessageEncoder builder.toGameFrame()
+}

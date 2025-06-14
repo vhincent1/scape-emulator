@@ -4,6 +4,10 @@ open class Item(id: Int, amount: Int = 1) : Node() {
     val id: Int
     val amount: Int
 
+    //todo remove
+    val definition: ItemDefinition? get() = ItemDefinitions.forId(id)
+    val equipmentDefinition: EquipmentDefinition? get() = EquipmentDefinition.forId(id)
+
     init {
         require(amount >= 0)
         this.id = id
@@ -31,7 +35,4 @@ open class Item(id: Int, amount: Int = 1) : Node() {
     }
 
     override fun toString(): String = Item::class.java.simpleName + " [id=" + id + ", amount=" + amount + "]"
-
-    val definition: ItemDefinition? get() = ItemDefinitions.forId(id)
-    val equipmentDefinition: EquipmentDefinition? get() = EquipmentDefinition.forId(id)
 }

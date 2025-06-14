@@ -8,8 +8,6 @@ abstract class CommandHandler(val name: String) {
 
 internal fun CommandHandler(name: String, block: (Player, Array<String>) -> Unit): CommandHandler {
     return object : CommandHandler(name) {
-        override fun handle(player: Player, arguments: Array<String>) {
-            block(player, arguments)
-        }
+        override fun handle(player: Player, arguments: Array<String>) = block(player, arguments)
     }
 }

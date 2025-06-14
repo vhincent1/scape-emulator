@@ -40,8 +40,6 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(FlagsMessageDecoder)
         bind(SequenceNumberMessageDecoder)
         bind(InterfaceClosedMessageDecoder)//184
-//        bind(ObjectOption1)
-//        bind(ObjectOption2)
         bind(EnterAmountDecoder)
         bind(EnterTextDecoder)
 
@@ -79,6 +77,7 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(WeightEncoder)
         bind(AccessMaskEncoder)
         bind(UpdateAreaEncoder)
+        bind(SoundEncoder)
 
         //ground items
         ItemDecoders.forEach(this::bind)

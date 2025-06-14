@@ -102,7 +102,7 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
 
         /* load map */
         if (PATHFINDING_ENABLED) mapSet.init(cache, landscapeKeyTable)
-        //mapSet.init(cache, landscapeKeyTable)
+        mapSet.init(cache, landscapeKeyTable)
 
         /* load plugins */
         plugins = PluginManager(this)

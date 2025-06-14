@@ -17,11 +17,3 @@ fun <T : Mob> Action(mob: T, delay: Int, immediate: Boolean, block: Action<T>.()
         }
     }
 }
-
-//fun <T : Mob> StartAction(mob: T, delay: Int, immediate: Boolean, block: (Action<T>, T, Int, Boolean) -> Unit) {
-//    mob.startAction(object : Action<T>(mob, delay, immediate) {
-//        override fun execute() {
-//            block(this, mob, delay, immediate)
-//        }
-//    })
-//}

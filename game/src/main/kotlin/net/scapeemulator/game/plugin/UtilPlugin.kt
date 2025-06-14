@@ -4,6 +4,7 @@ import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.HintIconMessage
 import net.scapeemulator.game.msg.InterfaceVisibleMessage
+import net.scapeemulator.game.plugin.rsinterface.generateAppearance
 import net.scapeemulator.game.task.Action
 import net.scapeemulator.game.util.displayEnterPrompt
 import net.scapeemulator.game.util.removeHintIcon
@@ -80,8 +81,9 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 event.player.sendPlayerOption(4, "Hi")
                 event.player.sendPlayerOption(6, "6")
                 event.player.sendPlayerOption(7, "7")
-            }
 
+                event.player.sendMessage("NPCS:${world.npcs.size}")
+            }
         }, { spawnBots(world) },
         arrayOf(
             CommandHandler("bandos") { player, args ->
@@ -99,12 +101,10 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 }
                 val id = arguments[0].toInt()
                 val npc = Npc(id).apply {
-                    position = player.position.apply {
-                        x + 1
-                    }
+                    position = Position(player.position.x + 1, player.position.y, player.position.height)
                 }
-                //world.npcs.add(npc)
-            }, CommandHandler("rm") { player, arguments ->
+                world.npcs.add(npc)
+            }, CommandHandler("rm") { player, args ->
                 if (!world.players.remove(playerBot))
                     world.players.add(playerBot)
             }, CommandHandler("drop") { player, arguments ->
@@ -122,20 +122,22 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 di.onEach {
                     it.expire = (5..10).random()
 //                    it.remainPrivate = true
-                    world.groundItemManager.create(it) {}
+                    world.items.create(it)
                 }
 //                val coins = GroundItem(995, 1000000, player.position, player)
 ////                coins.private = true
 //                coins.expire = 5
 //                world.groundItemManager.create(coins)
-            }, CommandHandler("rd") { player, arguments ->
+            }, CommandHandler("dw") { player, arguments ->
                 val coins = GroundItem(4151, 1, player.position)
 //                coins.remainPrivate = true
-                coins.expire = 5
-                world.groundItemManager.create(coins) {}
+//                coins.owner = playerBot
+                coins.worldVisibility = true
+                coins.expire = 10
+                world.items.create(coins)
             }, CommandHandler("d") { player, arguments ->
                 println("List:")
-                world.groundItemManager.nodes.forEach { println(it) }
+                world.items.nodes.forEach { println(it) }
             },
             CommandHandler("search") { player, arguments ->
                 player.displayEnterPrompt("pickup Item", RunScriptType.STRING) { player, value ->
@@ -159,7 +161,6 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                     player.sendMessage("Value: $value")
                 }
             }, CommandHandler("t") { player, arguments ->
-
                 if (arguments.size != 1) {
                     player.sendMessage("Syntax ::i [id]")
                     return@CommandHandler

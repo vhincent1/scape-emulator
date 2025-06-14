@@ -52,4 +52,5 @@ public final class Base37Utils {
 		
 	}
 
+
 }

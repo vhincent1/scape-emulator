@@ -1,16 +1,12 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.GameServer
-import net.scapeemulator.game.PATHFINDING_ENABLED
 import net.scapeemulator.game.msg.NpcUpdateMessage
 import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.msg.ResetMinimapFlagMessage
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.pathfinder.RegionManager
-import net.scapeemulator.game.pathfinder.RegionMapListener
 import net.scapeemulator.game.pathfinder.TraversalMap
-import net.scapeemulator.game.pathfinder.TraversalMapListener
 import net.scapeemulator.game.task.SyncTask
 import net.scapeemulator.game.task.TaskScheduler
 import net.scapeemulator.game.update.*
@@ -30,18 +26,19 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
 
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)
     val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
-    val groundItemManager = GroundItemManager(NodeList(MAX_GROUND_ITEMS))
+    val items = GroundItemManager(NodeList(MAX_GROUND_ITEMS))
 
     val regionManager = RegionManager()
     val traversalMap = TraversalMap(regionManager)
 
     init {
-        if (PATHFINDING_ENABLED) {
-            GameServer.INSTANCE.mapSet.apply {
-                addListener(RegionMapListener(regionManager))
-                addListener(TraversalMapListener(traversalMap))
-            }
-        }
+        // todo: fix
+//        if (PATHFINDING_ENABLED) {
+//            GameServer.INSTANCE.mapSet.apply {
+//                addListener(RegionMapListener(regionManager))
+//                addListener(TraversalMapListener(traversalMap))
+//            }
+//        }
     }
 
     override fun sync(tick: Int) {
@@ -53,7 +50,7 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
             session?.processMessageQueue()
         }
         taskScheduler.tick()
-        groundItemManager.tick()
+        items.tick()
         players.preprocessPlayers()
         npcs.preprocessNpcs()
         for (player in players) {

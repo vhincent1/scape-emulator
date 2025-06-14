@@ -10,7 +10,6 @@ import net.scapeemulator.game.util.gfx
 import kotlin.random.Random
 
 abstract class CombatHandler {
-
     abstract fun canHit(attacker: Mob?, victim: Mob?): Boolean
     abstract fun attack(attacker: Mob, victim: Mob): Int
     abstract fun visualImpact(attacker: Mob, victim: Mob)

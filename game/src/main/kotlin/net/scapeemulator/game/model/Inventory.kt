@@ -1,9 +1,13 @@
 package net.scapeemulator.game.model
 
+import java.io.File
+
 class Inventory {
     enum class StackMode {
         ALWAYS,
-        STACKABLE_ONLY
+        STACKABLE_ONLY,
+        NEVER_STACK,
+        SHOP
     }
 
     private val stackMode: StackMode
@@ -27,21 +31,10 @@ class Inventory {
         return array
     }
 
-    fun addListener(listener: InventoryListener) {
-        listeners.add(listener)
-    }
-
-    fun removeListener(listener: InventoryListener) {
-        listeners.remove(listener)
-    }
-
-    fun removeListeners() {
-        listeners.clear()
-    }
-
-    fun refresh() {
-        fireItemsChanged()
-    }
+    fun addListener(listener: InventoryListener) = listeners.add(listener)
+    fun removeListener(listener: InventoryListener) = listeners.remove(listener)
+    fun removeListeners() = listeners.clear()
+    fun refresh() = fireItemsChanged()
 
     fun get(slot: Int): Item? {
         checkSlot(slot)
@@ -66,9 +59,7 @@ class Inventory {
         fireItemChanged(slot2)
     }
 
-    fun reset(slot: Int) {
-        set(slot, null)
-    }
+    fun reset(slot: Int) = set(slot, null)
 
     //todo check slots before adding
     @JvmOverloads
@@ -143,7 +134,6 @@ class Inventory {
                     set(slot, single)
                     remaining--
                 }
-
                 if (remaining == 0) return null
             }
 
@@ -172,7 +162,6 @@ class Inventory {
                     return item
                 }
             }
-
             return null
         } else {
             var removed = 0
@@ -182,7 +171,6 @@ class Inventory {
                 checkSlot(preferredSlot)
                 if (items[preferredSlot]!!.id == id) {
                     set(preferredSlot, null)
-
                     if (++removed >= item.amount) return Item(id, removed)
                 }
             }
@@ -192,47 +180,47 @@ class Inventory {
                 val other = items[slot]
                 if (other != null && other.id == id) {
                     set(slot, null)
-
                     if (++removed >= item.amount) return Item(id, removed)
                 }
             }
-
             return if (removed == 0) null else Item(id, removed)
         }
     }
 
     fun shift() {
         var destSlot = 0
-
         for (slot in items.indices) {
             val item = items[slot]
             if (item != null) {
                 items[destSlot++] = item
             }
         }
-
         for (slot in destSlot..<items.size) items[slot] = null
-
         fireItemsChanged()
     }
 
     fun empty() {
         for (slot in items.indices) items[slot] = null
-
         fireItemsChanged()
     }
 
     val isEmpty: Boolean
         get() {
             for (slot in items.indices) if (items[slot] != null) return false
-
             return true
         }
+
+    fun freeSlots(item: Item): Int {
+        if (isStackable(item)/*|| type === ContainerType.SHOP*/) {
+            if (contains(item.id)) Int.MAX_VALUE - count(item)
+            return if (freeSlots() > 0) Int.MAX_VALUE else 0
+        }
+        return freeSlots()
+    }
 
     fun freeSlots(): Int {
         var slots = 0
         for (slot in items.indices) if (items[slot] == null) slots++
-
         return slots
     }
 
@@ -241,12 +229,14 @@ class Inventory {
             val item = items[slot]
             if (item != null && item.id == id) return slot
         }
-
         return -1
     }
 
-    fun contains(id: Int): Boolean {
-        return slotOf(id) != -1
+    fun contains(id: Int): Boolean = slotOf(id) != -1
+    fun contains(id: Int, amount: Int): Boolean {
+        var count = 0
+        items.filterNotNull().forEach { if (it.id == id) count += it.amount }
+        return count >= amount
     }
 
     private fun fireItemChanged(slot: Int) {
@@ -266,11 +256,42 @@ class Inventory {
 
     private fun isStackable(item: Item): Boolean {
         if (stackMode == StackMode.ALWAYS) return true
+        if (stackMode == StackMode.NEVER_STACK) return false
         return item.definition?.stackable ?: false //TODO check
     }
 
+    fun count(item: Item): Int {
+        var count = 0
+        items.filterNotNull().forEach { if (it.id == item.id) count += it.amount }
+        return count
+    }
 
     private fun checkSlot(slot: Int) {
         if (slot < 0 || slot >= items.size) throw IndexOutOfBoundsException("slot out of range")
     }
+}
+
+fun main() {
+
+    ItemDefinitions.init(File("game/src/main/resources/data/itemDefinitions.json"))
+
+    val inv = Inventory(20)
+    val coins = Item(995, 3)
+    val whip = Item(4151, 2)
+    inv.add(coins)
+    inv.add(Item(995, 2))
+    inv.add(whip)
+
+    val s = inv.freeSlots()
+    println(s)
+
+    println(inv.freeSlots(coins))
+    println(inv.freeSlots(whip))
+    println(inv.count(coins))
+
+    val hasRoomFor: (Item) -> Boolean = { it.amount <= inv.freeSlots(it) }
+
+    println("----------------")
+    println(hasRoomFor(whip))
+    println(inv.freeSlots(coins))
 }

@@ -18,7 +18,7 @@ class Flooder {
     private val bootstrap = Bootstrap()
 
     init {
-        cache = Cache(open("../game/data/cache/"))
+        cache = Cache(open("../game/src/main/resources/data/cache/"))
         val table = cache.createChecksumTable()
         val crc = IntArray(29)
         for (i in crc.indices)

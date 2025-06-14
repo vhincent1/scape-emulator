@@ -6,6 +6,7 @@ import net.scapeemulator.cache.Container
 import net.scapeemulator.cache.ReferenceTable
 import net.scapeemulator.cache.util.ByteBufferUtils
 import net.scapeemulator.cache.util.StringUtils
+import net.scapeemulator.game.model.GroundObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
 import net.scapeemulator.game.pathfinder.Tile
@@ -34,24 +35,27 @@ class MapSet {
                     val entry = rt.getEntry(id) ?: continue
                     try {
                         when (entry.identifier) {
-                            landscapeIdentifier -> readLandscape(cache, keyTable, x, y, id)
-                            mapIdentifier -> readMap(cache, x, y, id)
-                            npcId -> readNpc(cache, x, y, id)
+                            landscapeIdentifier -> readLandscape2(cache, keyTable, x, y, id)
+                        //    mapIdentifier -> readMap(cache, x, y, id)
+                          //  npcId -> readNpc(cache, x, y, id)
                         }
                     } catch (ex: Exception) {
                         logger.debug(ex) { "Failed to read map/landscape file $x, $y." }
                     }
                 }
-            }
+                }
         }
+//        println("Total objects: ${objects.size}")
+//        val lumbyTree =objects.find { it.id == 1278 && it.position.x == 3233 }
+//        lumbyTree?.apply { println("Found") }
     }
-
+    val objects = ArrayList<GroundObject>()
     @Throws(IOException::class)
     private fun readLandscape2(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, id: Int) {
         var buffer = cache.store.read(5, id)
         val key = keyTable.getKeys(x, y)
         buffer = Container.decode(buffer, key).getData()
-        Landscape.decode(listeners, x, y, buffer)
+       Landscape.decode(listeners, objects, x, y, buffer)
     }
 
     @Throws(IOException::class)
@@ -64,7 +68,6 @@ class MapSet {
         var buffer: ByteBuffer = cache.store.read(5, fileId)
         val keys: IntArray = keyTable.getKeys(x, y)
         buffer = Container.decode(buffer, keys).getData()
-
         var id = -1
         while (true) {
             val deltaId = ByteBufferUtils.getSmart(buffer)
@@ -144,19 +147,19 @@ class MapSet {
             val height = compressedData shr 14
             val localX = 63 and (compressedData shr 7)
             val localY = compressedData and 63
-            val npcId = buffer.getShort().toInt()
 
+            val npcId = buffer.getShort().toInt()
             val pos = Position((x * 64) + localX, (y * 64) + localY, height)
 //            println("NPC $npcId : $localX : $localY : $height")
 //            println("Position: ${pos.x} ${pos.y}")
 //
-////            val npc: net.scapeemulator.game.model.npc.NPC = NormalNPC(npcId)
+//            val npc: net.scapeemulator.game.model.npc.NPC = NormalNPC(npcId)
 ////            npc.setPosition(Position((x * 64) + localX, (y * 64) + localY, height))
 ////            World.getWorld().addNpc(npc)
 //            val npc = Npc(npcId).apply {
 //                position = pos
 //            }
-//            GameServer.INSTANCE.world.npcs.add(npc)
+//            GameServer.WORLD.npcs.add(npc)
         }
     }
 }

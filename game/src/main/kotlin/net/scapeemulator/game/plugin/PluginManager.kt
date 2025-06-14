@@ -2,6 +2,7 @@ package net.scapeemulator.game.plugin
 
 import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.plugin.combat.CombatPlugin.CombatHandler
+import net.scapeemulator.game.plugin.rsinterface.CharDesignPlugin
 import net.scapeemulator.game.plugin.rsinterface.EquipmentPlugin
 
 class PluginManager(val server: GameServer) {
