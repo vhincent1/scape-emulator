@@ -52,7 +52,8 @@ class Position {
 
     fun isWithinDistance(position: Position): Boolean = isWithinDistanceArea(position, 15)
 
-    fun isWithinDistanceArea(position: Position, distance: Int): Boolean {
+    fun isWithinDistanceArea(position: Position, distance: Int = 15): Boolean {
+        if (height != position.height) return false
         val deltaX: Int = position.x - x
         val deltaY: Int = position.y - y
         return deltaX >= -(distance + 1) && deltaX <= distance && deltaY >= -(distance + 1) && deltaY <= distance
@@ -66,6 +67,7 @@ class Position {
     }
 
     fun isWithinScene(position: Position): Boolean {
+        if (height != position.height) return false
         val deltaX: Int = position.x - x
         val deltaY: Int = position.y - y
         return deltaX >= -52 && deltaX <= 51 && deltaY >= -52 && deltaY <= 51
