@@ -27,7 +27,6 @@ data class GroundItem(val id: Int, var amount: Int, val coords: Position, var ow
 
     override fun toString(): String =
         "GroundItem(id=$id, owner=$owner, amount=$amount, position=$position)"
-
 }
 
 class GroundItemManager(val nodes: NodeList<GroundItem>) {
@@ -100,7 +99,7 @@ class GroundItemManager(val nodes: NodeList<GroundItem>) {
         if (isEmpty()) return
         for (item in this) {
             if (item == null) continue
-            println("Ticking ${item.expire} ${item.toItem()} ${item.position.x} ${item.position.y} ${item.remainPrivate}")
+            println("Ticking ${item.expire} ${item.toItem()} ${item.position.x} ${item.position.y} ${item.remainPrivate}")//debug
             if (item.expire-- >= 1) continue
 
             // respawn

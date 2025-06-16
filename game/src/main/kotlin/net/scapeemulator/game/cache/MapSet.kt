@@ -9,10 +9,10 @@ import net.scapeemulator.cache.util.StringUtils
 import net.scapeemulator.game.model.GroundObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
-import net.scapeemulator.game.pathfinder.Tile
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
+import java.util.zip.ZipException
 
 class MapSet {
     private val logger = KotlinLogging.logger {}
@@ -35,27 +35,29 @@ class MapSet {
                     val entry = rt.getEntry(id) ?: continue
                     try {
                         when (entry.identifier) {
-                            landscapeIdentifier -> readLandscape2(cache, keyTable, x, y, id)
-                        //    mapIdentifier -> readMap(cache, x, y, id)
-                          //  npcId -> readNpc(cache, x, y, id)
+                            landscapeIdentifier -> readLandscape(cache, keyTable, x, y, id)
+                            mapIdentifier -> readMap(cache, x, y, id)
+                            npcId -> readNpc(cache, x, y, id)
                         }
                     } catch (ex: Exception) {
                         logger.debug(ex) { "Failed to read map/landscape file $x, $y." }
                     }
                 }
-                }
+            }
         }
 //        println("Total objects: ${objects.size}")
 //        val lumbyTree =objects.find { it.id == 1278 && it.position.x == 3233 }
 //        lumbyTree?.apply { println("Found") }
     }
+
     val objects = ArrayList<GroundObject>()
+
     @Throws(IOException::class)
     private fun readLandscape2(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, id: Int) {
         var buffer = cache.store.read(5, id)
         val key = keyTable.getKeys(x, y)
         buffer = Container.decode(buffer, key).getData()
-       Landscape.decode(listeners, objects, x, y, buffer)
+        Landscape.decode(listeners, objects, x, y, buffer)
     }
 
     @Throws(IOException::class)
@@ -66,22 +68,28 @@ class MapSet {
 
     private fun readLandscape(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, fileId: Int) {
         var buffer: ByteBuffer = cache.store.read(5, fileId)
-        val keys: IntArray = keyTable.getKeys(x, y)
-        buffer = Container.decode(buffer, keys).getData()
+        val keys = keyTable.getKeys(x, y)
+        try {
+            buffer = Container.decode(buffer, keys).getData()
+        } catch (ze: ZipException) {
+            System.err.println(ze.message + " readLandscape(" + x + ", " + y + ", " + fileId + ")")
+        }
+
         var id = -1
         while (true) {
             val deltaId = ByteBufferUtils.getSmart(buffer)
             if (deltaId == 0) {
                 break
             }
-            id += deltaId
 
+            id += deltaId
             var pos = 0
             while (true) {
                 val deltaPos = ByteBufferUtils.getSmart(buffer)
                 if (deltaPos == 0) {
                     break
                 }
+
                 pos += deltaPos - 1
 
                 val localX = (pos shr 6) and 0x3F
@@ -93,7 +101,10 @@ class MapSet {
                 val rotation = temp and 0x3
 
                 val position = Position(x * 64 + localX, y * 64 + localY, height)
-                listeners.forEach { it.objectDecoded(id, rotation, ObjectType.forId(type), position) }
+
+                for (listener in listeners) {
+                    listener.objectDecoded(id, rotation, ObjectType.forId(type), position)
+                }
             }
         }
     }
@@ -105,33 +116,29 @@ class MapSet {
             for (localX in 0..63) {
                 for (localY in 0..63) {
                     val position = Position(x * 64 + localX, y * 64 + localY, plane)
+
+                    /* The tile variables */
                     var flags = 0
-                    val tile = Tile()
+
                     while (true) {
                         val config = buffer.get().toInt() and 0xFF
 
                         if (config == 0) {
-                            listeners.forEach { it.tileDecoded(flags, position) }
+                            for (listener in listeners) {
+                                listener.tileDecoded(flags, position)
+                            }
                             break
                         } else if (config == 1) {
-                            var height = buffer.get().toInt() and 0xFF
-                            if (height == 1) height = 0
+                            val i = buffer.get().toInt() and 0xFF
 
-//                            if (plane == 0)
-//                                tile.height = -height * 8
-//                            else
-//                                tile.height = tiles[x][y][plane - 1].height - height * 8
-
-                            listeners.forEach { it.tileDecoded(flags, position) }
+                            for (listener in listeners) {
+                                listener.tileDecoded(flags, position)
+                            }
                             break
                         } else if (config <= 49) {
-                            val overlay = buffer.get().toInt() and 0xFF
-                            val shape = (config - 2) / 4
-                            val shapeRotation = (config - 2) % 4
+                            val i = buffer.get().toInt() and 0xFF
                         } else if (config <= 81) {
                             flags = config - 49
-                        } else {
-                            val underlay = config - 81
                         }
                     }
                 }

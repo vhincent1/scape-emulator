@@ -33,7 +33,7 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
         if (player.isHit2Updated) addBlock(PlayerHitBlock2(player))
         if (player.isFacingUpdated) addBlock(PlayerFaceBlock(player))
         if (player.isForceChatUpdated) addBlock(ForceChatBlock(player))
-        if(player.isFacePositionUpdated) addBlock(PlayerFacePositionBlock(player))
+        if (player.isFacePositionUpdated) addBlock(PlayerFacePositionBlock(player))
     }
 
     private fun addBlock(block: PlayerBlock) = blocks.put(block::class, block)

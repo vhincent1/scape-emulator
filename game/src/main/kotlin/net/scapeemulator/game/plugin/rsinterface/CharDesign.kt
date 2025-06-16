@@ -105,7 +105,7 @@ object CharDesign {
         val type = "char-design:look" + body.ordinal
         println("TYPE: $type")
 
-        val max = body.getIds(player.appearance.gender).size - 1
+        val max = body.getType(player.appearance.gender).size - 1
 
         println("Max: $max")
         println("Incr: increment: $increment")
@@ -121,7 +121,7 @@ object CharDesign {
 
         println("Index: $value")
 
-        val bodyIds = body.getIds(player.appearance.gender)
+        val bodyIds = body.getType(player.appearance.gender)
         val bodyPart = if (randomise) bodyIds.random() else bodyIds[value]
 
         println("${body.name}=${bodyPart}")
@@ -191,13 +191,13 @@ object CharDesign {
 fun generateAppearance(gender: Gender = if (Random.nextBoolean()) Gender.MALE else Gender.FEMALE): Appearance {
     return Appearance(
         gender, intArrayOf(
-            Body.HEAD.getIds(gender).random(),
-            Body.FACIAL.getIds(gender).random(),
-            Body.TORSO.getIds(gender).random(),
-            Body.ARMS.getIds(gender).random(),
-            Body.HANDS.getIds(gender).random(),
-            Body.LEGS.getIds(gender).random(),
-            Body.FEET.getIds(gender).random()
+            Body.HEAD.getType(gender).random(),
+            Body.FACIAL.getType(gender).random(),
+            Body.TORSO.getType(gender).random(),
+            Body.ARMS.getType(gender).random(),
+            Body.HANDS.getType(gender).random(),
+            Body.LEGS.getType(gender).random(),
+            Body.FEET.getType(gender).random()
         ),
         intArrayOf(2, 5, 8, 11, 14)
     )

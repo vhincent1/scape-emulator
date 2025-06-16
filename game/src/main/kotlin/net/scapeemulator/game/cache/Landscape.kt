@@ -29,8 +29,8 @@ class Landscape private constructor(val x: Int, val y: Int) {
                     val type = (temp shr 2) and 0x3F
                     val rotation = temp and 0x3
                     val position = Position(x * 64 + localX, y * 64 + localY, height)
-                    landscape.objects.add(GroundObject(id, type, position, rotation))
-                    list.add(GroundObject(id, type, position, rotation))
+//                    landscape.objects.add(GroundObject(id, type, position, rotation))
+//                    list.add(GroundObject(id, type, position, rotation))
                     listeners.forEach { it.objectDecoded(id, rotation, ObjectType.forId(type), position) }
                 }
             }

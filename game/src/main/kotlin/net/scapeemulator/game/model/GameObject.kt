@@ -113,7 +113,7 @@ enum class ObjectType(
     DIAGONAL_PROP(11),
 
     /* Each of the yet to be identified types, some arent really important */
-    TYPE_0(0), TYPE_1(1),
+    STRAIGHT_WALL(0), TYPE_1(1),
     TYPE_2(2), TYPE_3(3),
     TYPE_4(4), TYPE_5(5),
     TYPE_6(6), TYPE_7(7),

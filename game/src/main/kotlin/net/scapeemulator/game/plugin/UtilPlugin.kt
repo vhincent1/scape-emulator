@@ -1,5 +1,6 @@
 package net.scapeemulator.game.plugin
 
+import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.HintIconMessage
@@ -41,7 +42,7 @@ fun spawnBots(world: World) {
     println("Spawning")
     val spawnLocation = Position(3222, 3219)
 
-    val npc = Npc(1).apply { position = Position(3221, 3219) }
+    val npc = Npc(1).apply { position = Position(3221, 3219, 0) }
     world.npcs.add(npc)
 
     playerBot = Player().apply {
@@ -107,6 +108,8 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
             }, CommandHandler("rm") { player, args ->
                 if (!world.players.remove(playerBot))
                     world.players.add(playerBot)
+            } ,CommandHandler("region") { player, args ->
+               player.sendMessage("Region ID: ${GameServer.WORLD.region.getRegionPlane(player.position)}")
             }, CommandHandler("drop") { player, arguments ->
                 val dp = arrayOf(
                     Position(3225, 3225),
@@ -121,6 +124,7 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 dp.onEach { di.add(GroundItem(995, 1000000, it, player)) }
                 di.onEach {
                     it.expire = (5..10).random()
+                    it.worldVisibility = true
 //                    it.remainPrivate = true
                     world.items.create(it)
                 }

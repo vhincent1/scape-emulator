@@ -70,7 +70,7 @@ class AStarPathFinder : PathFinder() {
             return null // out of range
         }
 
-        val map: TraversalMap = GameServer.INSTANCE.world.traversalMap
+        val map: TraversalMap = GameServer.WORLD.traversalMap
 
         open.clear()
         closed.clear()
@@ -95,22 +95,46 @@ class AStarPathFinder : PathFinder() {
             val y = current!!.y
 
             // south
-            if (y > 0 && map.isTraversableSouth(position.height, position.x + x - radius, position.y + y - radius, size)) {
+            if (y > 0 && map.isTraversableSouth(
+                    position.height,
+                    position.x + x - radius,
+                    position.y + y - radius,
+                    size
+                )
+            ) {
                 val n = nodes[x][y - 1]
                 examineNode(n)
             }
             // west
-            if (x > 0 && map.isTraversableWest(position.height, position.x + x - radius, position.y + y - radius, size)) {
+            if (x > 0 && map.isTraversableWest(
+                    position.height,
+                    position.x + x - radius,
+                    position.y + y - radius,
+                    size
+                )
+            ) {
                 val n = nodes[x - 1][y]
                 examineNode(n)
             }
             // north
-            if (y < length - 1 && map.isTraversableNorth(position.height, position.x + x - radius, position.y + y - radius, size)) {
+            if (y < length - 1 && map.isTraversableNorth(
+                    position.height,
+                    position.x + x - radius,
+                    position.y + y - radius,
+                    size
+                )
+            ) {
                 val n = nodes[x][y + 1]
                 examineNode(n)
             }
             // east
-            if (x < width - 1 && map.isTraversableEast(position.height, position.x + x - radius, position.y + y - radius, size)) {
+            if (x < width - 1 && map.isTraversableEast(
+                    position.height,
+                    position.x + x - radius,
+                    position.y + y - radius,
+                    size
+                )
+            ) {
                 val n = nodes[x + 1][y]
                 examineNode(n)
             }
@@ -205,13 +229,18 @@ class AStarPathFinder : PathFinder() {
             dstY = newY
         }
 
-        val p = Path()
-        var n: Node? = nodes[dstX][dstY]
-        while (n !== nodes[srcX][srcY]) {
-            p.addFirst(Position(n!!.x + position.x - radius, n.y + position.y - radius))
-            n = n.parent
+        val path = Path()
+        var node: Node? = nodes[dstX][dstY]
+        while (node !== nodes[srcX][srcY]) {
+            val pos = Position(node!!.x + position.x - radius, node.y + position.y - radius)
+            path.addFirst(pos)
+
+//            val pathItem = GroundItem(4151, 1, pos)
+//            GameServer.WORLD.items.create(pathItem)
+
+            node = node.parent
         }
-        return p
+        return path
     }
 
     private val lowestCost: Node?
@@ -254,7 +283,7 @@ class AStarPathFinder : PathFinder() {
      *
      * @return The distance.
      */
-    fun estimateDistance(src: Node?, dst: Node): Int {
+    private fun estimateDistance(src: Node?, dst: Node): Int {
         val deltaX = src!!.x - dst.x
         val deltaY = src.y - dst.y
         return ((abs(deltaX.toDouble()) + abs(deltaY.toDouble())) * COST_STRAIGHT).toInt()

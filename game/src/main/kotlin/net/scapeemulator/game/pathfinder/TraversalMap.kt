@@ -30,7 +30,7 @@ class TraversalMap(private val regionManager: RegionManager) {
         val x = position.x
         val y = position.y
         when (type) {
-            ObjectType.TYPE_0 -> {
+            ObjectType.STRAIGHT_WALL -> {
                 if (rotation == ObjectOrientation.WEST) {
                     set(plane, x, y, Tile.WALL_WEST)
                     set(plane, x - 1, y, Tile.WALL_EAST)
@@ -97,7 +97,7 @@ class TraversalMap(private val regionManager: RegionManager) {
 
     fun unmarkWall(rotation: Int, plane: Int, x: Int, y: Int, type: ObjectType?, impenetrable: Boolean) {
         when (type) {
-            ObjectType.TYPE_0 -> {
+            ObjectType.STRAIGHT_WALL -> {
                 if (rotation == ObjectOrientation.WEST) {
                     unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_WEST else Tile.WALL_WEST)
                     unset(plane, x - 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_EAST else Tile.WALL_EAST)

@@ -100,8 +100,8 @@ class Tile
         const val IMPENETRABLE_WALL_SOUTH_WEST: Int = 0x4000
 
         /* The other flags */
-        const val BLOCKED: Int = 0x20000
-        const val BRIDGE: Int = 0x40000
+        const val BLOCKED: Int = 0x20000 //solid
+        const val BRIDGE: Int = 0x40000 //tile object
         const val NONE: Int = 0x0
     }
 }

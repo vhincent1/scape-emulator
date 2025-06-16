@@ -12,7 +12,6 @@ import net.scapeemulator.game.task.TaskScheduler
 import net.scapeemulator.game.update.*
 import net.scapeemulator.game.update.PlayerDescriptor.Companion.create
 
-
 //world id
 class World(val worldId: Int, private val loginService: LoginService) : SyncTask {
     companion object {
@@ -22,24 +21,14 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
     }
 
     var isOnline = false
+
+    val region = RegionManager()
+    val traversalMap = TraversalMap(region)
     val taskScheduler: TaskScheduler = TaskScheduler()
 
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)
     val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
     val items = GroundItemManager(NodeList(MAX_GROUND_ITEMS))
-
-    val regionManager = RegionManager()
-    val traversalMap = TraversalMap(regionManager)
-
-    init {
-        // todo: fix
-//        if (PATHFINDING_ENABLED) {
-//            GameServer.INSTANCE.mapSet.apply {
-//                addListener(RegionMapListener(regionManager))
-//                addListener(TraversalMapListener(traversalMap))
-//            }
-//        }
-    }
 
     override fun sync(tick: Int) {
         if (!isOnline) return

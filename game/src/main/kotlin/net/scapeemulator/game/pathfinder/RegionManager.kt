@@ -17,7 +17,9 @@
  */
 package net.scapeemulator.game.pathfinder
 
+import net.scapeemulator.game.model.GameObject
 import net.scapeemulator.game.model.Position
+import java.util.*
 
 class RegionManager {
 
@@ -28,19 +30,93 @@ class RegionManager {
         const val SIZE: Int = 256
     }
 
-    val REGION_CACHE: Map<Int, Region> = HashMap<Int, Region>()
+    val REGION_CACHE: MutableMap<Int, Region> = HashMap()
 
-    class Region(val x: Int, val y: Int) {
-        companion object {
-            const val SIZE = 64
-        }
-//        val planes =
+    fun forId(id: Int): Region? {
+        val region = REGION_CACHE[id]
+        if (region == null) REGION_CACHE[id] = Region(id shr 8 and 0xFF, id and 0xFF)
+        return region
     }
 
-    private val regionPlanes = arrayOfNulls<RegionPlane>(SIZE * SIZE)
+    class Region(val x: Int, val y: Int) {
+//        companion object {
+//            const val SIZE = 64
+//            //val x = regionId shr 8 and 0xFF
+//            //val y = regionId and 0xFF
+//        }
+////        val planes =
+        /**
+         * The flags within the region.
+         */
+        private val tiles: Array<Array<Tile?>>
+
+        /**
+         * The objects within the region.
+         */
+        private val objects: MutableMap<Position, GameObject> = java.util.HashMap()
+
+        /**
+         * Constructs a new [net.scapeemulator.game.model.region.Region];
+         */
+        init {
+            this.tiles = Array(MAXIMUM_PLANE) {
+                arrayOfNulls(REGION_SIZE * REGION_SIZE)
+            }
+            for (i in 0 until MAXIMUM_PLANE) {
+                for (j in 0 until REGION_SIZE * REGION_SIZE) {
+                    tiles[i][j] = Tile()
+                }
+            }
+        }
+
+        fun getTile(plane: Int, x: Int, y: Int): Tile? {
+            return tiles[plane][x + y * REGION_SIZE]
+        }
+
+        fun addObject(gameObj: GameObject) {
+            objects[gameObj.position] = gameObj
+        }
+
+        fun getObject(position: Position): GameObject? {
+            return objects[position]
+        }
+
+        fun getObjects(): Collection<GameObject> {
+            return Collections.unmodifiableCollection(objects.values)
+        }
+
+        companion object {
+            const val REGION_SIZE: Int = 64
+
+            /**
+             * The maximum plane.
+             */
+            const val MAXIMUM_PLANE: Int = 4
+        }
+    }
+
+//    class RegionPlane2(region: Region, plane: Int) {
+//        companion object {
+//            const val CHUNK_SIZE = Region.SIZE shr 3
+//        }
+//    }
+
+    class RegionFlags {
+
+        //        val members: Boolean = false
+//        val baseX: Int = 0
+//        val baseY: Int = 0
+//        private val clippingFlags: Array<IntArray>
+//        private val landscape: Array<BooleanArray>
+//        private val projectile = false
+        constructor(plane: Int, x: Int, y: Int)
+    }
+
+
+    private val regions = arrayOfNulls<Region>(SIZE * SIZE)
 
     init {
-        println("Regions: ${regionPlanes.size}")
+        println("Regions: ${regions.size}")
     }
 
     class RegionChunk {
@@ -56,21 +132,30 @@ class RegionManager {
         //flags(20)
     }
 
-    fun getRegion(x: Int, y: Int): RegionPlane? =
-        regionPlanes[(x shr 6) + (y shr 6) * SIZE]
-
+    fun getRegion(x: Int, y: Int): Region? = regions[(x shr 6) + (y shr 6) * SIZE]
     fun getRegionPlane(position: Position) {
         val regionId = ((position.x shr 6) shl 8) or (position.y shr 6)
+        println(regionId)
+
+        val x = regionId shr 8 and 0xFF
+        val y = regionId and 0xFF
+        println("X: $x Y: $y")
     }
 
     /**
      * Initializes the region at the specified coordinates.
      */
     fun initializeRegion(position: Position) {
+//        val regionId = ((position.x shr 6) shl 8) or (position.y shr 6)
+//        val x = regionId shr 8 and 0xFF
+//        val y = regionId and 0xFF
+
         /* Calculate the coordinates */
         val regionX = position.x shr 6
         val regionY = position.y shr 6
-        regionPlanes[regionX + regionY * SIZE] = RegionPlane()
+
+//        println("Region id=$regionId x=$x y=$y | regionX=$regionX regionY=$regionY")
+        regions[regionX + regionY * SIZE] = Region(regionX, regionY)
     }
 
     /**
@@ -82,7 +167,7 @@ class RegionManager {
         val regionY = position.y shr 6
 
         /* Get if the region is not null */
-        val r = regionPlanes[regionX + regionY * SIZE] != null
+        val r = regions[regionX + regionY * SIZE] != null
         return r
     }
 
@@ -120,3 +205,5 @@ class RegionManager {
 //        return region.getPlanes().get(z).getFlags().getClippingFlags().get(x).get(y)
 //    }
 }
+
+

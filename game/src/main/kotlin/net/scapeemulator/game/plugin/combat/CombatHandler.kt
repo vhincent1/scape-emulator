@@ -19,7 +19,7 @@ abstract class CombatHandler {
 class Melee : CombatHandler() {
     override fun canHit(attacker: Mob?, victim: Mob?): Boolean {
         if (attacker == null || victim == null) return false
-        if (attacker.position.isWithinDistance(victim.position, 1)) return true
+        if (attacker.position.isWithinTileDistance(victim.position, 1)) return true
         return false
     }
 

@@ -4,10 +4,10 @@ import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
-class TeleportPlayerDescriptor(player: Player, tickets: IntArray) : PlayerDescriptor(player, tickets) {
+class TeleportPlayerDescriptor(val player: Player, tickets: IntArray) : PlayerDescriptor(player, tickets) {
     private val regionChanging: Boolean = player.isRegionChanging
 
-    public override fun encodeDescriptor(
+    override fun encodeDescriptor(
         message: PlayerUpdateMessage,
         builder: GameFrameBuilder,
         blockBuilder: GameFrameBuilder

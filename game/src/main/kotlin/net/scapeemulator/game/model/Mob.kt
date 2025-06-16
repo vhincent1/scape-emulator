@@ -115,4 +115,5 @@ abstract class Mob : Entity() {
     abstract fun login()
     abstract fun logout()
     abstract fun getClientIndex(): Int
+    fun isClipped(): Boolean = true
 }
