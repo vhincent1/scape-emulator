@@ -20,7 +20,6 @@ package net.scapeemulator.game.pathfinder
 import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.model.Position
 import kotlin.math.abs
-import kotlin.math.sqrt
 
 /**
  * @author Graham Edgecombe
@@ -28,9 +27,94 @@ import kotlin.math.sqrt
 class AStarPathFinder : PathFinder() {
     /**
      * Represents a node used by the A* algorithm.
-     *
      * @author Graham Edgecombe
      */
+    class Node
+    /**
+     * Creates a node.
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     */(
+        /**
+         * The x coordinate.
+         */
+        val x: Int,
+        /**
+         * The y coordinate.
+         */
+        val y: Int
+    ) : Comparable<Node?> {
+        /**
+         * Gets the parent node.
+         * @return The parent node.
+         */
+        /**
+         * Sets the parent.
+         * @param parent The parent.
+         */
+        /**
+         * The parent node.
+         */
+        var parent: Node? = null
+
+        /**
+         * The cost.
+         */
+        var cost: Int = 0
+
+        /**
+         * The heuristic.
+         */
+        private val heuristic = 0
+
+        /**
+         * The depth.
+         */
+        private val depth = 0
+
+        /**
+         * Gets the X coordinate.
+         * @return The X coordinate.
+         */
+
+        /**
+         * Gets the Y coordinate.
+         * @return The Y coordinate.
+         */
+
+        override fun hashCode(): Int {
+            val prime = 31
+            var result = 1
+            result = prime * result + cost
+            result = prime * result + depth
+            result = prime * result + heuristic
+            result = (prime * result
+                    + (if ((parent == null)) 0 else parent.hashCode()))
+            result = prime * result + x
+            result = prime * result + y
+            return result
+        }
+
+        override fun equals(obj: Any?): Boolean {
+            if (this === obj) return true
+            if (obj == null) return false
+            if (javaClass != obj.javaClass) return false
+            val other = obj as Node
+            if (cost != other.cost) return false
+            if (depth != other.depth) return false
+            if (heuristic != other.heuristic) return false
+            if (parent == null) {
+                if (other.parent != null) return false
+            } else if (parent != other.parent) return false
+            if (x != other.x) return false
+            if (y != other.y) return false
+            return true
+        }
+
+        override fun compareTo(arg0: Node?): Int {
+            return cost - arg0!!.cost
+        }
+    }
 
     private var current: Node? = null
     private lateinit var nodes: Array<Array<Node?>>
@@ -39,41 +123,19 @@ class AStarPathFinder : PathFinder() {
 
     override fun find(
         position: Position,
-        radius: Int,
+        width: Int,
+        length: Int,
         srcX: Int,
         srcY: Int,
         dstX: Int,
         dstY: Int,
-        objWidth: Int,
-        objLength: Int,
         size: Int
     ): Path? {
-        /**
-         * Okay, the radius @2 is quick but it does not cover the whole map.
-         * The larger the radius is times by, the slower this PF becomes.
-         */
-        var srcX = srcX
-        var srcY = srcY
-        var dstX = dstX
-        var dstY = dstY
-        val width = radius * 2
-        val length = width * 2
-
-        /* Move our coordinates to the center so we don't run into bounds issues */
-        srcX += radius
-        srcY += radius
-        dstX += radius
-        dstY += radius
-
         if (dstX < 0 || dstY < 0 || dstX >= width || dstY >= length) {
-            println("Out of range")
             return null // out of range
         }
 
-        val map: TraversalMap = GameServer.WORLD.traversalMap
-
-        open.clear()
-        closed.clear()
+        val map = GameServer.WORLD.traversalMap//World.getWorld().getTraversalMap()
 
         nodes = Array(width) { arrayOfNulls(length) }
         for (x in 0 until width) {
@@ -83,6 +145,7 @@ class AStarPathFinder : PathFinder() {
         }
 
         open.add(nodes[srcX][srcY]!!)
+
         while (open.size > 0) {
             current = lowestCost
             if (current === nodes[dstX][dstY]) {
@@ -95,32 +158,20 @@ class AStarPathFinder : PathFinder() {
             val y = current!!.y
 
             // south
-            if (y > 0 && map.isTraversableSouth(
-                    position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
-                    size
-                )
-            ) {
+            if (y > 0 && map.isTraversableSouth(position.height, position.x + x, position.y + y, size)) {
                 val n = nodes[x][y - 1]
                 examineNode(n)
             }
             // west
-            if (x > 0 && map.isTraversableWest(
-                    position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
-                    size
-                )
-            ) {
+            if (x > 0 && map.isTraversableWest(position.height, position.x + x, position.y + y, size)) {
                 val n = nodes[x - 1][y]
                 examineNode(n)
             }
             // north
             if (y < length - 1 && map.isTraversableNorth(
                     position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
+                    position.x + x,
+                    position.y + y,
                     size
                 )
             ) {
@@ -130,8 +181,8 @@ class AStarPathFinder : PathFinder() {
             // east
             if (x < width - 1 && map.isTraversableEast(
                     position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
+                    position.x + x,
+                    position.y + y,
                     size
                 )
             ) {
@@ -141,8 +192,8 @@ class AStarPathFinder : PathFinder() {
             // south west
             if (x > 0 && y > 0 && map.isTraversableSouthWest(
                     position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
+                    position.x + x,
+                    position.y + y,
                     size
                 )
             ) {
@@ -152,8 +203,8 @@ class AStarPathFinder : PathFinder() {
             // north west
             if (x > 0 && y < length - 1 && map.isTraversableNorthWest(
                     position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
+                    position.x + x,
+                    position.y + y,
                     size
                 )
             ) {
@@ -164,8 +215,8 @@ class AStarPathFinder : PathFinder() {
             // south east
             if (x < width - 1 && y > 0 && map.isTraversableSouthEast(
                     position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
+                    position.x + x,
+                    position.y + y,
                     size
                 )
             ) {
@@ -175,8 +226,8 @@ class AStarPathFinder : PathFinder() {
             // north east
             if (x < width - 1 && y < length - 1 && map.isTraversableNorthEast(
                     position.height,
-                    position.x + x - radius,
-                    position.y + y - radius,
+                    position.x + x,
+                    position.y + y,
                     size
                 )
             ) {
@@ -186,61 +237,17 @@ class AStarPathFinder : PathFinder() {
         }
 
         if (nodes[dstX][dstY]?.parent == null) {
-            var newX = dstX
-            var newY = dstY
-
-            var minDistance = 999
-            var minCost = 999999
-            for (x in dstX - UNREACHABLE_SEARCH_DISTANCE..dstX + UNREACHABLE_SEARCH_DISTANCE) {
-                for (y in dstY - UNREACHABLE_SEARCH_DISTANCE..dstY + UNREACHABLE_SEARCH_DISTANCE) {
-                    if ((x >= 0 && x < width) && (y >= 0 && y < length) && (nodes[x][y]?.parent != null)) {
-                        var deltaX = 0
-                        var deltaY = 0
-                        if (y < dstY) {
-                            deltaY = dstY - y
-                        } else if (y > (dstY + objLength - 1)) {
-                            deltaY = y + 1 - (dstY + objLength)
-                        }
-                        if (x >= dstX) {
-                            if (x > (dstX + objWidth - 1)) {
-                                deltaX = 1 + (x - dstX - objWidth)
-                            }
-                        } else {
-                            deltaX = dstX - x
-                        }
-                        val dist = sqrt((deltaX * deltaX + deltaY + deltaY).toDouble()).toInt()
-                        val cost = nodes[x][y]?.cost!!
-                        if (dist < minDistance || (dist == minDistance && cost < minCost)) {
-                            minDistance = dist
-                            minCost = cost
-                            newX = x
-                            newY = y
-                        }
-                    }
-                }
-            }
-
-            if (nodes[newX][newY]?.parent == null) {
-                println("Still no path")
-                return null
-            }
-
-            dstX = newX
-            dstY = newY
+            return null
         }
 
-        val path = Path()
-        var node: Node? = nodes[dstX][dstY]
-        while (node !== nodes[srcX][srcY]) {
-            val pos = Position(node!!.x + position.x - radius, node.y + position.y - radius)
-            path.addFirst(pos)
-
-//            val pathItem = GroundItem(4151, 1, pos)
-//            GameServer.WORLD.items.create(pathItem)
-
-            node = node.parent
+        val p: Path = Path()
+        var n: Node? = nodes[dstX][dstY]
+        while (n !== nodes[srcX][srcY] && n != null) {
+            p.addFirst(Position(n.x + position.x, n.y + position.y))
+            n = n.parent
         }
-        return path
+
+        return p
     }
 
     private val lowestCost: Node?
@@ -275,15 +282,11 @@ class AStarPathFinder : PathFinder() {
 
     /**
      * Estimates a distance between the two points.
-     *
-     * @param src
-     * The source node.
-     * @param dst
-     * The distance node.
-     *
+     * @param src The source node.
+     * @param dst The distance node.
      * @return The distance.
      */
-    private fun estimateDistance(src: Node?, dst: Node): Int {
+    fun estimateDistance(src: Node?, dst: Node): Int {
         val deltaX = src!!.x - dst.x
         val deltaY = src.y - dst.y
         return ((abs(deltaX.toDouble()) + abs(deltaY.toDouble())) * COST_STRAIGHT).toInt()
@@ -294,10 +297,6 @@ class AStarPathFinder : PathFinder() {
          * The cost of moving in a straight line.
          */
         private const val COST_STRAIGHT = 10
-
-        /**
-         * The radius to search if we can't find a path to our tile.
-         */
-        private const val UNREACHABLE_SEARCH_DISTANCE = 10
     }
+
 }

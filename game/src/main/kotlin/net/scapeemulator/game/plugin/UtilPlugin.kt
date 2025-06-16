@@ -1,6 +1,5 @@
 package net.scapeemulator.game.plugin
 
-import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.HintIconMessage
@@ -109,7 +108,7 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 if (!world.players.remove(playerBot))
                     world.players.add(playerBot)
             } ,CommandHandler("region") { player, args ->
-               player.sendMessage("Region ID: ${GameServer.WORLD.region.getRegionPlane(player.position)}")
+            //   player.sendMessage("Region ID: ${GameServer.WORLD.region.getRegionPlane(player.position)}")
             }, CommandHandler("drop") { player, arguments ->
                 val dp = arrayOf(
                     Position(3225, 3225),

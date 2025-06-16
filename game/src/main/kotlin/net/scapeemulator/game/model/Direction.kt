@@ -4,7 +4,7 @@ import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.pathfinder.TraversalMap
 import java.util.*
 
-enum class Direction(private val intValue: Int, val x: Int, val y: Int) {
+enum class Direction(private val intValue: Int, private val x: Int, private val y: Int) {
     NONE(-1, 0, 0),
     NORTH(1, 0, 1),
     NORTH_EAST(2, 1, 1),
@@ -15,29 +15,36 @@ enum class Direction(private val intValue: Int, val x: Int, val y: Int) {
     WEST(3, -1, 0),
     NORTH_WEST(0, -1, 1);
 
-    val inverted: Direction
-        get() {
-            return when (this) {
-                NONE -> NONE
-                NORTH -> SOUTH
-                NORTH_EAST -> SOUTH_WEST
-                EAST -> WEST
-                SOUTH_EAST -> NORTH_WEST
-                SOUTH -> NORTH
-                SOUTH_WEST -> NORTH_EAST
-                WEST -> EAST
-                NORTH_WEST -> SOUTH_EAST
-            }
-            throw RuntimeException()
+    fun getInverted(): Direction {
+        return when (this) {
+            NONE -> NONE
+            NORTH -> SOUTH
+            NORTH_EAST -> SOUTH_WEST
+            EAST -> WEST
+            SOUTH_EAST -> NORTH_WEST
+            SOUTH -> NORTH
+            SOUTH_WEST -> NORTH_EAST
+            WEST -> EAST
+            NORTH_WEST -> SOUTH_EAST
         }
+        throw RuntimeException()
+    }
 
     fun toInteger(): Int {
         return intValue
     }
 
+    fun getX(): Int {
+        return x
+    }
+
+    fun getY(): Int {
+        return y
+    }
+
     companion object {
         fun getNearbyTraversableTiles(from: Position, size: Int): List<Position> {
-            val traversalMap: TraversalMap = GameServer.WORLD.traversalMap
+            val traversalMap: TraversalMap = GameServer.INSTANCE.world.traversalMap
             val positions: MutableList<Position> = LinkedList()
 
             if (traversalMap.isTraversableNorth(from.height, from.x, from.y, size)) {
@@ -76,7 +83,9 @@ enum class Direction(private val intValue: Int, val x: Int, val y: Int) {
         }
 
         fun isTraversable(from: Position, direction: Direction, size: Int): Boolean {
-            val traversalMap: TraversalMap = GameServer.WORLD.traversalMap
+            val traversalMap: TraversalMap = GameServer.INSTANCE.world.traversalMap
+
+            println("Is traversable: $direction $size")
             return when (direction) {
                 NORTH -> traversalMap.isTraversableNorth(from.height, from.x, from.y, size)
                 SOUTH -> traversalMap.isTraversableSouth(from.height, from.x, from.y, size)
@@ -92,7 +101,7 @@ enum class Direction(private val intValue: Int, val x: Int, val y: Int) {
         }
 
         fun projectileClipping(from: Position, to: Position): Boolean {
-            val traversalMap: TraversalMap = GameServer.WORLD.traversalMap
+            val traversalMap: TraversalMap = GameServer.INSTANCE.world.traversalMap
             val direction = between(from, to)
             return when (direction) {
                 NORTH -> traversalMap.isTraversableNorth(from.height, from.x, from.y, true)

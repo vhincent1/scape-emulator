@@ -4,19 +4,22 @@
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation either version 3 of the License or
  * (at your option) any later version.
  *
- * This program is distributed in  the hope that it will be useful,
+ * This program is distributed in  the hope that it will be useful
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http:></http:>//www.gnu.org/license/>.
+ * along with this program. If not see <http:></http:>//www.gnu.org/license/>.
  */
 package net.scapeemulator.game.pathfinder
 
+/**
+ * Created by Hadyn Richard
+ */
 /**
  * Created by Hadyn Richard
  */
@@ -27,7 +30,7 @@ class Tile
     /**
      * The flags for the tile.
      */
-    var flags: Int = NONE
+     var flags: Int = NONE
 ) {
     /**
      * Constructs a new [Tile];
@@ -44,7 +47,7 @@ class Tile
      * Unsets a flag for the tile.
      */
     fun unset(flag: Int) {
-        flags = flags and flag.inv()
+        flags = flags and 0xffff - flag
     }
 
     /**
@@ -100,8 +103,8 @@ class Tile
         const val IMPENETRABLE_WALL_SOUTH_WEST: Int = 0x4000
 
         /* The other flags */
-        const val BLOCKED: Int = 0x20000 //solid
-        const val BRIDGE: Int = 0x40000 //tile object
+        const val BLOCKED: Int = 0x20000
+        const val BRIDGE: Int = 0x40000
         const val NONE: Int = 0x0
     }
 }

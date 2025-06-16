@@ -79,6 +79,7 @@ class WalkingQueue(mob: Mob) {
     var isRunningQueue: Boolean = false
     var isMinimapFlagReset: Boolean = false
     val recentPoints: Deque<Position> = LinkedList()
+
     private var walkDirection: Direction = Direction.NONE
     private var runDirection: Direction = Direction.NONE
     fun isMoving(): Boolean = walkDirection != Direction.NONE || runDirection != Direction.NONE
@@ -147,11 +148,8 @@ class WalkingQueue(mob: Mob) {
      */
     fun tick() {
         var position: Position = mob.position
-
-        var firstDirection: Direction? =
-            Direction.NONE
-        var secondDirection: Direction? =
-            Direction.NONE
+        var firstDirection: Direction? = Direction.NONE
+        var secondDirection: Direction? = Direction.NONE
 
         walkDirection = firstDirection!!
         runDirection = secondDirection!!

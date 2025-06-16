@@ -21,5 +21,5 @@ internal fun walkMessageDecoder(opcode: Int) = MessageDecoder(opcode) { frame ->
         val stepY = y + reader.getSigned(DataType.BYTE, DataTransformation.SUBTRACT).toInt()
         steps[i] = WalkMessage.Step(stepX, stepY)
     }
-    return@MessageDecoder WalkMessage(WalkMessage.Step(x, y), steps, running, 0)
+    return@MessageDecoder WalkMessage(WalkMessage.Step(x, y), steps, running)
 }

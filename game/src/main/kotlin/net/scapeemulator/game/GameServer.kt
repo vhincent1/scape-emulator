@@ -21,8 +21,7 @@ import net.scapeemulator.game.msg.codec.CodecRepository
 import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
-import net.scapeemulator.game.pathfinder.RegionMapListener
-import net.scapeemulator.game.pathfinder.TraversalMapListener
+import net.scapeemulator.game.pathfinder.MapDataListener
 import net.scapeemulator.game.plugin.PluginManager
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -37,7 +36,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
-const val PATHFINDING_ENABLED = true
 
 class GameServer(worldId: Int, loginAddress: SocketAddress) {
 
@@ -103,11 +101,11 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
         world = World(worldId, loginService)
 
         /* load map */
-        if (PATHFINDING_ENABLED) {
-            map.addListener(RegionMapListener(world.region))
-            map.addListener(TraversalMapListener(world.traversalMap))
+//        if (PATHFINDING_ENABLED) {
+//            map.addListener(RegionMapListener(world.region))
+            map.addListener(MapDataListener(world.traversalMap))
             map.init(cache, landscapeKeyTable)
-        }
+//        }
 
         /* load plugins */
         plugins = PluginManager(this)

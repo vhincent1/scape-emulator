@@ -4,6 +4,7 @@ import net.scapeemulator.cache.util.ByteBufferUtils
 import net.scapeemulator.game.model.GroundObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
+import net.scapeemulator.game.pathfinder.MapListener
 import java.nio.ByteBuffer
 
 class Landscape private constructor(val x: Int, val y: Int) {

@@ -1,6 +1,7 @@
 package net.scapeemulator.game.cache
 
 import net.scapeemulator.game.model.Position
+import net.scapeemulator.game.pathfinder.MapListener
 import net.scapeemulator.game.pathfinder.Tile
 import java.nio.ByteBuffer
 

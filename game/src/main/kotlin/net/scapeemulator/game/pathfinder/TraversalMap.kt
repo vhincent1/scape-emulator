@@ -24,51 +24,193 @@ import java.util.*
 /**
  * Created by Hadyn Richard
  */
-class TraversalMap(private val regionManager: RegionManager) {
-    fun markWall(position: Position, rotation: Int, type: ObjectType?, impenetrable: Boolean) {
-        val plane = position.height
-        val x = position.x
-        val y = position.y
+class TraversalMap
+/**
+ * Constructs a new [TraversalMap];
+ */
+{
+    /**
+     * The regions for the traversal data.
+     */
+    private val regions = arrayOfNulls<Region>(SIZE * SIZE)
+
+    /**
+     * Created by Hadyn Richard
+     */
+    private inner class Region {
+        /**
+         * The flags within the region.
+         */
+        private val tiles: Array<Array<Tile?>> =
+            Array(MAXIMUM_PLANE) {
+                arrayOfNulls(REGION_SIZE * REGION_SIZE)
+            }
+
+        /**
+         * Constructs a new [Region];
+         */
+        init {
+            for (i in 0 until MAXIMUM_PLANE) {
+                for (j in 0 until REGION_SIZE * REGION_SIZE) {
+                    tiles[i][j] = Tile()
+                }
+            }
+        }
+
+        fun getTile(plane: Int, x: Int, y: Int): Tile? {
+            return tiles[plane][x + y * REGION_SIZE]
+        }
+    }
+
+    /**
+     * Initializes the region at the specified coordinates.
+     */
+    fun initializeRegion(x: Int, y: Int) {
+        /* Calculate the coordinates */
+
+        val regionX = x shr 6
+        val regionY = y shr 6
+
+        regions[regionX + regionY * SIZE] = Region()
+    }
+
+    /**
+     * Gets if the set contains a region for the specified coordinates.
+     */
+    fun regionInitialized(x: Int, y: Int): Boolean {
+        /* Calculate the coordinates */
+
+        val regionX = x shr 6
+        val regionY = y shr 6
+
+        /* Get if the region is not null */
+        return regions[regionX + regionY * SIZE] != null
+    }
+
+    fun markWall(
+        rotation: Int,
+        plane: Int,
+        x: Int,
+        y: Int,
+        type: ObjectType?,
+        impenetrable: Boolean
+    ) {
         when (type) {
             ObjectType.STRAIGHT_WALL -> {
                 if (rotation == ObjectOrientation.WEST) {
                     set(plane, x, y, Tile.WALL_WEST)
                     set(plane, x - 1, y, Tile.WALL_EAST)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_WEST)
+                        set(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST)
+                    }
                 }
                 if (rotation == ObjectOrientation.NORTH) {
                     set(plane, x, y, Tile.WALL_NORTH)
                     set(plane, x, y + 1, Tile.WALL_SOUTH)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_NORTH)
+                        set(plane, x, y + 1, Tile.IMPENETRABLE_WALL_SOUTH)
+                    }
                 }
                 if (rotation == ObjectOrientation.EAST) {
                     set(plane, x, y, Tile.WALL_EAST)
                     set(plane, x + 1, y, Tile.WALL_WEST)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_EAST)
+                        set(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST)
+                    }
                 }
                 if (rotation == ObjectOrientation.SOUTH) {
                     set(plane, x, y, Tile.WALL_SOUTH)
                     set(plane, x, y - 1, Tile.WALL_NORTH)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_SOUTH)
+                        set(plane, x, y - 1, Tile.IMPENETRABLE_WALL_NORTH)
+                    }
                 }
             }
 
             ObjectType.TYPE_2 -> {
                 if (rotation == ObjectOrientation.WEST) {
-                    set(plane, x, y, Tile.WALL_WEST or Tile.WALL_NORTH)
+                    set(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_WEST or Tile.WALL_NORTH
+                    )
                     set(plane, x - 1, y, Tile.WALL_EAST)
                     set(plane, x, y + 1, Tile.WALL_SOUTH)
+                    if (impenetrable) {
+                        set(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_NORTH
+                        )
+                        set(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST)
+                        set(plane, x, y + 1, Tile.IMPENETRABLE_WALL_SOUTH)
+                    }
                 }
                 if (rotation == ObjectOrientation.NORTH) {
-                    set(plane, x, y, Tile.WALL_EAST or Tile.WALL_NORTH)
+                    set(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_EAST or Tile.WALL_NORTH
+                    )
                     set(plane, x, y + 1, Tile.WALL_SOUTH)
                     set(plane, x + 1, y, Tile.WALL_WEST)
+                    if (impenetrable) {
+                        set(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_NORTH
+                        )
+                        set(plane, x, y + 1, Tile.IMPENETRABLE_WALL_SOUTH)
+                        set(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST)
+                    }
                 }
                 if (rotation == ObjectOrientation.EAST) {
-                    set(plane, x, y, Tile.WALL_EAST or Tile.WALL_SOUTH)
+                    set(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_EAST or Tile.WALL_SOUTH
+                    )
                     set(plane, x + 1, y, Tile.WALL_WEST)
                     set(plane, x, y - 1, Tile.WALL_NORTH)
+                    if (impenetrable) {
+                        set(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_SOUTH
+                        )
+                        set(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST)
+                        set(plane, x, y - 1, Tile.IMPENETRABLE_WALL_NORTH)
+                    }
                 }
                 if (rotation == ObjectOrientation.SOUTH) {
-                    set(plane, x, y, Tile.WALL_WEST or Tile.WALL_SOUTH)
-                    set(plane, x, y - 1, Tile.WALL_NORTH)
+                    set(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_WEST or Tile.WALL_SOUTH
+                    )
                     set(plane, x - 1, y, Tile.WALL_EAST)
+                    set(plane, x, y - 1, Tile.WALL_NORTH)
+                    if (impenetrable) {
+                        set(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_SOUTH
+                        )
+                        set(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST)
+                        set(plane, x, y - 1, Tile.IMPENETRABLE_WALL_NORTH)
+                    }
                 }
             }
 
@@ -76,18 +218,54 @@ class TraversalMap(private val regionManager: RegionManager) {
                 if (rotation == ObjectOrientation.WEST) {
                     set(plane, x, y, Tile.WALL_NORTH_WEST)
                     set(plane, x - 1, y + 1, Tile.WALL_SOUTH_EAST)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_NORTH_WEST)
+                        set(
+                            plane,
+                            x - 1,
+                            y + 1,
+                            Tile.IMPENETRABLE_WALL_SOUTH_EAST
+                        )
+                    }
                 }
                 if (rotation == ObjectOrientation.NORTH) {
                     set(plane, x, y, Tile.WALL_NORTH_EAST)
                     set(plane, x + 1, y + 1, Tile.WALL_SOUTH_WEST)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_NORTH_EAST)
+                        set(
+                            plane,
+                            x + 1,
+                            y + 1,
+                            Tile.IMPENETRABLE_WALL_SOUTH_WEST
+                        )
+                    }
                 }
                 if (rotation == ObjectOrientation.EAST) {
                     set(plane, x, y, Tile.WALL_SOUTH_EAST)
                     set(plane, x + 1, y - 1, Tile.WALL_NORTH_WEST)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_SOUTH_EAST)
+                        set(
+                            plane,
+                            x + 1,
+                            y - 1,
+                            Tile.IMPENETRABLE_WALL_NORTH_WEST
+                        )
+                    }
                 }
                 if (rotation == ObjectOrientation.SOUTH) {
                     set(plane, x, y, Tile.WALL_SOUTH_WEST)
                     set(plane, x - 1, y - 1, Tile.WALL_NORTH_EAST)
+                    if (impenetrable) {
+                        set(plane, x, y, Tile.IMPENETRABLE_WALL_SOUTH_WEST)
+                        set(
+                            plane,
+                            x - 1,
+                            y - 1,
+                            Tile.IMPENETRABLE_WALL_NORTH_EAST
+                        )
+                    }
                 }
             }
 
@@ -95,90 +273,185 @@ class TraversalMap(private val regionManager: RegionManager) {
         }
     }
 
-    fun unmarkWall(rotation: Int, plane: Int, x: Int, y: Int, type: ObjectType?, impenetrable: Boolean) {
+    fun unmarkWall(
+        rotation: Int,
+        plane: Int,
+        x: Int,
+        y: Int,
+        type: ObjectType?,
+        impenetrable: Boolean
+    ) {
         when (type) {
             ObjectType.STRAIGHT_WALL -> {
                 if (rotation == ObjectOrientation.WEST) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_WEST else Tile.WALL_WEST)
-                    unset(plane, x - 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_EAST else Tile.WALL_EAST)
+                    unset(plane, x, y, Tile.WALL_WEST)
+                    unset(plane, x - 1, y, Tile.WALL_EAST)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_WEST)
+                        unset(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST)
+                    }
                 }
                 if (rotation == ObjectOrientation.NORTH) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH else Tile.WALL_NORTH)
-                    unset(plane, x, y + 1, if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH else Tile.WALL_SOUTH)
+                    unset(plane, x, y, Tile.WALL_NORTH)
+                    unset(plane, x, y + 1, Tile.WALL_SOUTH)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_NORTH)
+                        unset(plane, x, y + 1, Tile.IMPENETRABLE_WALL_SOUTH)
+                    }
                 }
                 if (rotation == ObjectOrientation.EAST) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_EAST else Tile.WALL_EAST)
-                    unset(plane, x + 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_WEST else Tile.WALL_WEST)
+                    unset(plane, x, y, Tile.WALL_EAST)
+                    unset(plane, x + 1, y, Tile.WALL_WEST)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_EAST)
+                        unset(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST)
+                    }
                 }
                 if (rotation == ObjectOrientation.SOUTH) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH else Tile.WALL_SOUTH)
-                    unset(plane, x, y - 1, if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH else Tile.WALL_NORTH)
+                    unset(plane, x, y, Tile.WALL_SOUTH)
+                    unset(plane, x, y - 1, Tile.WALL_NORTH)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_SOUTH)
+                        unset(plane, x, y - 1, Tile.IMPENETRABLE_WALL_NORTH)
+                    }
                 }
             }
 
             ObjectType.TYPE_2 -> {
                 if (rotation == ObjectOrientation.WEST) {
-                    if (impenetrable) unset(plane, x, y, Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_NORTH)
-                    else unset(plane, x, y, Tile.WALL_WEST or Tile.WALL_NORTH)
-                    unset(plane, x - 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_EAST else Tile.WALL_EAST)
-                    unset(plane, x, y + 1, if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH else Tile.WALL_SOUTH)
+                    unset(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_WEST or Tile.WALL_NORTH
+                    )
+                    unset(plane, x - 1, y, Tile.WALL_EAST)
+                    unset(plane, x, y + 1, Tile.WALL_SOUTH)
+                    if (impenetrable) {
+                        unset(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_NORTH
+                        )
+                        unset(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST)
+                        unset(plane, x, y + 1, Tile.IMPENETRABLE_WALL_SOUTH)
+                    }
                 }
                 if (rotation == ObjectOrientation.NORTH) {
-                    if (impenetrable) unset(plane, x, y, Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_NORTH)
-                    else unset(plane, x, y, Tile.WALL_EAST or Tile.WALL_NORTH)
-                    unset(plane, x, y + 1, if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH else Tile.WALL_SOUTH)
-                    unset(plane, x + 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_WEST else Tile.WALL_WEST)
+                    unset(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_EAST or Tile.WALL_NORTH
+                    )
+                    unset(plane, x, y + 1, Tile.WALL_SOUTH)
+                    unset(plane, x + 1, y, Tile.WALL_WEST)
+                    if (impenetrable) {
+                        unset(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_NORTH
+                        )
+                        unset(plane, x, y + 1, Tile.IMPENETRABLE_WALL_SOUTH)
+                        unset(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST)
+                    }
                 }
                 if (rotation == ObjectOrientation.EAST) {
-                    if (impenetrable) unset(plane, x, y, Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_SOUTH)
-                    else unset(plane, x, y, Tile.WALL_EAST or Tile.WALL_SOUTH)
-                    unset(plane, x + 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_WEST else Tile.WALL_WEST)
-                    unset(plane, x, y - 1, if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH else Tile.WALL_NORTH)
+                    unset(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_EAST or Tile.WALL_SOUTH
+                    )
+                    unset(plane, x + 1, y, Tile.WALL_WEST)
+                    unset(plane, x, y - 1, Tile.WALL_NORTH)
+                    if (impenetrable) {
+                        unset(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_SOUTH
+                        )
+                        unset(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST)
+                        unset(plane, x, y - 1, Tile.IMPENETRABLE_WALL_NORTH)
+                    }
                 }
                 if (rotation == ObjectOrientation.SOUTH) {
-                    if (impenetrable) unset(plane, x, y, Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_SOUTH)
-                    else unset(plane, x, y, Tile.WALL_WEST or Tile.WALL_SOUTH)
-                    unset(plane, x, y - 1, if (impenetrable) Tile.IMPENETRABLE_WALL_WEST else Tile.WALL_WEST)
-                    unset(plane, x - 1, y, if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH else Tile.WALL_NORTH)
+                    unset(
+                        plane,
+                        x,
+                        y,
+                        Tile.WALL_EAST or Tile.WALL_SOUTH
+                    )
+                    unset(plane, x, y - 1, Tile.WALL_WEST)
+                    unset(plane, x - 1, y, Tile.WALL_NORTH)
+                    if (impenetrable) {
+                        unset(
+                            plane,
+                            x,
+                            y,
+                            Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_SOUTH
+                        )
+                        unset(plane, x, y - 1, Tile.IMPENETRABLE_WALL_WEST)
+                        unset(plane, x - 1, y, Tile.IMPENETRABLE_WALL_NORTH)
+                    }
                 }
             }
 
             ObjectType.TYPE_1, ObjectType.TYPE_3 -> {
                 if (rotation == ObjectOrientation.WEST) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH_WEST else Tile.WALL_NORTH_WEST)
-                    unset(
-                        plane,
-                        x - 1,
-                        y + 1,
-                        if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH_EAST else Tile.WALL_SOUTH_EAST
-                    )
+                    unset(plane, x, y, Tile.WALL_NORTH_WEST)
+                    unset(plane, x - 1, y + 1, Tile.WALL_SOUTH_EAST)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_NORTH_WEST)
+                        unset(
+                            plane,
+                            x - 1,
+                            y + 1,
+                            Tile.IMPENETRABLE_WALL_SOUTH_EAST
+                        )
+                    }
                 }
                 if (rotation == ObjectOrientation.NORTH) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH_EAST else Tile.WALL_NORTH_EAST)
-                    unset(
-                        plane,
-                        x + 1,
-                        y + 1,
-                        if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH_WEST else Tile.WALL_SOUTH_WEST
-                    )
+                    unset(plane, x, y, Tile.WALL_NORTH_EAST)
+                    unset(plane, x + 1, y + 1, Tile.WALL_SOUTH_WEST)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_NORTH_EAST)
+                        unset(
+                            plane,
+                            x + 1,
+                            y + 1,
+                            Tile.IMPENETRABLE_WALL_SOUTH_WEST
+                        )
+                    }
                 }
                 if (rotation == ObjectOrientation.EAST) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH_EAST else Tile.WALL_SOUTH_EAST)
-                    unset(
-                        plane,
-                        x + 1,
-                        y - 1,
-                        if (impenetrable) Tile.IMPENETRABLE_WALL_NORTH_WEST else Tile.WALL_NORTH_WEST
-                    )
+                    unset(plane, x, y, Tile.WALL_SOUTH_EAST)
+                    unset(plane, x + 1, y - 1, Tile.WALL_NORTH_WEST)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_SOUTH_EAST)
+                        unset(
+                            plane,
+                            x + 1,
+                            y - 1,
+                            Tile.IMPENETRABLE_WALL_NORTH_WEST
+                        )
+                    }
                 }
                 if (rotation == ObjectOrientation.SOUTH) {
-                    unset(plane, x, y, if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH_WEST else Tile.WALL_SOUTH_WEST)
-                    unset(
-                        plane,
-                        x - 1,
-                        y - 1,
-                        if (impenetrable) Tile.IMPENETRABLE_WALL_SOUTH_WEST else Tile.WALL_SOUTH_WEST
-                    )
+                    unset(plane, x, y, Tile.WALL_SOUTH_WEST)
+                    unset(plane, x - 1, y - 1, Tile.WALL_NORTH_EAST)
+                    if (impenetrable) {
+                        unset(plane, x, y, Tile.IMPENETRABLE_WALL_SOUTH_WEST)
+                        unset(
+                            plane,
+                            x - 1,
+                            y - 1,
+                            Tile.IMPENETRABLE_WALL_NORTH_EAST
+                        )
+                    }
                 }
             }
 
@@ -186,38 +459,59 @@ class TraversalMap(private val regionManager: RegionManager) {
         }
     }
 
-    fun markBlocked(position: Position) {
-        val plane = position.height
-        val x = position.x
-        val y = position.y
+    fun markBlocked(plane: Int, x: Int, y: Int) {
+        /* Calculate the coordinates */
+
+        val regionX = x shr 6
+        val regionY = y shr 6
 
         /* Calculate the local coordinates */
         val localX = x and 0x3f
         val localY = y and 0x3f
 
-        val region = regionManager.getRegion(x, y) ?: return
+        val region = regions[regionX + regionY * SIZE] ?: return
 
         var modifiedPlane = plane
-        if ((region.getTile(1, localX, localY)!!.flags() and Tile.BRIDGE) != 0) {
+        if ((region.getTile(1, localX, localY)?.flags()!! and Tile.BRIDGE) != 0) {
             modifiedPlane = plane - 1
         }
 
-        region.getTile(modifiedPlane, x and 0x3f, y and 0x3f)!!.set(Tile.BLOCKED)
+        region.getTile(modifiedPlane, x and 0x3f, y and 0x3f)?.set(Tile.BLOCKED)
     }
 
-    fun markOccupant(position: Position, width: Int, length: Int) {
-        val plane = position.height
-        val x = position.x
-        val y = position.y
+    fun markOccupant(plane: Int, x: Int, y: Int, width: Int, length: Int, impenetrable: Boolean) {
         for (offsetX in 0 until width) {
             for (offsetY in 0 until length) {
                 set(plane, x + offsetX, y + offsetY, Tile.OCCUPANT)
+                if (impenetrable) {
+                    set(
+                        plane,
+                        x + offsetX,
+                        y + offsetY,
+                        Tile.IMPENETRABLE_OCCUPANT
+                    )
+                }
             }
         }
     }
 
-    fun markBridge(position: Position) {
-        set(position.height, position.x, position.y, Tile.BRIDGE)
+    fun unmarkOccupant(plane: Int, x: Int, y: Int, width: Int, length: Int, impenetrable: Boolean) {
+        for (offsetX in 0 until width) {
+            for (offsetY in 0 until length) {
+                unset(plane, x + offsetX, y + offsetY, Tile.OCCUPANT)
+                if (impenetrable) {
+                    unset(plane,
+                        x + offsetX,
+                        y + offsetY,
+                        Tile.IMPENETRABLE_OCCUPANT
+                    )
+                }
+            }
+        }
+    }
+
+    fun markBridge(plane: Int, x: Int, y: Int) {
+        set(plane, x, y, Tile.BRIDGE)
     }
 
     fun isTraversableNorth(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -240,9 +534,19 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableNorth(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(plane, x, y + 1, Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_SOUTH)
+            return isInactive(
+                plane,
+                x,
+                y + 1,
+                Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_SOUTH
+            )
         }
-        return isInactive(plane, x, y + 1, Tile.WALL_SOUTH or Tile.OCCUPANT or Tile.BLOCKED)
+        return isInactive(
+            plane,
+            x,
+            y + 1,
+            Tile.WALL_SOUTH or Tile.OCCUPANT or Tile.BLOCKED
+        )
     }
 
     fun isTraversableSouth(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -265,9 +569,19 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableSouth(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(plane, x, y - 1, Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_NORTH)
+            return isInactive(
+                plane,
+                x,
+                y - 1,
+                Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_NORTH
+            )
         }
-        return isInactive(plane, x, y - 1, Tile.WALL_NORTH or Tile.OCCUPANT or Tile.BLOCKED)
+        return isInactive(
+            plane,
+            x,
+            y - 1,
+            Tile.WALL_NORTH or Tile.OCCUPANT or Tile.BLOCKED
+        )
     }
 
     fun isTraversableEast(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -290,9 +604,19 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableEast(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(plane, x + 1, y, Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_WEST)
+            return isInactive(
+                plane,
+                x + 1,
+                y,
+                Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_WEST
+            )
         }
-        return isInactive(plane, x + 1, y, Tile.WALL_WEST or Tile.OCCUPANT or Tile.BLOCKED)
+        return isInactive(
+            plane,
+            x + 1,
+            y,
+            Tile.WALL_WEST or Tile.OCCUPANT or Tile.BLOCKED
+        )
     }
 
     fun isTraversableWest(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -315,7 +639,9 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableWest(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(plane, x - 1, y, Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_EAST)
+            return isInactive(
+                plane, x - 1, y, Tile.IMPENETRABLE_OCCUPANT or Tile.IMPENETRABLE_WALL_EAST
+            )
         }
         return isInactive(plane, x - 1, y, Tile.WALL_EAST or Tile.OCCUPANT or Tile.BLOCKED)
     }
@@ -340,29 +666,39 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableNorthEast(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(
+            return (isInactive(
                 plane,
                 x + 1,
                 y + 1,
                 Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_SOUTH or Tile.IMPENETRABLE_WALL_SOUTH_WEST or Tile.OCCUPANT
-            ) && isInactive(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_OCCUPANT) && isInactive(
+            ) && isInactive(
+                plane,
+                x + 1,
+                y,
+                Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_OCCUPANT
+            ) && isInactive(
                 plane,
                 x,
                 y + 1,
                 Tile.IMPENETRABLE_WALL_SOUTH or Tile.IMPENETRABLE_OCCUPANT
-            )
+            ))
         }
-        return isInactive(
+        return (isInactive(
             plane,
             x + 1,
             y + 1,
             Tile.WALL_WEST or Tile.WALL_SOUTH or Tile.WALL_SOUTH_WEST or Tile.OCCUPANT or Tile.BLOCKED
-        ) && isInactive(plane, x + 1, y, Tile.WALL_WEST or Tile.OCCUPANT or Tile.BLOCKED) && isInactive(
+        ) && isInactive(
+            plane,
+            x + 1,
+            y,
+            Tile.WALL_WEST or Tile.OCCUPANT or Tile.BLOCKED
+        ) && isInactive(
             plane,
             x,
             y + 1,
             Tile.WALL_SOUTH or Tile.OCCUPANT or Tile.BLOCKED
-        )
+        ))
     }
 
     fun isTraversableNorthWest(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -385,29 +721,39 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableNorthWest(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(
+            return (isInactive(
                 plane,
                 x - 1,
                 y + 1,
                 Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_SOUTH or Tile.IMPENETRABLE_WALL_SOUTH_EAST or Tile.OCCUPANT
-            ) && isInactive(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_OCCUPANT) && isInactive(
+            ) && isInactive(
+                plane,
+                x - 1,
+                y,
+                Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_OCCUPANT
+            ) && isInactive(
                 plane,
                 x,
                 y + 1,
                 Tile.IMPENETRABLE_WALL_SOUTH or Tile.IMPENETRABLE_OCCUPANT
-            )
+            ))
         }
-        return isInactive(
+        return (isInactive(
             plane,
             x - 1,
             y + 1,
             Tile.WALL_EAST or Tile.WALL_SOUTH or Tile.WALL_SOUTH_EAST or Tile.OCCUPANT or Tile.BLOCKED
-        ) && isInactive(plane, x - 1, y, Tile.WALL_EAST or Tile.OCCUPANT or Tile.BLOCKED) && isInactive(
+        ) && isInactive(
+            plane,
+            x - 1,
+            y,
+            Tile.WALL_EAST or Tile.OCCUPANT or Tile.BLOCKED
+        ) && isInactive(
             plane,
             x,
             y + 1,
             Tile.WALL_SOUTH or Tile.OCCUPANT or Tile.BLOCKED
-        )
+        ))
     }
 
     fun isTraversableSouthEast(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -430,29 +776,39 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableSouthEast(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(
+            return (isInactive(
                 plane,
                 x + 1,
                 y - 1,
                 Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_WALL_NORTH or Tile.IMPENETRABLE_WALL_NORTH_WEST or Tile.OCCUPANT
-            ) && isInactive(plane, x + 1, y, Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_OCCUPANT) && isInactive(
+            ) && isInactive(
+                plane,
+                x + 1,
+                y,
+                Tile.IMPENETRABLE_WALL_WEST or Tile.IMPENETRABLE_OCCUPANT
+            ) && isInactive(
                 plane,
                 x,
                 y - 1,
                 Tile.IMPENETRABLE_WALL_NORTH or Tile.IMPENETRABLE_OCCUPANT
-            )
+            ))
         }
-        return isInactive(
+        return (isInactive(
             plane,
             x + 1,
             y - 1,
             Tile.WALL_WEST or Tile.WALL_NORTH or Tile.WALL_NORTH_WEST or Tile.OCCUPANT or Tile.BLOCKED
-        ) && isInactive(plane, x + 1, y, Tile.WALL_WEST or Tile.OCCUPANT or Tile.BLOCKED) && isInactive(
+        ) && isInactive(
+            plane,
+            x + 1,
+            y,
+            Tile.WALL_WEST or Tile.OCCUPANT or Tile.BLOCKED
+        ) && isInactive(
             plane,
             x,
             y - 1,
             Tile.WALL_NORTH or Tile.OCCUPANT or Tile.BLOCKED
-        )
+        ))
     }
 
     fun isTraversableSouthWest(plane: Int, x: Int, y: Int, size: Int): Boolean {
@@ -475,107 +831,122 @@ class TraversalMap(private val regionManager: RegionManager) {
      */
     fun isTraversableSouthWest(plane: Int, x: Int, y: Int, impenetrable: Boolean): Boolean {
         if (impenetrable) {
-            return isInactive(
+            return (isInactive(
                 plane,
                 x - 1,
                 y - 1,
                 Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_WALL_NORTH or Tile.IMPENETRABLE_WALL_NORTH_EAST or Tile.OCCUPANT
-            ) && isInactive(plane, x - 1, y, Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_OCCUPANT) && isInactive(
+            )
+                    && isInactive(
+                plane,
+                x - 1,
+                y,
+                Tile.IMPENETRABLE_WALL_EAST or Tile.IMPENETRABLE_OCCUPANT
+            ) && isInactive(
                 plane,
                 x,
                 y - 1,
                 Tile.IMPENETRABLE_WALL_NORTH or Tile.IMPENETRABLE_OCCUPANT
-            )
+            ))
         }
-        return isInactive(
+        return (isInactive(
             plane,
             x - 1,
             y - 1,
             Tile.WALL_EAST or Tile.WALL_NORTH or Tile.WALL_NORTH_EAST or Tile.OCCUPANT or Tile.BLOCKED
-        ) && isInactive(plane, x - 1, y, Tile.WALL_EAST or Tile.OCCUPANT or Tile.BLOCKED) && isInactive(
+        ) && isInactive(
+            plane,
+            x - 1,
+            y,
+            Tile.WALL_EAST or Tile.OCCUPANT or Tile.BLOCKED
+        ) && isInactive(
             plane,
             x,
             y - 1,
             Tile.WALL_NORTH or Tile.OCCUPANT or Tile.BLOCKED
-        )
+        ))
     }
 
     fun set(plane: Int, x: Int, y: Int, flag: Int) {
-        val region = regionManager.getRegion(x, y) ?: return
-        region.getTile(plane, x and 0x3f, y and 0x3f)!!.set(flag)
-    }
+        /* Calculate the coordinates */
 
-    fun isInactive(plane: Int, x: Int, y: Int, flag: Int): Boolean {
-        /* Calculate the local region coordinates */
-        val localX = x and 0x3f
-        val localY = y and 0x3f
+        val regionX = x shr 6
+        val regionY = y shr 6
 
-        val region = regionManager.getRegion(x, y) ?: return false
+        val region = regions[regionX + regionY * SIZE] ?: return
 
-        var modifiedPlane = plane
-        if (region.getTile(1, localX, localY)!!.isActive(Tile.BRIDGE)) {
-            modifiedPlane = plane + 1
-        }
-
-        return region.getTile(modifiedPlane, localX, localY)!!.isInactive(flag)
-    }
-
-    fun unset(plane: Int, x: Int, y: Int, flag: Int) {
-        val region = regionManager.getRegion(x, y) ?: return
-
-        region.getTile(plane, x and 0x3f, y and 0x3f)!!.unset(flag)
-    }
-
-    /*Direction */
-    fun getNearbyTraversableTiles(from: Position, size: Int): MutableList<Position> {
-        val positions: MutableList<Position> = LinkedList()
-        if (isTraversableNorth(from.height, from.x, from.y, size))
-            positions.add(Position(from.x, from.y + 1, from.height))
-        if (isTraversableSouth(from.height, from.x, from.y, size))
-            positions.add(Position(from.x, from.y - 1, from.height))
-        if (isTraversableEast(from.height, from.x, from.y, size))
-            positions.add(Position(from.x + 1, from.y, from.height))
-        if (isTraversableWest(from.height, from.x, from.y, size))
-            positions.add(Position(from.x - 1, from.y, from.height))
-        if (isTraversableNorthEast(from.height, from.x, from.y, size))
-            positions.add(Position(from.x + 1, from.y + 1, from.height))
-        if (isTraversableNorthWest(from.height, from.x, from.y, size))
-            positions.add(Position(from.x - 1, from.y + 1, from.height))
-        if (isTraversableSouthEast(from.height, from.x, from.y, size))
-            positions.add(Position(from.x + 1, from.y - 1, from.height))
-        if (isTraversableSouthWest(from.height, from.x, from.y, size))
-            positions.add(Position(from.x - 1, from.y - 1, from.height))
-        return positions
-    }
-
-    fun isTraversable(from: Position, direction: Direction?, size: Int): Boolean {
-        return when (direction) {
-            Direction.NORTH -> isTraversableNorth(from.height, from.x, from.y, size)
-            Direction.SOUTH -> isTraversableSouth(from.height, from.x, from.y, size)
-            Direction.EAST -> isTraversableEast(from.height, from.x, from.y, size)
-            Direction.WEST -> isTraversableWest(from.height, from.x, from.y, size)
-            Direction.NORTH_EAST -> isTraversableNorthEast(from.height, from.x, from.y, size)
-            Direction.NORTH_WEST -> isTraversableNorthWest(from.height, from.x, from.y, size)
-            Direction.SOUTH_EAST -> isTraversableSouthEast(from.height, from.x, from.y, size)
-            Direction.SOUTH_WEST -> isTraversableSouthWest(from.height, from.x, from.y, size)
-            Direction.NONE -> true
-            else -> throw RuntimeException("unknown type")
-        }
+        region.getTile(plane, x and 0x3f, y and 0x3f)?.set(flag)
     }
 
     fun attackPathClear(source: Mob, dest: Position, projectile: Boolean): Boolean {
         if (projectile) {
-            val path = ProjectilePathFinder.find(source.position, dest)
-            if (path.isEmpty) return true
+            val path: Path =
+                ProjectilePathFinder.find(source.position, dest)
+            if (path.isEmpty) {
+                return true
+            }
             var prev: Position = source.position
             while (!path.isEmpty) {
-                val next = path.poll()
-                if (!Direction.projectileClipping(prev, next)) return false
+                val next: Position = path.poll()
+                if (!Direction.projectileClipping(prev, next)) {
+                    return false
+                }
                 prev = next
             }
             return true
         } else {
-            return isTraversable(source.position, Direction.between(source.position, dest), source.size)
+            return Direction.isTraversable(
+                source.position,
+                Direction.between(source.position, dest),
+                source.size
+            )
         }
+    }
+
+    fun isInactive(plane: Int, x: Int, y: Int, flag: Int): Boolean {
+        /* Calculate the region coordinates */
+        val regionX = x shr 6
+        val regionY = y shr 6
+
+        /* Calculate the local region coordinates */
+        val localX = x and 0x3f
+        val localY = y and 0x3f
+
+        val region = regions[regionX + regionY * SIZE] ?: return false
+
+        var modifiedPlane = plane
+        if (region.getTile(1, localX, localY)?.isActive(Tile.BRIDGE)!!) {
+            modifiedPlane = plane + 1
+        }
+
+        return region.getTile(modifiedPlane, localX, localY)?.isInactive(flag)!!
+    }
+
+    fun unset(plane: Int, x: Int, y: Int, flag: Int) {
+        /* Calculate the coordinates */
+
+        val regionX = x shr 6
+        val regionY = y shr 6
+
+        val region = regions[regionX + regionY * SIZE] ?: return
+
+        region.getTile(plane, x and 0x3f, y and 0x3f)?.unset(flag)
+    }
+
+    companion object {
+        /**
+         * The size of one side of the region array.
+         */
+        const val SIZE: Int = 256
+
+        /**
+         * The size of a region.
+         */
+        const val REGION_SIZE: Int = 64
+
+        /**
+         * The maximum plane.
+         */
+        const val MAXIMUM_PLANE: Int = 4
     }
 }

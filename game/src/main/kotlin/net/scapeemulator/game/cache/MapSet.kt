@@ -9,12 +9,19 @@ import net.scapeemulator.cache.util.StringUtils
 import net.scapeemulator.game.model.GroundObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
+import net.scapeemulator.game.pathfinder.MapListener
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.zip.ZipException
 
 class MapSet {
+    companion object {
+        const val FLAG_CLIP: Int = 0x1
+
+        const val BRIDGE_FLAG: Int = 0x2
+    }
+
     private val logger = KotlinLogging.logger {}
     private val listeners: MutableList<MapListener> = mutableListOf()
     fun addListener(listener: MapListener) = listeners.add(listener)
@@ -50,6 +57,7 @@ class MapSet {
 //        lumbyTree?.apply { println("Found") }
     }
 
+
     val objects = ArrayList<GroundObject>()
 
     @Throws(IOException::class)
@@ -66,48 +74,6 @@ class MapSet {
         Map.decode(listeners, x, y, buffer)
     }
 
-    private fun readLandscape(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, fileId: Int) {
-        var buffer: ByteBuffer = cache.store.read(5, fileId)
-        val keys = keyTable.getKeys(x, y)
-        try {
-            buffer = Container.decode(buffer, keys).getData()
-        } catch (ze: ZipException) {
-            System.err.println(ze.message + " readLandscape(" + x + ", " + y + ", " + fileId + ")")
-        }
-
-        var id = -1
-        while (true) {
-            val deltaId = ByteBufferUtils.getSmart(buffer)
-            if (deltaId == 0) {
-                break
-            }
-
-            id += deltaId
-            var pos = 0
-            while (true) {
-                val deltaPos = ByteBufferUtils.getSmart(buffer)
-                if (deltaPos == 0) {
-                    break
-                }
-
-                pos += deltaPos - 1
-
-                val localX = (pos shr 6) and 0x3F
-                val localY = pos and 0x3F
-                val height = (pos shr 12) and 0x3
-
-                val temp = buffer.get().toInt() and 0xFF
-                val type = temp shr 2
-                val rotation = temp and 0x3
-
-                val position = Position(x * 64 + localX, y * 64 + localY, height)
-
-                for (listener in listeners) {
-                    listener.objectDecoded(id, rotation, ObjectType.forId(type), position)
-                }
-            }
-        }
-    }
 
     private fun readMap(cache: Cache, x: Int, y: Int, id: Int) {
         val buffer = cache.read(5, id).getData()
@@ -167,6 +133,53 @@ class MapSet {
 //                position = pos
 //            }
 //            GameServer.WORLD.npcs.add(npc)
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun readLandscape(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, fileId: Int) {
+        var buffer: ByteBuffer = cache.store.read(5, fileId)
+
+        val keys: IntArray = keyTable.getKeys(x, y)
+        try {
+            buffer = Container.decode(buffer, keys).getData()
+        } catch (ze: ZipException) {
+            System.err.println(ze.message + " readLandscape(" + x + ", " + y + ", " + fileId + ")")
+        }
+
+        var id = -1
+
+        while (true) {
+            val deltaId = ByteBufferUtils.getSmart(buffer)
+            if (deltaId == 0) {
+                break
+            }
+
+            id += deltaId
+
+            var pos = 0
+
+            while (true) {
+                val deltaPos = ByteBufferUtils.getSmart(buffer)
+                if (deltaPos == 0) {
+                    break
+                }
+
+                pos += deltaPos - 1
+
+                val localX = (pos shr 6) and 0x3F
+                val localY = pos and 0x3F
+                val height = (pos shr 12) and 0x3
+
+                val temp = buffer.get().toInt() and 0xFF
+                val type = temp shr 2
+                val rotation = temp and 0x3
+
+                val position = Position(x * 64 + localX, y * 64 + localY, height)
+
+                for (listener in listeners)
+                    listener.objectDecoded(id, rotation, ObjectType.forId(type), position)
+            }
         }
     }
 }
