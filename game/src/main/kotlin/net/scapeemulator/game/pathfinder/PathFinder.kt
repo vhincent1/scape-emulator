@@ -17,60 +17,58 @@
  */
 package net.scapeemulator.game.pathfinder
 
-import net.scapeemulator.game.model.Mob
-import net.scapeemulator.game.model.Position
-
 /**
  * Created by Hadyn Richard
  */
-abstract class PathFinder {
-    fun find(mob: Mob, dest: Position): Path? {
-        return find(mob, dest.x, dest.y)
-    }
-
-    fun find(mob: Mob, destX: Int, destY: Int): Path? {
-        /* Get the current position of the player */
-
-        val position: Position = mob.position
-
-        /* Get the scene base x and y coordinates */
-        val baseLocalX = position.getBaseLocalX()
-        val baseLocalY = position.getBaseLocalY()
-
-        /* Calculate the local x and y coordinates */
-        val destLocalX = destX - baseLocalX
-        val destLocalY = destY - baseLocalY
-
-        return find(
-            Position(baseLocalX, baseLocalY, position.height), 104, 104,
-            position.getLocalX(),
-            position.getLocalY(),
-            destLocalX,
-            destLocalY,
-            mob.size
-        )
-    }
-
-    fun find(
-        position: Position,
-        width: Int,
-        length: Int,
-        srcX: Int,
-        srcY: Int,
-        destX: Int,
-        destY: Int
-    ): Path? {
-        return find(position, width, length, srcX, srcY, destX, destY, 1)
-    }
-
-    abstract fun find(
-        position: Position,
-        width: Int,
-        length: Int,
-        srcX: Int,
-        srcY: Int,
-        destX: Int,
-        destY: Int,
-        size: Int
-    ): Path?
-}
+//abstract class PathFinder {
+//    fun find(mob: Mob, dest: Position): Path? {
+//        return find(mob, dest.x, dest.y)
+//    }
+//
+//
+//    fun find(mob: Mob, destX: Int, destY: Int): Path? {
+//        /* Get the current position of the player */
+//
+//        val position: Position = mob.position
+//
+//        /* Get the scene base x and y coordinates */
+//        val baseLocalX = position.getBaseLocalX()
+//        val baseLocalY = position.getBaseLocalY()
+//
+//        /* Calculate the local x and y coordinates */
+//        val destLocalX = destX - baseLocalX
+//        val destLocalY = destY - baseLocalY
+//
+//        return find(
+//            Position(baseLocalX, baseLocalY, position.height), 104, 104,
+//            position.getLocalX(),
+//            position.getLocalY(),
+//            destLocalX,
+//            destLocalY,
+//            mob.size
+//        )
+//    }
+//
+//    fun find(
+//        position: Position,
+//        width: Int,
+//        length: Int,
+//        srcX: Int,
+//        srcY: Int,
+//        destX: Int,
+//        destY: Int
+//    ): Path? {
+//        return find(position, width, length, srcX, srcY, destX, destY, 1)
+//    }
+//
+//    abstract fun find(
+//        position: Position,
+//        width: Int,
+//        length: Int,
+//        srcX: Int,
+//        srcY: Int,
+//        destX: Int,
+//        destY: Int,
+//        size: Int
+//    ): Path?
+//}

@@ -1,13 +1,10 @@
 package net.scapeemulator.game.model
 
-class Position {
-    val x: Int
-    val y: Int
-    val height: Int
+import net.scapeemulator.game.pathfinder.RegionManager
 
-//    private val regionId: Int get() = (x shr 6) shl 8 or (y shr 6)
-//    private val regionId: Int get() = (regionX / 8 shl 8) + regionY / 8
+data class Position(val x: Int, val y: Int, val height: Int = 0) {
 
+    val regionId: Int get() = (x shr 6) shl 8 or (y shr 6)
     private val regionX: Int get() = x shr 3
     private val regionY: Int get() = y shr 3
 
@@ -17,29 +14,18 @@ class Position {
     // script message
     val packed: Int get() = (height shl 28) or (x shl 14) or y
 
-    constructor(x: Int, y: Int) {
-        this.x = x
-        this.y = y
-        this.height = 0
-    }
-
-    constructor(x: Int, y: Int, height: Int) {
-        this.x = x
-        this.y = y
-        this.height = height
-    }
-
     fun getChunkBase() = Position(regionX shl 3, regionY shl 3, height)
 
-    //    fun getChunkOffsetX(): Int {
-//        val x = x - ((x shr 6) shl 6)
-//        return x - ((x / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
-//    }
-//
-//    fun getChunkOffsetY(): Int {
-//        val y = y - ((y shr 6) shl 6)
-//        return y - ((y / RegionManager.RegionChunk.SIZE) * RegionManager.RegionChunk.SIZE)
-//    }
+    fun getChunkOffsetX(): Int {
+        val x = x - ((x shr 6) shl 6) //localX
+        return x - ((x / RegionManager.SIZE) * RegionManager.SIZE)
+    }
+
+    fun getChunkOffsetY(): Int {
+        val y = y - ((y shr 6) shl 6) //localY
+        return y - ((y / RegionManager.SIZE) * RegionManager.SIZE)
+    }
+
     //    fun getChunkBase(): Position = Position(getRegionX() shl 3, getRegionY() shl 3, z)
     //    fun getLocalX(): Int = x - ((x shr 6) shl 6)
 //    fun getLocalY(): Int = y - ((y shr 6) shl 6)
@@ -74,31 +60,19 @@ class Position {
         return isWithinDistance(position, 51)
     }
 
+    fun blockHash(): Int = (x and 0x7) shl 4 or (y and 0x7)
+    fun blockHash2(): Int = (x and 0x7) shl 4 or (y and 0x7)
+
     /* pathfinder todo cleanup*/
+//    fun getLocalX(): Int = getLocalX(centralRegionX)
+//    fun getLocalY(): Int = getLocalY(centralRegionY)
+    fun getLocalX() = x - ((x shr 6) shl 6)
+    fun getLocalY() = y - ((y shr 6) shl 6)
 
-    fun getLocalX(): Int {
-        return getLocalX(centralRegionX)
-    }
-
-    fun getLocalY(): Int {
-        return getLocalY(centralRegionY)
-    }
-
-    fun getBaseLocalX(): Int {
-        return getBaseLocalX(centralRegionX)
-    }
-
-    fun getBaseLocalY(): Int {
-        return getBaseLocalY(centralRegionY)
-    }
-
-    fun getBaseLocalX(centralRegionX: Int): Int {
-        return (centralRegionX - 6) * 8
-    }
-
-    fun getBaseLocalY(centralRegionY: Int): Int {
-        return (centralRegionY - 6) * 8
-    }
+    fun getBaseLocalX(): Int = getBaseLocalX(centralRegionX)
+    fun getBaseLocalY(): Int = getBaseLocalY(centralRegionY)
+    private fun getBaseLocalX(centralRegionX: Int): Int = (centralRegionX - 6) * 8
+    private fun getBaseLocalY(centralRegionY: Int): Int = (centralRegionY - 6) * 8
 
     /*autogen*/
     override fun hashCode(): Int {
@@ -121,7 +95,29 @@ class Position {
         return true
     }
 
-    override fun toString(): String {
-        return "Position(x=$x, y=$y, height=$height)"
+    override fun toString(): String = "Position(x=$x, y=$y, height=$height)"
+
+}
+
+fun main() {
+    val position = Position(3222, 3222, 0)
+    position.apply {
+        val localX = x - ((x shr 6) shl 6)
+        val localY = y - ((y shr 6) shl 6)
+
+        println("LocalX: " + getLocalX())
+        println("LocalY: " + getLocalY())
+
+        println("getRegionX: " + getRegionX(position))
+        println("getRegionY: " + getRegionY(position))
+
+        println(localX)
+        println(localY)
+
+        println("ChunkOffsetX: " + getChunkOffsetX())
+        println("ChunkOffsetY: " + getChunkOffsetY())
+
+        println(getBaseLocalX())
+        println(getBaseLocalY())
     }
 }

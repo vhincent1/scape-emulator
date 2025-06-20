@@ -183,6 +183,26 @@ class WalkingQueue(mob: Mob) {
         mob.position = position
     }
 
+//    fun tick() {
+//        var position: Position? = mob.position
+//        walkDirection = Direction.NONE
+//        runDirection = Direction.NONE
+//        var next = points.poll()
+//        if (next != null) {
+//            walkDirection = Direction.between(position!!, next)
+//            position = next
+//            if (this.isRunningQueue || mob.isRunning) {
+//                next = points.poll()
+//                if (next != null) {
+//                    runDirection = between(position, next)
+//                    position = next
+//                }
+//            }
+//        }
+//        mob.setDirections(walkDirection, runDirection)
+//        mob.position = position!!
+//    }
+
     /**
      * Add position to the tail of []. When
      * [] has reached its maximum size,

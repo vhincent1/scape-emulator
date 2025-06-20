@@ -28,35 +28,13 @@ class GameObject(var id: Int, val type: Int, position: Position, rotation: Int) 
         this.rotation = rotation
     }
 
-    val definition: ObjectDefinition?
-        get() = ObjectDefinitions.forId(id) //
-    //    @Override
-    //    public String toString() {
-    //        ObjectDefinition def = getDefinition();
-    //
-    //        StringBuilder builder = new StringBuilder("GameObject[");
-    //        builder.append("id=");
-    //        builder.append(id);
-    //        builder.append(", type=");
-    //        builder.append(type);
-    //        builder.append(", width=");
-    //        builder.append(def.getWidth());
-    //        builder.append(", length=");
-    //        builder.append(def.getLength());
-    //        builder.append("]");
-    //        return builder.toString();
-    //    }
+    val definition: ObjectDefinition? get() = ObjectDefinitions.forId(id)
 }
 
 /**
  * Created by Hadyn Richard
  */
-enum class ObjectGroup(
-    /**
-     * The group id that the type belongs to.
-     */
-    private val id: Int
-) {
+enum class ObjectGroup(private val id: Int) {
     /**
      * Enumation for each group type.
      */
@@ -76,11 +54,7 @@ enum class ObjectGroup(
 
         fun forType(type: Int): ObjectGroup {
             val id = OBJECT_GROUPS[type]
-            for (group in entries) {
-                if (group.id == id) {
-                    return group
-                }
-            }
+            for (group in entries) if (group.id == id) return group
             throw RuntimeException()
         }
     }
@@ -101,12 +75,7 @@ object ObjectOrientation {
 /**
  * Created by Hadyn Richard
  */
-enum class ObjectType(
-    /**
-     * Gets the type id.
-     */
-    @JvmField val id: Int
-) {
+enum class ObjectType(@JvmField val id: Int) {
     /* Each of the types that have been identified */
     DIAGONAL_WALL(9),
     PROP(10),
@@ -124,28 +93,13 @@ enum class ObjectType(
     TYPE_19(19), TYPE_20(20),
     TYPE_21(21), TYPE_22(22);
 
-    val isWall: Boolean
-        /**
-         * Gets if the object type is apart of the wall group.
-         */
-        get() = objectGroup == ObjectGroup.WALL
-
-    val objectGroup: ObjectGroup
-        /**
-         * Gets the object group this type belongs to.
-         */
-        get() = ObjectGroup.forType(id)
+    val isWall: Boolean get() = objectGroup == ObjectGroup.WALL
+    val objectGroup: ObjectGroup get() = ObjectGroup.forType(id)
 
     companion object {
-        /**
-         * Gets the object type for the specified id.
-         */
         fun forId(id: Int): ObjectType {
-            for (type in entries) {
-                if (type.id == id) {
-                    return type
-                }
-            }
+            for (type in entries)
+                if (type.id == id) return type
             throw RuntimeException("unknown object type for id: $id")
         }
     }

@@ -85,14 +85,14 @@ internal val UpdateAreaEncoder = MessageEncoder(UpdateAreaMessage::class) { allo
     return@MessageEncoder builder.toGameFrame()
 }
 
-//internal val UpdateAreaEncoder = MessageEncoder(UpdateAreaMessage::class) { alloc, message ->
-//    val builder = GameFrameBuilder(alloc, 230, GameFrame.Type.VARIABLE_SHORT)
-////    val x: Int = base.getSceneX(player.getPlayerFlags().getLastSceneGraph())
-////    val y: Int = base.getSceneY(player.getPlayerFlags().getLastSceneGraph())
-////    builder.put(DataType.BYTE, DataTransformation.ADD, x)
-////    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, y)
-//    return@MessageEncoder builder.toGameFrame()
-//}
+internal val ChunkUpdateEncoder = MessageEncoder(ChunkUpdateMessage::class) { alloc, message ->
+    val builder = GameFrameBuilder(alloc, 230, GameFrame.Type.VARIABLE_SHORT)
+    val x: Int = message.base.getRegionX(message.lastScene)
+    val y: Int = message.base.getRegionY(message.lastScene)
+    builder.put(DataType.BYTE, DataTransformation.ADD, x)
+    builder.put(DataType.BYTE, DataTransformation.SUBTRACT, y)
+    return@MessageEncoder builder.toGameFrame()
+}
 
 internal val SoundEncoder = MessageEncoder(SoundMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 172)

@@ -77,11 +77,14 @@ class CodecRepository(table: LandscapeKeyTable) {
         bind(WeightEncoder)
         bind(AccessMaskEncoder)
         bind(UpdateAreaEncoder)
+        bind(ChunkUpdateEncoder) //todo test
         bind(SoundEncoder)
 
         //ground items
         ItemDecoders.forEach(this::bind)
-        ItemEncoders.forEach(this::bind)
+        bind(ItemEncoder)
+//        ItemEncoders.forEach(this::bind)
+        bind(GroundObjectEncoder)
     }
 
     fun get(opcode: Int): MessageDecoder<*>? = inCodecs[opcode] //TODO: fix

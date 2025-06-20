@@ -5,6 +5,7 @@ import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.msg.ResetMinimapFlagMessage
 import net.scapeemulator.game.net.login.LoginService
+import net.scapeemulator.game.pathfinder.RegionManager
 import net.scapeemulator.game.pathfinder.TraversalMap
 import net.scapeemulator.game.task.SyncTask
 import net.scapeemulator.game.task.TaskScheduler
@@ -21,8 +22,8 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
 
     var isOnline = false
 
-//    val region = RegionManager()
-    val traversalMap = TraversalMap()
+    val region = RegionManager()
+    val traversalMap = TraversalMap(region)
     val taskScheduler: TaskScheduler = TaskScheduler()
 
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)

@@ -8,6 +8,7 @@ import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
 import net.scapeemulator.game.cache.LandscapeKeyTable
+import net.scapeemulator.game.cache.MapDataListener
 import net.scapeemulator.game.cache.MapSet
 import net.scapeemulator.game.cache.ObjectDefinitions
 import net.scapeemulator.game.io.DummyPlayerSerializer
@@ -21,7 +22,6 @@ import net.scapeemulator.game.msg.codec.CodecRepository
 import net.scapeemulator.game.msg.handler.MessageDispatcher
 import net.scapeemulator.game.net.login.LoginService
 import net.scapeemulator.game.net.update.UpdateService
-import net.scapeemulator.game.pathfinder.MapDataListener
 import net.scapeemulator.game.plugin.PluginManager
 import net.scapeemulator.util.NetworkConstants
 import java.io.File
@@ -103,7 +103,8 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
         /* load map */
 //        if (PATHFINDING_ENABLED) {
 //            map.addListener(RegionMapListener(world.region))
-            map.addListener(MapDataListener(world.traversalMap))
+//        map.addListener(GroundObjectPopulator(world))
+        map.addListener(MapDataListener(world))
             map.init(cache, landscapeKeyTable)
 //        }
 

@@ -11,6 +11,7 @@ internal fun RegionChangeEncoder(table: LandscapeKeyTable) =
 
         val position = message.position
         builder.put(DataType.SHORT, DataTransformation.ADD, position.getLocalX(position.centralRegionX))
+        //player.getPlayerFlags().setLastSceneGraph(player.getLocation());
 
         var force = true
         val centralMapX = position.centralRegionX / 8

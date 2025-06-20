@@ -1,5 +1,6 @@
 package net.scapeemulator.game.plugin
 
+import net.scapeemulator.game.GameServer
 import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.HintIconMessage
@@ -105,10 +106,32 @@ val UtilPlugin: (World) -> PluginHandler = { world ->
                 }
                 world.npcs.add(npc)
             }, CommandHandler("rm") { player, args ->
-                if (!world.players.remove(playerBot))
-                    world.players.add(playerBot)
-            } ,CommandHandler("region") { player, args ->
-            //   player.sendMessage("Region ID: ${GameServer.WORLD.region.getRegionPlane(player.position)}")
+                if (!world.players.remove(playerBot)) world.players.add(playerBot)
+            }, CommandHandler("region") { player, args ->
+                val region = GameServer.WORLD.region
+//                player.sendMessage("Region: ${region.getRegion(player.position)}")
+//                player.sendMessage("Size: ${region.regions.filterNotNull().size}")
+//
+//                val tileX = player.position.x and 0x3f
+//                val tileY = player.position.y and 0x3f
+//                val tile = region.getRegion(player.position)?.getTile()
+//                player.sendMessage("Tile: $tile")
+//                player.sendMessage("TileCoords: $tileX $tileY")
+//                player.sendMessage("Region: ${player.position.regionId}")
+//                player.sendMessage("TeleportPermit: ${region.isTeleportPermitted(player.position)}")
+//                player.sendMessage("Objects: ${region.getRegion(player.position)?.getObjects()?.size}")
+
+            },CommandHandler("pos") { player, args ->
+//                val localX = x - ((x shr 6) shl 6)
+//                val localY = x - ((x shr 6) shl 6)
+                player.sendMessage("LocalX: ")
+                player.sendMessage("")
+                player.sendMessage("")
+                player.sendMessage("")
+
+            }, CommandHandler("noclip") { player, args ->
+                player.clipping = !player.clipping
+                player.sendMessage("Clipping ${player.clipping}")
             }, CommandHandler("drop") { player, arguments ->
                 val dp = arrayOf(
                     Position(3225, 3225),

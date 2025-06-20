@@ -17,69 +17,39 @@
  */
 package net.scapeemulator.game.pathfinder
 
-/**
- * Created by Hadyn Richard
- */
-/**
- * Created by Hadyn Richard
- */
-class Tile
-/**
- * Constructs a new [Tile];
- */ @JvmOverloads constructor(
-    /**
-     * The flags for the tile.
-     */
-     var flags: Int = NONE
-) {
-    /**
-     * Constructs a new [Tile];
-     */
+class Tile @JvmOverloads constructor(var flags: Int = NONE) {
 
-    /**
-     * Sets a flag for the tile.
-     */
     fun set(flag: Int) {
         flags = flags or flag
     }
 
-    /**
-     * Unsets a flag for the tile.
-     */
     fun unset(flag: Int) {
         flags = flags and 0xffff - flag
     }
 
-    /**
-     * Gets if a flag is active.
-     * @param flag The flag to check for if it is active.
-     * @return If the flag is active.
-     */
-    fun isActive(flag: Int): Boolean {
-        return (flags and flag) != 0
-    }
+    fun isActive(flag: Int): Boolean = (flags and flag) != 0
+    fun isInactive(flag: Int): Boolean = (flags and flag) == 0
+    fun flags(): Int = flags
 
-    /**
-     * Gets if a flag is inactive.
-     * @param flag The flag to check for if it is inactive.
-     * @return If the flag is inactive.
-     */
-    fun isInactive(flag: Int): Boolean {
-        return (flags and flag) == 0
-    }
+    fun canFollow() = (flags and FLAG_FOLLOWERS) != 0
+    fun isMembers() = (flags and FLAG_MEMBERS) != 0
+    fun canRandomEvent() = (flags and FLAG_RANDOM_EVENT) != 0
+    fun canFire() = (flags and FLAG_FIRES) != 0
+    fun canCannon() = (flags and FLAG_CANNON) != 0
 
-    /**
-     * Gets the flags for the tile.
-     */
-    fun flags(): Int {
-        return flags
-    }
+    override fun toString(): String = "Tile(flags=$flags follow=${canFollow()} members=${isMembers()} random=${canRandomEvent()} " +
+            "fire=${canFire()} cannon=${canCannon()})"
+
 
     companion object {
-        /**
-         * The flags for each of the traversals.
-         */
-        const val  /* Each of the flags for walls */WALL_NORTH: Int = 0x1
+        const val FLAG_CLIP: Int = 0x1
+        const val FLAG_BRIDGE: Int = 0x2
+        const val /* no followers */FLAG_FOLLOWERS = 0 shl 1
+        const val /* no random events */FLAG_RANDOM_EVENT = 1 shl 2
+        const val /* no fires */FLAG_FIRES = 1 shl 2
+        const val /* members only */FLAG_MEMBERS = 1 shl 3
+        const val /* no cannons */FLAG_CANNON = 1 shl 4
+        const val /* Each of the flags for walls */WALL_NORTH: Int = 0x1
         const val WALL_SOUTH: Int = 0x2
         const val WALL_EAST: Int = 0x4
         const val WALL_WEST: Int = 0x8
@@ -106,5 +76,15 @@ class Tile
         const val BLOCKED: Int = 0x20000
         const val BRIDGE: Int = 0x40000
         const val NONE: Int = 0x0
+
+        /* Traversal flags */
+        const val PREVENT_NORTH = 0x12c0120
+        const val PREVENT_EAST = 0x12c0180
+        const val PREVENT_NORTHEAST = 0x12c01e0
+        const val PREVENT_SOUTH = 0x12c0102
+        const val PREVENT_SOUTHEAST = 0x12c0183
+        const val PREVENT_WEST = 0x12c0108
+        const val PREVENT_SOUTHWEST = 0x12c010e
+        const val PREVENT_NORTHWEST = 0x12c0138
     }
 }

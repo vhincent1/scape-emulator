@@ -67,18 +67,21 @@ fun Player.sendAreaUpdate(pos: Position) {
 
 fun Player.sendGroundItemCreate(item: GroundItem) {
     sendAreaUpdate(item.position)
-    send(GroundItemCreateMessage(item.id, item.amount, item.position))
+//    send(GroundItemCreateMessage(item.id, item.amount, item.position))
+    send(GroundItemMessage(item.id, item.amount, item.position))
 }
 
 fun Player.sendGroundItemUpdate(new: GroundItem, previousAmount: Int) {
     println("Updated ${new.amount} : old=${previousAmount}")
     sendAreaUpdate(new.position)
-    send(GroundItemUpdateMessage(new.id, new.amount, new.position, previousAmount))
+//    send(GroundItemUpdateMessage(new.id, new.amount, new.position, previousAmount))
+    send(GroundItemMessage(new.id, new.amount, new.position, previousAmount))
 }
 
 fun Player.sendGroundItemRemoval(item: Int, position: Position) {
     sendAreaUpdate(position)
-    send(GroundItemRemoveMessage(item, position))
+//    send(GroundItemRemoveMessage(item, position))
+    send(GroundItemMessage(item, position))
 }
 
 /* Ground items */

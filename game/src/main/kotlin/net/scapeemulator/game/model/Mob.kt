@@ -7,6 +7,7 @@ import java.util.*
 abstract class Mob : Entity() {
 
     var index: Int = 0
+    var clipping = true
 
     protected var action: Action<*>? = null
     val walkingQueue: WalkingQueue = WalkingQueue(this)
@@ -115,5 +116,5 @@ abstract class Mob : Entity() {
     abstract fun login()
     abstract fun logout()
     abstract fun getClientIndex(): Int
-    fun isClipped(): Boolean = true
+    fun isClipped(): Boolean = clipping
 }
