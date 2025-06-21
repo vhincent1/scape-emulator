@@ -20,14 +20,15 @@ package net.scapeemulator.game.model
 import net.scapeemulator.cache.def.ObjectDefinition
 import net.scapeemulator.game.cache.ObjectDefinitions
 
-class GameObject(var id: Int, val type: Int, position: Position, rotation: Int) : Entity() {
-    val rotation: Int
-
+class GameObject(var id: Int, val type: Int, position: Position, val rotation: Int) : Entity() {
     init {
         this.position = position
-        this.rotation = rotation
     }
-
+    constructor(id: Int, position: Position) : this(id, 10, position, 0)
+    constructor(id: Int, position: Position, rotation: Int) : this(id, 10, position, rotation)
+    fun transform(id: Int) = GameObject(id, position, rotation)
+    fun transform(id: Int, rotation: Int) = GameObject(id, position, rotation)
+    /*doors*/fun transform(id: Int, rotation: Int, position: Position) = GameObject(id, position, rotation)
     val definition: ObjectDefinition? get() = ObjectDefinitions.forId(id)
 }
 
@@ -36,7 +37,7 @@ class GameObject(var id: Int, val type: Int, position: Position, rotation: Int) 
  */
 enum class ObjectGroup(private val id: Int) {
     /**
-     * Enumation for each group type.
+     * Enumeration for each group type.
      */
     WALL(0),
     WALL_DECORATION(1),
@@ -47,9 +48,9 @@ enum class ObjectGroup(private val id: Int) {
         /**
          * The array of object group ids for their type.
          */
-        val OBJECT_GROUPS: IntArray = intArrayOf(
-            0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2,
-            2, 2, 2, 2, 2, 2, 2, 3
+        private val OBJECT_GROUPS: IntArray = intArrayOf(
+            0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2,
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3
         )
 
         fun forType(type: Int): ObjectGroup {
@@ -58,18 +59,6 @@ enum class ObjectGroup(private val id: Int) {
             throw RuntimeException()
         }
     }
-}
-
-object ObjectOrientation {
-    const val WEST: Int = 0
-    const val NORTH: Int = 1
-    const val EAST: Int = 2
-    const val SOUTH: Int = 3
-
-    const val ROTATE_CW: Int = 1
-    const val ROTATE_CCW: Int = -1
-
-    const val HALF_TURN: Int = 2
 }
 
 /**
@@ -81,7 +70,7 @@ enum class ObjectType(@JvmField val id: Int) {
     PROP(10),
     DIAGONAL_PROP(11),
 
-    /* Each of the yet to be identified types, some arent really important */
+    /* Each of the yet to be identified types, some aren't really important */
     STRAIGHT_WALL(0), TYPE_1(1),
     TYPE_2(2), TYPE_3(3),
     TYPE_4(4), TYPE_5(5),
@@ -94,12 +83,11 @@ enum class ObjectType(@JvmField val id: Int) {
     TYPE_21(21), TYPE_22(22);
 
     val isWall: Boolean get() = objectGroup == ObjectGroup.WALL
-    val objectGroup: ObjectGroup get() = ObjectGroup.forType(id)
+    private val objectGroup: ObjectGroup get() = ObjectGroup.forType(id)
 
     companion object {
         fun forId(id: Int): ObjectType {
-            for (type in entries)
-                if (type.id == id) return type
+            for (type in entries) if (type.id == id) return type
             throw RuntimeException("unknown object type for id: $id")
         }
     }

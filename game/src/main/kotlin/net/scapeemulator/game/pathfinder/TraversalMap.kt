@@ -450,9 +450,7 @@ class TraversalMap(private val region: RegionManager) {
                 prev = next
             }
             return true
-        } else {
-            return Direction.isTraversable(source.position, Direction.between(source.position, dest), source.size)
-        }
+        } else return Direction.isTraversable(source.position, Direction.between(source.position, dest), source.size)
     }
 
     private fun isInactive(plane: Int, x: Int, y: Int, flag: Int): Boolean {
@@ -504,5 +502,15 @@ class TraversalMap(private val region: RegionManager) {
         if ((region.getTile(1, localX, localY)?.flags()!! and Tile.BRIDGE) != 0)
             modifiedPlane = plane - 1
         region.getTile(modifiedPlane, localX, localY)?.set(Tile.BLOCKED)
+    }
+
+    private object ObjectOrientation {
+        const val WEST: Int = 0
+        const val NORTH: Int = 1
+        const val EAST: Int = 2
+        const val SOUTH: Int = 3
+        const val ROTATE_CW: Int = 1
+        const val ROTATE_CCW: Int = -1
+        const val HALF_TURN: Int = 2
     }
 }
