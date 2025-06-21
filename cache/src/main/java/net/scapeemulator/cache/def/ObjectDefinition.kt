@@ -6,33 +6,31 @@ import java.nio.ByteBuffer
 class ObjectDefinition {
     var name: String? = null
         private set
-
     var options: Array<String?> = emptyArray()
         private set
-
     var width: Int = 0
         private set
     var length: Int = 0
         private set
     var animationId: Int = 0
         private set
-
     var isImpenetrable: Boolean = false
         private set
     var isSolid: Boolean = false
         private set
+    var clipType: Int = 0
+    var children: Array<Int?> = emptyArray()
+        private set
+    var membersOnly: Boolean = false
 
     fun hasOptions(): Boolean {
-        for (i in options.indices) {
-            if (options[i] != null) {
+        for (i in options.indices)
+            if (options[i] != null)
                 return true
-            }
-        }
         return false
     }
 
     companion object {
-        @Suppress("unused")
         fun decode(buffer: ByteBuffer): ObjectDefinition {
             val def = ObjectDefinition()
             def.name = "null"
@@ -46,21 +44,17 @@ class ObjectDefinition {
                 if (opcode == 0) break
                 if (opcode == 1) {
                     val i = buffer.get().toInt() and 0xff
-                    if (i > 0) {
+                    if (i > 0)
                         for (var5 in 0 until i) {
                             buffer.getShort()
                             buffer.get()
                         }
-                    }
                 } else if (opcode == 2) {
                     def.name = ByteBufferUtils.getJagexString(buffer)
                 } else if (opcode == 5) {
                     val i = buffer.get().toInt() and 0xff
-                    if (i > 0) {
-                        for (var5 in 0 until i) {
-                            buffer.getShort()
-                        }
-                    }
+                    if (i > 0) for (var5 in 0 until i)
+                        buffer.getShort()
                 } else if (opcode == 14) {
                     def.width = buffer.get().toInt() and 0xff
                 } else if (opcode == 15) {
@@ -68,24 +62,23 @@ class ObjectDefinition {
                 } else if (opcode == 17) {
                     def.isSolid = false
                     //TODO
-//                    def.projectileClipped = false;
-//                    def.clipType = 0;
+                    def.isImpenetrable = false
+                    def.clipType = 0
                 } else if (opcode == 18) {
                     def.isImpenetrable = false
-                    //TODO projectileClipped
                 } else if (opcode == 19) {
                     val i = buffer.get().toInt()
                 } else if (opcode == 24) {
                     def.animationId = buffer.getShort().toInt()
-                    if (def.animationId == 65535) {
-                        def.animationId = -1
-                    }
+                    if (def.animationId == 65535) def.animationId = -1
+                } else if (opcode == 27) {
+                    def.clipType = 1
                 } else if (opcode == 28) {
                     val i = buffer.get().toInt()
                 } else if (opcode == 29) {
                     val i = buffer.get().toInt()
-                } else if (opcode >= 30 && opcode < 35) def.options[opcode - 30] =
-                    ByteBufferUtils.getJagexString(buffer)
+                } else if (opcode >= 30 && opcode < 35)
+                    def.options[opcode - 30] = ByteBufferUtils.getJagexString(buffer)
                 else if (opcode == 39) {
                     val i = buffer.get().toInt()
                 } else if (opcode == 40) {
@@ -116,9 +109,7 @@ class ObjectDefinition {
                 } else if (opcode == 67) {
                     val i = buffer.getShort().toInt() and 0xffff
                 } else if (opcode == 69) {
-                    val i = buffer.get().toInt() and 0xff
-                    //TODO
-                    //walking flag
+                    val walkingFlag = buffer.get().toInt() and 0xff
                 } else if (opcode == 70) {
                     val i = buffer.getShort().toInt()
                 } else if (opcode == 71) {
@@ -126,23 +117,25 @@ class ObjectDefinition {
                 } else if (opcode == 72) {
                     val i = buffer.getShort().toInt()
                 } else if (opcode == 74) {
-                    //TODO
-                    //notClipped = true
+                    def.clipType = 0
+                    def.isImpenetrable = false
                 } else if (opcode == 75) {
                     val i = buffer.get().toInt()
                 } else if (opcode == 77 || opcode == 92) {
-                    val i = buffer.getShort().toInt() and 0xffff
-                    val i2 = buffer.getShort().toInt() and 0xffff
-
-                    if (opcode == 92) {
-                        val i3 = buffer.getShort().toInt()
+                    val configFileId = buffer.getShort().toInt() and 0xffff
+                    val configId = buffer.getShort().toInt() and 0xffff
+                    var defaultId = -1
+                    if (opcode == 92) {//defaultId
+                        defaultId = buffer.getShort().toInt()
+                        if (defaultId == 65535) defaultId = -1
                     }
-
-                    val i4 = buffer.get().toInt() and 0xff
-
-                    for (var6 in 0..i4) {
+                    val childrenAmount = buffer.get().toInt() and 0xff
+                    def.children = arrayOfNulls(childrenAmount + 2)
+                    for (index in 0..childrenAmount) {
                         val i5 = buffer.getShort().toInt()
+                        def.children[index] = if (i5 == 65535) -1 else i5
                     }
+                    def.children[childrenAmount + 1] = defaultId
                 } else if (opcode == 78) {
                     buffer.getShort()
                     buffer.get()
@@ -158,8 +151,8 @@ class ObjectDefinition {
                     val i = buffer.get().toInt() and 0xff
                 } else if (opcode == 91) {
                     //TODO
-                    //membersOnly = true
-                }  else if (opcode == 93) {
+                    def.membersOnly = true
+                } else if (opcode == 93) {
                     val i = buffer.getShort().toInt() and 0xFFFFF
                 } else if (opcode == 99) {
                     val i = buffer.get().toInt() and 0xff
@@ -179,11 +172,7 @@ class ObjectDefinition {
                         val value: Any = if (stringInstance) ByteBufferUtils.getJagexString(buffer) else buffer.getInt()
                     }
                 }
-            }//TODO:
-//            if (def.notClipped) {
-//                def.clipType = 0
-//                def.projectileClipped = false
-//            }
+            }
             return def
         }
     }
