@@ -1,42 +1,10 @@
 package net.scapeemulator.game.model
 
-import net.scapeemulator.game.pathfinder.RegionManager
-
 data class Position(val x: Int, val y: Int, val height: Int = 0) {
-
     val regionId: Int get() = (x shr 6) shl 8 or (y shr 6)
-    private val regionX: Int get() = x shr 3
-    private val regionY: Int get() = y shr 3
-
-    val centralRegionX: Int get() = x / 8
-    val centralRegionY: Int get() = y / 8
-
-    // script message
-    val packed: Int get() = (height shl 28) or (x shl 14) or y
-
-    fun getChunkBase() = Position(regionX shl 3, regionY shl 3, height)
-
-    fun getChunkOffsetX(): Int {
-        val x = x - ((x shr 6) shl 6) //localX
-        return x - ((x / RegionManager.SIZE) * RegionManager.SIZE)
-    }
-
-    fun getChunkOffsetY(): Int {
-        val y = y - ((y shr 6) shl 6) //localY
-        return y - ((y / RegionManager.SIZE) * RegionManager.SIZE)
-    }
-
-    //    fun getChunkBase(): Position = Position(getRegionX() shl 3, getRegionY() shl 3, z)
-    //    fun getLocalX(): Int = x - ((x shr 6) shl 6)
-//    fun getLocalY(): Int = y - ((y shr 6) shl 6)
-//    fun getSceneX(): Int = x - ((getRegionX() - 6) shl 3)
-//    fun getSceneY(): Int = y - ((getRegionY() - 6) shl 3)
-    fun getRegionX(position: Position): Int = x - ((position.regionX - 6) shl 3)
-    fun getRegionY(position: Position): Int = y - ((position.regionY - 6) * 8)
-    fun getLocalX(centralRegionX: Int): Int = x - ((centralRegionX - 6) * 8)
-    fun getLocalY(centralRegionY: Int): Int = y - ((centralRegionY - 6) * 8)
-
-//    fun isWithinDistance(position: Position): Boolean = isWithinDistanceArea(position, 15)
+    val centralRegionX: Int get() = x / 8//x shr 3
+    val centralRegionY: Int get() = y / 8//y shr 3
+    val packed:/*script message*/ Int get() = (height shl 28) or (x shl 14) or y
 
     fun isWithinDistance(position: Position, distance: Int = 15): Boolean {
         if (height != position.height) return false
@@ -52,23 +20,24 @@ data class Position(val x: Int, val y: Int, val height: Int = 0) {
         return deltaX <= dist && deltaX >= -dist && deltaY <= dist && deltaY >= -dist
     }
 
-    fun isWithinScene(position: Position): Boolean {
-//        if (height != position.height) return false
-//        val deltaX: Int = position.x - x
-//        val deltaY: Int = position.y - y
-//        return deltaX >= -52 && deltaX <= 51 && deltaY >= -52 && deltaY <= 51
-        return isWithinDistance(position, 51)
-    }
-
+    fun isWithinScene(position: Position): Boolean = isWithinDistance(position, 51)
     fun blockHash(): Int = (x and 0x7) shl 4 or (y and 0x7)
-    fun blockHash2(): Int = (x and 0x7) shl 4 or (y and 0x7)
-
+    fun getRegionX(position: Position): Int = x - ((position.centralRegionX - 6) shl 3)
+    fun getRegionY(position: Position): Int = y - ((position.centralRegionY - 6) * 8)
+    fun getLocalX(centralRegionX: Int): Int = x - ((centralRegionX - 6) * 8)
+    fun getLocalY(centralRegionY: Int): Int = y - ((centralRegionY - 6) * 8)
+    fun getChunkBase() = Position(centralRegionX shl 3, centralRegionY shl 3, height)
+    fun getChunkOffsetX(): Int {
+        val x = x - ((x shr 6) shl 6) //localX
+        return x - ((x / RegionManager.SIZE) * RegionManager.SIZE)
+    }
+    fun getChunkOffsetY(): Int {
+        val y = y - ((y shr 6) shl 6) //localY
+        return y - ((y / RegionManager.SIZE) * RegionManager.SIZE)
+    }
     /* pathfinder todo cleanup*/
-//    fun getLocalX(): Int = getLocalX(centralRegionX)
-//    fun getLocalY(): Int = getLocalY(centralRegionY)
-    fun getLocalX() = x - ((x shr 6) shl 6)
-    fun getLocalY() = y - ((y shr 6) shl 6)
-
+    fun getLocalX(): Int = getLocalX(centralRegionX)
+    fun getLocalY(): Int = getLocalY(centralRegionY)
     fun getBaseLocalX(): Int = getBaseLocalX(centralRegionX)
     fun getBaseLocalY(): Int = getBaseLocalY(centralRegionY)
     private fun getBaseLocalX(centralRegionX: Int): Int = (centralRegionX - 6) * 8
@@ -96,7 +65,6 @@ data class Position(val x: Int, val y: Int, val height: Int = 0) {
     }
 
     override fun toString(): String = "Position(x=$x, y=$y, height=$height)"
-
 }
 
 fun main() {
@@ -119,5 +87,12 @@ fun main() {
 
         println(getBaseLocalX())
         println(getBaseLocalY())
+        println("------")
+        println("centralRegionX: $centralRegionX")
+        println("centralRegionY: $centralRegionY")
+        fun Position.positionHash() = (getChunkOffsetX() shl 4) or (getChunkOffsetY() and 0x7)
+
+        println(positionHash())
+        println(blockHash())
     }
 }

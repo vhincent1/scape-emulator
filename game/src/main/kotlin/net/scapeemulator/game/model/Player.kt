@@ -6,7 +6,7 @@ import net.scapeemulator.game.msg.*
 import net.scapeemulator.game.net.game.GameSession
 
 //todo Player(world, account, session)
-class Player() : Mob() {
+class Player : Mob() {
     var worldId = 0
     var databaseId: Int = 0
     var session: GameSession? = null
@@ -17,7 +17,6 @@ class Player() : Mob() {
 
     val localPlayers: MutableList<Player> = ArrayList()
     val localNpcs: MutableList<Npc> = ArrayList()
-    val localItems: MutableList<GroundItem> = ArrayList()
 
     val inventory: Inventory = Inventory(28)
     val equipment: Inventory = Inventory(14)
@@ -29,9 +28,18 @@ class Player() : Mob() {
     var runScript: RunScript? = null
 
     val appearanceTickets: IntArray = IntArray(World.MAX_PLAYERS)
-    var appearanceTicketCounter = 0
+    private var appearanceTicketCounter = 0
     var appearanceTicket: Int = nextAppearanceTicket()
         private set
+
+    private fun nextAppearanceTicket(): Int {
+        if (++appearanceTicketCounter == 0) appearanceTicketCounter = 1
+        return appearanceTicketCounter
+    }
+
+    fun appearanceUpdated() {
+        appearanceTicket = nextAppearanceTicket()
+    }
 
     var appearance: Appearance = Appearance(Gender.FEMALE)
         set(appearance) {
@@ -46,7 +54,6 @@ class Player() : Mob() {
         }
 
     val isChatUpdated: Boolean get() = chatMessage != null
-
     var isRegionChanging: Boolean = false
     var lastKnownRegion: Position? = null
         set(lastKnownRegion) {
@@ -57,8 +64,6 @@ class Player() : Mob() {
     val stance: Int
         get() {
             val weapon = equipment.get(Equipment.WEAPON)
-
-//            val def = weapon.definition
             return weapon?.definition?.getStance() ?: 1426
         }
 
@@ -72,12 +77,10 @@ class Player() : Mob() {
         val position = position
         lastKnownRegion = position
         send(RegionChangeMessage(position))
-
         /* set up the game interface */
         interfaceSet.init()
         sendMessage("Welcome to HustlaScape. q p")
         sendMessage("                                                 W")
-
         /* refresh skills, inventory, energy, etc. */
         inventory.refresh()
         bank.refresh()
@@ -90,25 +93,16 @@ class Player() : Mob() {
     private fun init() {
         skillSet.addListener(SkillMessageListener(this))
         skillSet.addListener(SkillAppearanceListener(this))
-
         inventory.addListener(InventoryMessageListener(this, 149, 0, 93))
         inventory.addListener(InventoryFullListener(this, "inventory"))
-
         bank.addListener(InventoryFullListener(this, "bank"))
-
         equipment.addListener(InventoryMessageListener(this, 387, 28, 94))
         equipment.addListener(InventoryFullListener(this, "equipment"))
         equipment.addListener(InventoryAppearanceListener(this))
     }
 
-    fun send(message: Message): ChannelFuture? {
-        return session?.send(message)
-    }
-
-    fun sendMessage(text: String) {
-        send(ServerMessage(text))
-    }
-
+    fun send(message: Message): ChannelFuture? = session?.send(message)
+    fun sendMessage(text: String) = send(ServerMessage(text))
     override fun logout() {
         // TODO this seems fragile
         val future = send(LogoutMessage())
@@ -121,14 +115,6 @@ class Player() : Mob() {
         chatMessage = null
     }
 
-    override val isRunning: Boolean
-        get() = settings.running
-
-    private fun nextAppearanceTicket(): Int {
-        if (++appearanceTicketCounter == 0)
-            appearanceTicketCounter = 1
-        return appearanceTicketCounter
-    }
-
+    override val isRunning: Boolean get() = settings.running
     override fun getClientIndex(): Int = index.plus(32768)
 }

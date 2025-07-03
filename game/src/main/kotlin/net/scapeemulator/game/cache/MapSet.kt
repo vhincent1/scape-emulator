@@ -6,7 +6,7 @@ import net.scapeemulator.cache.Container
 import net.scapeemulator.cache.ReferenceTable
 import net.scapeemulator.cache.util.ByteBufferUtils
 import net.scapeemulator.cache.util.StringUtils
-import net.scapeemulator.game.model.GroundObject
+import net.scapeemulator.game.model.GameObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
 import java.io.IOException
@@ -50,7 +50,7 @@ class MapSet {
 //        lumbyTree?.apply { println("Found") }
     }
 
-    val objects = ArrayList<GroundObject>()
+    val objects = ArrayList<GameObject>()
 
     @Throws(IOException::class)
     private fun readLandscape2(cache: Cache, keyTable: LandscapeKeyTable, x: Int, y: Int, id: Int) {

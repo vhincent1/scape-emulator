@@ -37,7 +37,6 @@ abstract class PlayerDescriptor(player: Player, tickets: IntArray) {
     }
 
     private fun addBlock(block: PlayerBlock) = blocks.put(block::class, block)
-
     val isBlockUpdatedRequired: Boolean get() = blocks.isNotEmpty()
 
     fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder, blockBuilder: GameFrameBuilder) {

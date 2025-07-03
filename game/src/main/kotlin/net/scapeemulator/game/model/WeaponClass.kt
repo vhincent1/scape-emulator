@@ -15,7 +15,7 @@ class AttackStyle(val style: Style, val bonus: Bonus) {
         RANGE_RAPID,
         RANGE_LONG,
         CAST_DEFENSIVE,
-        CAST
+        CAST;
     }
 
     enum class Bonus {
@@ -25,7 +25,12 @@ class AttackStyle(val style: Style, val bonus: Bonus) {
         BONUS_MAGIC,
         BONUS_RANGE, //range accurate
         BONUS_RANGE_RAPID,
-        BONUS_RANGE_DEFENSIVE
+        BONUS_RANGE_DEFENSIVE;
+    }
+
+    companion object {
+        fun getStyle(style: Int) = Style.entries[style]
+        fun getBonus(style: Int) = Bonus.entries[style]
     }
 }
 

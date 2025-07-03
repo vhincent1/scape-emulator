@@ -3,7 +3,7 @@ package net.scapeemulator.game.msg
 import net.scapeemulator.game.model.Item
 import net.scapeemulator.game.model.SlottedItem
 class InterfaceClosedMessage : Message
-data class InterfaceVisibleMessage(val id: Int, val slot: Int, val isVisible: Boolean) : Message
+data class InterfaceConfigMessage(val id: Int, val slot: Int, val isVisible: Boolean) : Message
 data class InterfaceCloseMessage(val id: Int, val slot: Int) : Message
 //type = isWalkable
 data class InterfaceOpenMessage(val id: Int, val slot: Int, val childId: Int, val type: Int) : Message

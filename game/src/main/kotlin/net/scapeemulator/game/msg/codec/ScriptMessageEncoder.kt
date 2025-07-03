@@ -12,11 +12,13 @@ internal val ScriptMessageEncoder = MessageEncoder(ScriptMessage::class) { alloc
     val builder = GameFrameBuilder(alloc, 115, GameFrame.Type.VARIABLE_SHORT)
     builder.put(DataType.SHORT, 0) // packet counter
     builder.putString(types)
-    for (i in (types.length - 1) downTo 0) {
-        if (types[i] == 's') {
-            builder.putString(parameters[i] as String)
-        } else {
-            builder.put(DataType.INT, (parameters[i] as Number).toInt())
+    if (parameters.isNotEmpty()) {
+        for (i in types.length - 1 downTo 0) {
+            if (types[i] == 's') {
+                builder.putString((parameters[types.length - 1 - i] as String))
+            } else {
+                builder.put(DataType.INT, ((parameters[types.length - 1 - i] as Int)))
+            }
         }
     }
     builder.put(DataType.INT, id)

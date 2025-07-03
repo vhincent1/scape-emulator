@@ -1,18 +1,18 @@
 package net.scapeemulator.game.cache
 
 import net.scapeemulator.cache.util.ByteBufferUtils
-import net.scapeemulator.game.model.GroundObject
+import net.scapeemulator.game.model.GameObject
 import net.scapeemulator.game.model.ObjectType
 import net.scapeemulator.game.model.Position
 import java.nio.ByteBuffer
 
 class Landscape private constructor(val x: Int, val y: Int) {
     //todo add ground object definitions
-    val objects = ArrayList<GroundObject>()
+    val objects = ArrayList<GameObject>()
 
     companion object {
         @JvmStatic
-        fun decode(listeners: List<MapListener>, list: ArrayList<GroundObject>, x: Int, y: Int, buffer: ByteBuffer): Landscape {
+        fun decode(listeners: List<MapListener>, list: ArrayList<GameObject>, x: Int, y: Int, buffer: ByteBuffer): Landscape {
             val landscape = Landscape(x, y)
             var id = -1
             var deltaId: Int

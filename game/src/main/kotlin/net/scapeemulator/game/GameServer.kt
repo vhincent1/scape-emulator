@@ -8,7 +8,6 @@ import net.scapeemulator.cache.Cache
 import net.scapeemulator.cache.ChecksumTable
 import net.scapeemulator.cache.FileStore
 import net.scapeemulator.game.cache.LandscapeKeyTable
-import net.scapeemulator.game.cache.MapDataListener
 import net.scapeemulator.game.cache.MapSet
 import net.scapeemulator.game.cache.ObjectDefinitions
 import net.scapeemulator.game.io.DummyPlayerSerializer
@@ -54,14 +53,13 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
     // world
     val world: World
     val version: Int = 530
-
+    val map = MapSet()
     val cache: Cache
     val checksumTable: ChecksumTable
     val landscapeKeyTable: LandscapeKeyTable
     val codecRepository: CodecRepository
     val messageDispatcher: MessageDispatcher
 
-    val map = MapSet()
     val plugins: PluginManager
 
     // network
@@ -69,48 +67,34 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
 
     init {
         logger.info { "Starting ScapeEmulator game server..." }
-
         // todo: world list and game settings
-
         /* load landscape keys */
         landscapeKeyTable = LandscapeKeyTable.open("data/landscape-keys")
-
         /* load game cache */
         cache = Cache(FileStore.open("data/cache"))
         checksumTable = cache.createChecksumTable()
-
         /* load item definitions */
         ItemDefinitions.init(File("./data/itemDefinitions.json"))
         EquipmentDefinition.init()
         ObjectDefinitions.init(cache)
         NPCDefinitions.init(cache)
-
 //        MapSet.init(cache, landscapeKeyTable)
-
         /* load message codecs and dispatcher */
         codecRepository = CodecRepository(landscapeKeyTable)
         messageDispatcher = MessageDispatcher()
-
         /* load player serializer from config file */
         val serializer = createPlayerSerializer()
         logger.info { "Using serializer: $serializer." }
         loginService = LoginService(serializer)
         updateService = UpdateService()
-
         /* load world */
         world = World(worldId, loginService)
-
         /* load map */
-//        if (PATHFINDING_ENABLED) {
-//            map.addListener(RegionMapListener(world.region))
-//        map.addListener(GroundObjectPopulator(world))
-        map.addListener(MapDataListener(world))
-            map.init(cache, landscapeKeyTable)
-//        }
-
+//        map.addListener(RegionMapListener(world.region))
+//        map.addListener(TraversalMapListener(world.traversalMap))
+//        map.init(cache, landscapeKeyTable)
         /* load plugins */
         plugins = PluginManager(this)
-
         /* start netty */
         network = Network(this)
     }
@@ -130,7 +114,6 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
 //        }
 
         /* main game tick loop */
-
         var tick = 0
         gameExecutor.scheduleAtFixedRate(
             {
@@ -167,9 +150,7 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
     @Throws(IOException::class, SQLException::class)
     private fun createPlayerSerializer(): PlayerSerializer {
         val properties = Properties()
-        FileInputStream("data/serializer.conf").use { file ->
-            properties.load(file)
-        }
+        FileInputStream("data/serializer.conf").use { properties.load(it) }
         val type = properties["type"] as String?
         when (type) {
             "dummy" -> return DummyPlayerSerializer()
@@ -218,14 +199,13 @@ class GameServer(worldId: Int, loginAddress: SocketAddress) {
                 INSTANCE.apply {
                     start()
                     network.start(gamePort, httpPort)
-
                     WORLD = this.world
                 }
 
                 /* shutdown hook */
                 Runtime.getRuntime().addShutdownHook(Thread { INSTANCE.shutdown() })
             } catch (t: Throwable) {
-//                logger.error(t) { "Failed to start server." }
+                logger.error(t) { "Failed to start server." }
             }
         }
     }

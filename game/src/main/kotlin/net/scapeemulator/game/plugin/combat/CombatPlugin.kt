@@ -4,7 +4,6 @@ import net.scapeemulator.game.command.CommandHandler
 import net.scapeemulator.game.model.*
 import net.scapeemulator.game.msg.ButtonMessage
 import net.scapeemulator.game.msg.InteractionMessage
-import net.scapeemulator.game.msg.InteractionType
 import net.scapeemulator.game.msg.WalkMessage
 import net.scapeemulator.game.plugin.MessageEvent
 import net.scapeemulator.game.plugin.PluginHandler
@@ -18,19 +17,26 @@ object CombatPlugin {
     const val DEBUG = true
     const val DEFAULT_ATTACK_SPEED = 4
 
-    /* plugin variables/declarations */
-    private val combat: (Mob) -> Combat? = { it.attributes["combatTask"] as Combat? }
-    private val setCombatTask: (Mob, Combat?) -> Unit = { p, t -> p.attributes["combatTask"] = t }
-
-    // ? move to CombatTask class
-    internal val isAttacking: (Mob) -> Boolean = { (it.attributes["isAttacking"] ?: false) as Boolean }
-    internal val setIsAttacking: (Mob, Boolean) -> Unit = { p, v -> p.attributes["isAttacking"] = v }
-    internal val nextAttack: (Mob) -> Int = { (it.attributes["nextAttack"] ?: -1) as Int }
-    internal val setNextAttack: (Mob, Int) -> Unit = { p, v -> p.attributes["nextAttack"] = v }
-
     /* extensions */
-    internal fun Mob.combat() = combat(this)
-    internal fun Mob.setCombat(combat: Combat?) = setCombatTask(this, combat)
+    internal var Mob.combat: Combat?
+        get() = attributes["combatTask"] as Combat?
+        set(value) {
+            attributes["combatTask"] = value
+        }
+
+    internal var Mob.isAttacking: Boolean
+        get() = (attributes["isAttacking"] ?: false) as Boolean
+        set(value) {
+            attributes["isAttacking"] = value
+        }
+
+    internal var Mob.nextAttack: Int
+        get() = (attributes["nextAttack"] ?: -1) as Int
+        set(value) {
+            attributes["nextAttack"] = value
+        }
+
+    internal fun Mob.startCombat(target: Mob) = Combat(this, target).apply { combat = this }
 
     val CombatHandler: (World) -> PluginHandler = { world ->
         PluginHandler(
@@ -39,12 +45,21 @@ object CombatPlugin {
                     if (isEmpty()) return
                     for (player in this) {
                         if (player == null) continue
-                        player.combat()?.tick()
+                        player.combat?.tick()
+                    }
+                }
+
+                fun ActorList<Npc>.processCombat() {
+                    if (isEmpty()) return
+                    for (npc in this) {
+                        if (npc == null) continue
+                        npc.combat?.tick()
                     }
                 }
                 /* Combat Tick */
                 world.taskScheduler.schedule(Task(1, false) {
                     world.players.processCombat()
+                    world.npcs.processCombat()
                 })
             },
             handler = { event ->
@@ -53,41 +68,29 @@ object CombatPlugin {
                 when (message) {
                     is InteractionMessage -> {
                         val (type, index, option) = message
-                        val target = if (type == InteractionType.NPC)
-                            world.npcs[index] else world.players[index]
-
-                        if (target == null) return@PluginHandler
-
+                        val target = when (type) {
+                            InteractionMessage.Type.PLAYER -> world.players[index]
+                            InteractionMessage.Type.NPC -> world.npcs[index]
+                        } ?: return@PluginHandler
                         player.sendHintIcon(0, index, target)
                         if (option == 0) // attack option
-                            player.setCombat(Combat(player, target))
+                            player.startCombat(target)
                     }
-
                     // reset facing
-                    is WalkMessage -> if (player.faceMob != null) player.faceMob = null
-
+                    is WalkMessage -> if (player.faceTarget != null) player.faceTarget = null
                     /* equipment change */
                     is ButtonMessage -> {//--------------
                         val (id, slot) = message
-
                         /* all combat interfaces */
-                        for (combatInterfaces in Interface.ATTACK_AXE..Interface.ATTACK_WHIP) {
-                            if (id == combatInterfaces) {
-                                /* spec bar */
-                                if (slot == 8 || slot == 10 || slot == 11)
-//                                    combat(player)?.instantSpec()
-                                    player.combat()?.instantSpec()
-                            }
-                        }
+                        for (combatInterfaces in Interface.ATTACK_AXE..Interface.ATTACK_WHIP)
+                            if (id == combatInterfaces) if (slot == 8 || slot == 10 || slot == 11)
+                            /* spec bar */ player.combat?.instantSpec()
                     }//-----------
                 }
-
             },
             commands = arrayOf(CommandHandler("c") { player, strings ->
-                combat(player)?.stop()
-                world.players.onEach { p ->
-                    println("${p?.username}=${p?.index}")
-                }
+                player.combat?.stop()
+                world.players.onEach { p -> println("${p?.username}=${p?.index}") }
                 world.npcs.onEach { npc ->
                     println("NPC=${npc?.index} loc=${npc?.position?.x} ${npc?.position?.y}")
                 }

@@ -2,12 +2,12 @@ package net.scapeemulator.game.command
 
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.msg.ConfigMessage
-import net.scapeemulator.game.msg.InterfaceVisibleMessage
+import net.scapeemulator.game.msg.InterfaceConfigMessage
 
 class ConfigCommandHandler : CommandHandler("config") {
     override fun handle(player: Player, arguments: Array<String>) {
 
-        player.send(InterfaceVisibleMessage(89, 12, true))
+        player.send(InterfaceConfigMessage(89, 12, true))
         player.send(ConfigMessage(300, 100 * 10))
         player.send(ConfigMessage(301, 1))
         if (player.rights < 2) return

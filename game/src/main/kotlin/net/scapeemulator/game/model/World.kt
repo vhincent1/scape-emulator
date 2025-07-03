@@ -5,7 +5,6 @@ import net.scapeemulator.game.msg.PlayerUpdateMessage
 import net.scapeemulator.game.msg.RegionChangeMessage
 import net.scapeemulator.game.msg.ResetMinimapFlagMessage
 import net.scapeemulator.game.net.login.LoginService
-import net.scapeemulator.game.pathfinder.RegionManager
 import net.scapeemulator.game.pathfinder.TraversalMap
 import net.scapeemulator.game.task.SyncTask
 import net.scapeemulator.game.task.TaskScheduler
@@ -29,6 +28,17 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
     val players: ActorList<Player> = ActorList(MAX_PLAYERS)
     val npcs: ActorList<Npc> = ActorList(MAX_NPCS)
     val items = GroundItemManager(NodeList(MAX_GROUND_ITEMS))
+
+    fun regionTick(){
+        for (player in players){
+            if(player == null) continue
+            val r = region.getRegion(player.position)
+            r?.mobs?.set()
+        }
+        for (npc in npcs){
+            if(npc==null) continue
+        }
+    }
 
     override fun sync(tick: Int) {
         if (!isOnline) return
@@ -83,6 +93,13 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
                 val position = player.position
                 player.lastKnownRegion = position
                 player.send(RegionChangeMessage(position))
+                /*if (player.getConstructedRegion() != null) {
+                player.send(new RegionConstructMessage(position, player.getConstructedRegion()));
+                player.setClipped(false);
+            } else {
+                player.send(new RegionChangeMessage(position));
+                player.setClipped(true);
+            }   */
             }
             player.walkingQueue.tick()
             processHitQueue(player)
@@ -173,6 +190,12 @@ class World(val worldId: Int, private val loginService: LoginService) : SyncTask
             if (npc == null) continue
             npc.reset()
         }
+    }
+
+    fun getMobByIndex(mob: Mob): Mob? = when (mob) {
+        is Player -> players[mob.index]
+        is Npc -> npcs[mob.index]
+        else -> null
     }
 
     fun getPlayerByName(username: String): Player? {

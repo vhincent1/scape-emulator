@@ -37,7 +37,7 @@ class ButtonDispatcher() {
     }
 
     fun bind(handler: ButtonHandler) {
-        handlers.put(handler.id, handler)
+        handlers[handler.id] = handler
     }
 
     fun handle(player: Player, id: Int, slot: Int, parameter: Int) {

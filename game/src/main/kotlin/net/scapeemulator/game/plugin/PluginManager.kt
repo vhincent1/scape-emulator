@@ -6,7 +6,7 @@ import net.scapeemulator.game.plugin.rsinterface.CharDesignPlugin
 import net.scapeemulator.game.plugin.rsinterface.EquipmentPlugin
 
 class PluginManager(val server: GameServer) {
-    internal val plugins: MutableList<PluginHandler> = ArrayList()
+    private val plugins: MutableList<PluginHandler> = ArrayList()
     private fun add(plugin: PluginHandler) = plugins.add(plugin)
 
     init {
@@ -22,7 +22,7 @@ class PluginManager(val server: GameServer) {
     }
 
     //todo check
-    fun notify(event: PluginEvent) = plugins.onEach { listener -> listener.handle(event) }
+    fun notify(event: PluginEvent) = plugins.onEach { it.handle(event) }
 
     private fun bind() = plugins.onEach { listener ->
         listener.buttons().onEach(server.messageDispatcher.buttonDispatcher::bind)

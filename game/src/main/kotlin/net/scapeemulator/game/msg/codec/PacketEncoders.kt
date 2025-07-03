@@ -94,7 +94,7 @@ internal val ChunkUpdateEncoder = MessageEncoder(ChunkUpdateMessage::class) { al
     return@MessageEncoder builder.toGameFrame()
 }
 
-internal val SoundEncoder = MessageEncoder(SoundMessage::class) { alloc, message ->
+internal val SoundEncoder = MessageEncoder(AudioMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 172)
     builder.put(DataType.SHORT, message.id)
     builder.put(DataType.BYTE, message.volume)

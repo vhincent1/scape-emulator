@@ -79,10 +79,9 @@ data class ItemDefinition(
     val options: Set<String>,
 //    val configurations: Map<String, Object>,
     val stackable: Boolean,
-    val value: Int,
     val membersOnly: Boolean,
     val equipmentId: Int,
-    val itemRequirements: Map<Integer, Integer>?,
+    val itemRequirements: Map<Int, Int>?,
     val renderAnimationId: Int,
     val groundOptions: Set<String>,
     val inventoryOptions: Set<String>,
@@ -126,7 +125,6 @@ data class ItemDefinition(
     val maleWornModelId1: Int,
     val unnoted: Boolean,
     var alchemizable: Boolean?,
-    var defence_anim: Int?,
     var equipSound: Int?
 ) {
 
@@ -171,9 +169,7 @@ data class ItemDefinition(
         if (name.contains("2h sword")) return WeaponClass.TWO_H_SWORD
         if (name.contains("sword")) return WeaponClass.SWORD_DAGGER
         if (name.contains("dagger")) return WeaponClass.SWORD_DAGGER
-        if (name.contains("mace") || name.contains("flail")
-            || name.contains("anchor")
-        ) return WeaponClass.MACE
+        if (name.contains("mace") || name.contains("flail") || name.contains("anchor")) return WeaponClass.MACE
         if (name.contains("maul") || name.contains("warhammer")) return WeaponClass.MAUL
         if (name.contains("whip")) return WeaponClass.WHIP
         if (name.contains("longbow")) return WeaponClass.BOW
@@ -388,9 +384,7 @@ data class ItemDefinition(
         return true
     }
 
-    override fun hashCode(): Int {
-        return name.hashCode() + value
-    }
+    override fun hashCode(): Int = name.hashCode()
 }
 
 

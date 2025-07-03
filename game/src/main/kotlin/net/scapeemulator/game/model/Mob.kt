@@ -5,19 +5,15 @@ import net.scapeemulator.game.task.Action
 import java.util.*
 
 abstract class Mob : Entity() {
-
     var index: Int = 0
     var clipping = true
-
     protected var action: Action<*>? = null
     val walkingQueue: WalkingQueue = WalkingQueue(this)
     var firstDirection: Direction = Direction.NONE
     var secondDirection: Direction = Direction.NONE
         protected set
     var mostRecentDirection: Direction = Direction.SOUTH
-
     val skillSet: SkillSet = SkillSet()
-
     /* update masks */
     var isTeleporting: Boolean = false
         protected set
@@ -30,44 +26,32 @@ abstract class Mob : Entity() {
     var secondaryHit: Hit? = null
     val isAnimationUpdated: Boolean get() = animation != null
     val isSpotAnimationUpdated: Boolean get() = spotAnimation != null
-    var isHitUpdated = false
-
-    //        get() = primaryHit != null
-    var isHit2Updated = false
-
-    //        get() = secondaryHit != null
-    var faceMob: Mob? = null
+    var isHitUpdated = false  //get() = primaryHit != null
+    var isHit2Updated = false //get() = secondaryHit != null
+    var faceTarget: Mob? = null
         set(value) {
             field = value
             isFacingUpdated = true
         }
     var isFacingUpdated: Boolean = false
-
-
     var facePosition: Position? = null
-    val isFacePositionUpdated
-        get() = facePosition != null
-
+    val isFacePositionUpdated get() = facePosition != null
     var forceChat: String = ""
-    val isForceChatUpdated: Boolean
-        get() = forceChat.isNotEmpty()
+    val isForceChatUpdated: Boolean get() = forceChat.isNotEmpty()
 
     /**/
-
     fun resetId() {
         this.index = 0
     }
 
-    val isActive: Boolean
-        get() = index != 0
-
+    val isActive: Boolean get() = index != 0
     fun startAction(action: Action<*>) {
         if (this.action != null) {
             if (this.action == action) return
             stopAction()
         }
         this.action = action
-        GameServer.INSTANCE.world.taskScheduler.schedule(action)
+        GameServer.WORLD.taskScheduler.schedule(action)
     }
 
     fun stopAction() {

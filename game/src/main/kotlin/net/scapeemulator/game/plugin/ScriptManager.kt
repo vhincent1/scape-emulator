@@ -26,9 +26,9 @@ class ScriptManager() {
             if (file.isDirectory || file.extension != "kts") return@forEach
             val scriptName = file.name
             val compiledScript = compilable.compile(file.reader())
-            scripts.put(scriptName, compiledScript)
+            scripts[scriptName] = compiledScript
         }
         logger.info { "Loaded  ${scripts.size} scripts" }
-        scripts.forEach { name, script -> script.eval() }
+        scripts.forEach { (name, script) -> script.eval() }
     }
 }

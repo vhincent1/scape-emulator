@@ -55,7 +55,7 @@
 //            return
 //        }
 //
-//        path = DumbPathFinder.find(mob.position, targetBounds.center(), mob.size, 2, false)
+//        path = net.scapeemulator.game.pathfinder.DumbPathFinder.find(mob.position, targetBounds.center(), mob.size, 2, false)
 //        if (path == null || path.isEmpty) {
 //            return
 //        }

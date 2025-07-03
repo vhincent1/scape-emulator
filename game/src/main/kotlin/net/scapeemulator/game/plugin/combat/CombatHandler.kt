@@ -7,20 +7,28 @@ import net.scapeemulator.game.util.anim
 import net.scapeemulator.game.util.appendHit
 import net.scapeemulator.game.util.drainSpecial
 import net.scapeemulator.game.util.gfx
+import kotlin.math.floor
 import kotlin.random.Random
 
-abstract class CombatHandler {
-    abstract fun canHit(attacker: Mob?, victim: Mob?): Boolean
-    abstract fun attack(attacker: Mob, victim: Mob): Int
-    abstract fun visualImpact(attacker: Mob, victim: Mob)
-    abstract fun impact(attacker: Mob, victim: Mob): Int
+private interface CombatBase {
+    fun canHit(attacker: Mob?, victim: Mob?): Boolean
+    fun attack(attacker: Mob, victim: Mob): Int
+    fun visualImpact(attacker: Mob, victim: Mob)
+    fun impact(attacker: Mob, victim: Mob): Int
 }
 
-class Melee : CombatHandler() {
+abstract class CombatHandler : CombatBase {
     override fun canHit(attacker: Mob?, victim: Mob?): Boolean {
         if (attacker == null || victim == null) return false
         if (attacker.position.isWithinTileDistance(victim.position, 1)) return true
         return false
+    }
+}
+
+class Melee : CombatHandler() {
+
+    override fun canHit(attacker: Mob?, victim: Mob?): Boolean {
+        return super.canHit(attacker, victim)
     }
 
     override fun attack(attacker: Mob, victim: Mob): Int {
@@ -34,11 +42,9 @@ class Melee : CombatHandler() {
             //todo special energy check
             if (attacker.settings.specialToggled) {
                 when (weapon?.id) {
-                    ARMADYL_GODSWORD -> {
-                        if (attacker.drainSpecial(50)) {
-                            attacker.anim(7074)
-                            attacker.gfx(1222)
-                        }
+                    ARMADYL_GODSWORD -> if (attacker.drainSpecial(50)) {
+                        attacker.anim(7074)
+                        attacker.gfx(1222)
                     }
 
                     DRAGON_DAGGER -> {
@@ -51,7 +57,7 @@ class Melee : CombatHandler() {
                     }
 
                     GRANITE_MAUL -> {
-                        attacker.combat()?.instantSpec()
+                        attacker.combat?.instantSpec()
                     }
 
                     VESTAS_LONGSWORD -> {
@@ -94,8 +100,35 @@ class Melee : CombatHandler() {
     }
 
     override fun impact(attacker: Mob, victim: Mob): Int {
-        victim.appendHit(1, HitType.NONE)
-        return 1
+        val hit = calculateHit(attacker, victim)
+        return hit
+    }
+
+    private fun Player.attackStyle(): AttackStyle.Style =AttackStyle.getStyle(settings.attackStyle)
+
+    fun calculateHit(attacker: Mob, victim: Mob, modifier: Double = 1.0): Int {
+        val level = attacker.skillSet.getCurrentLevel(Skill.STRENGTH)
+        val bonus = attacker.skillSet.bonuses[11]
+        var prayer = 1.0
+        if (attacker is Player) {
+//            prayer += attacker.prayer.bonus(str)
+        }
+        var cumulativeStr = floor(level * prayer)
+        if (attacker is Player) {
+            if (attacker.attackStyle() == AttackStyle.Style.AGGRESSIVE)
+                cumulativeStr += 3
+            if (attacker.attackStyle() == AttackStyle.Style.CONTROLLED)
+                cumulativeStr += 1
+
+            attacker.settings.attackStyle
+        }
+        cumulativeStr += getSetMultiplier(attacker, Skill.STRENGTH)
+        val hit = (16 + cumulativeStr + (bonus / 8) + ((cumulativeStr * bonus) * 0.016865)) * modifier
+        return ((hit / 10) + 1).toInt()
+    }
+
+    fun getSetMultiplier(attacker: Mob, skill: Int): Double {
+        return 1.0
     }
 }
 

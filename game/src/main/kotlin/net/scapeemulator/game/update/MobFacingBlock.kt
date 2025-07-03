@@ -11,7 +11,7 @@ import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 
 class PlayerFaceBlock(player: Player) : PlayerBlock(0x2) {
-    private val index: Int = if (player.faceMob == null) -1 else player.faceMob?.getClientIndex()!!
+    private val index: Int = if (player.faceTarget == null) -1 else player.faceTarget?.getClientIndex()!!
     override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         builder.put(DataType.SHORT, DataTransformation.ADD, index)
     }
@@ -21,14 +21,14 @@ class PlayerFacePositionBlock(player: Player) : PlayerBlock(0x40) {
     private val position: Position? = player.facePosition
     override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         // The measure is in half tiles, you must add a half tile because the player is located on the middle of a tile
-        builder.put(DataType.SHORT, position?.x!! * 2 + 1);
+        builder.put(DataType.SHORT, position?.x!! * 2 + 1)
         builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, position.y * 2 + 1);
     }
 }
 
 
 class NpcFaceBlock(npc: Npc) : NpcBlock(0x4) {
-    private val index: Int = if (npc.faceMob == null) -1 else npc.faceMob?.getClientIndex()!!
+    private val index: Int = if (npc.faceTarget == null) -1 else npc.faceTarget?.getClientIndex()!!
     override fun encode(message: NpcUpdateMessage, builder: GameFrameBuilder) {
         builder.put(DataType.SHORT, DataTransformation.ADD, index)
     }

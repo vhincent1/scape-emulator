@@ -32,7 +32,7 @@ fun Player.removeHintIcon(slot: Int, entity: Entity) {
 
 fun Player.clearMinimapFlag() = send(ResetMinimapFlagMessage())
 fun Player.sendPlayerOption(slot: Int, option: String) = send(InteractionOptionMessage(slot, option))
-fun Player.displayEnterPrompt(prompt: String, type: RunScriptType, block: (Player, Any) -> Unit) {
+fun Player.displayEnterPrompt(prompt: String, type: RunScriptType, block: (Any) -> Unit) {
     send(ScriptMessage(type.id, type.types, prompt))
     runScript = RunScript(block)
 }
@@ -44,7 +44,7 @@ fun Mob.appendHit(damage: Int, type: HitType) {
 
 fun Mob.anim(id: Int, delay: Int = 0) = playAnimation(Animation(id, delay))
 fun Mob.gfx(id: Int, delay: Int = 0, height: Int = 0) = playSpotAnimation(SpotAnimation(id, delay, height))
-fun Player.sound(id: Int, delay: Int = 0, volume: Int = 10) = send(SoundMessage(id, volume, delay))
+fun Player.sound(id: Int, delay: Int = 0, volume: Int = 10) = send(AudioMessage(id, volume, delay))
 fun Player.drainSpecial(amount: Int): Boolean {
     if (!settings.specialToggled) return false
     settings.toggleSpecialBar()
@@ -67,25 +67,21 @@ fun Player.sendAreaUpdate(pos: Position) {
 
 fun Player.sendGroundItemCreate(item: GroundItem) {
     sendAreaUpdate(item.position)
-//    send(GroundItemCreateMessage(item.id, item.amount, item.position))
     send(GroundItemMessage(item.id, item.amount, item.position))
 }
 
 fun Player.sendGroundItemUpdate(new: GroundItem, previousAmount: Int) {
     println("Updated ${new.amount} : old=${previousAmount}")
     sendAreaUpdate(new.position)
-//    send(GroundItemUpdateMessage(new.id, new.amount, new.position, previousAmount))
     send(GroundItemMessage(new.id, new.amount, new.position, previousAmount))
 }
 
 fun Player.sendGroundItemRemoval(item: Int, position: Position) {
     sendAreaUpdate(position)
-//    send(GroundItemRemoveMessage(item, position))
     send(GroundItemMessage(item, position))
 }
 
 /* Ground items */
-
 fun Player.drop(item: Item, preferredSlot: Int = -1): Boolean {
     if (!inventory.contains(item.id)) return false
     val removed = inventory.remove(item, preferredSlot) ?: return false
@@ -113,6 +109,22 @@ fun Player.pickup(groundItem: GroundItem): Boolean {
     })
     GameServer.WORLD.items.remove(groundItem)
     return true
+}
+
+/* ground objects */
+fun Player.sendGroundObject(groundObject: GameObject) {
+    sendAreaUpdate(groundObject.position)
+    send(GroundObjectMessage(GroundObjectMessage.Type.CREATE, groundObject.id, groundObject.position))
+}
+
+fun Player.sendGroundObjectR(groundObject: GameObject) {
+    sendAreaUpdate(groundObject.position)
+    send(GroundObjectMessage(GroundObjectMessage.Type.REMOVE, groundObject.id, groundObject.position))
+}
+
+fun Player.sendGroundObjectA(groundObject: GameObject, anim: Int) {
+    sendAreaUpdate(groundObject.position)
+    send(GroundObjectMessage(groundObject.id, groundObject.position, anim))
 }
 
 fun Player.totalWealth(): Int {

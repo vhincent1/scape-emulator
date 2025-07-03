@@ -4,6 +4,6 @@ import net.scapeemulator.game.msg.RunScriptMessage
 
 internal val RunScriptMessageHandler = MessageHandler<RunScriptMessage> { player, message ->
     val runScript = player.runScript
-    runScript?.block?.invoke(player, message.value)
+    runScript?.block?.invoke(message.value)
     player.runScript = null
 }

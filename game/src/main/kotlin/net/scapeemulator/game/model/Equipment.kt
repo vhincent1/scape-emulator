@@ -1,7 +1,7 @@
 package net.scapeemulator.game.model
 
+import net.scapeemulator.game.msg.InterfaceConfigMessage
 import net.scapeemulator.game.msg.InterfaceTextMessage
-import net.scapeemulator.game.msg.InterfaceVisibleMessage
 
 object Equipment {
     const val HEAD: Int = 0
@@ -120,13 +120,7 @@ object Equipment {
         if (weapon != null && def != null) {
             name = def.name
             weaponClass = def.getWeaponClass()
-            player.send(
-                InterfaceVisibleMessage(
-                    weaponClass.tab,
-                    if (weaponClass.attackStyles.size > 3) 12 else 10,
-                    def.hasSpecial
-                )
-            )
+            player.send(InterfaceConfigMessage(weaponClass.tab, if (weaponClass.attackStyles.size > 3) 12 else 10, def.hasSpecial))
         } else {
             name = "Unarmed"
             weaponClass = WeaponClass.UNARMED

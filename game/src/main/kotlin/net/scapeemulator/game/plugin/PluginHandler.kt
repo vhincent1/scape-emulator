@@ -10,8 +10,8 @@ abstract class PluginHandler : PluginEvent {
 }
 
 internal fun PluginHandler(
-    handler: (PluginEvent) -> Unit,
     init: () -> Unit = {},
+    handler: (PluginEvent) -> Unit,
     commands: Array<CommandHandler> = emptyArray(),
     buttons: Array<ButtonHandler> = emptyArray(), //todo remove?
 ): PluginHandler {
@@ -31,7 +31,5 @@ internal fun PluginHandler(
     commandHandlers: Array<CommandHandler> = emptyArray(),
     buttonHandlers: Array<ButtonHandler> = emptyArray(), //todo remove?
 ): PluginHandler {
-    return PluginHandler(block, {}, commandHandlers, buttonHandlers)
+    return PluginHandler({}, block, commandHandlers, buttonHandlers)
 }
-
-

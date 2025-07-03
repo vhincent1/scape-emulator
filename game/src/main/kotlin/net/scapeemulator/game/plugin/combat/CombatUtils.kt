@@ -3,7 +3,7 @@ package net.scapeemulator.game.plugin.combat
 import net.scapeemulator.game.model.Item
 import net.scapeemulator.game.model.Player
 import net.scapeemulator.game.plugin.combat.CombatPlugin.combat
-import net.scapeemulator.game.plugin.combat.CombatPlugin.setCombat
+import net.scapeemulator.game.plugin.combat.CombatPlugin.startCombat
 
 const val ARMADYL_GODSWORD = 11694
 const val DRAGON_DAGGER = 5698
@@ -14,12 +14,8 @@ const val DRAGON_CLAWS = 14484
 const val BARRELCHEST_ANCHOR = 10887
 
 fun Combat.autoRetaliate() {
-    if (target is Player) {
-        if (target.settings.autoRetaliating) {
-            if (target.combat() == null)
-                target.setCombat(Combat(target, source!!))
-        }
-    }
+    if (source != null && victim is Player && victim.settings.autoRetaliating)
+        if (victim.combat == null) victim.startCombat(source)
 }
 
 internal fun getAttackAnimation(weapon: Item?, style: Int): Int {
@@ -37,9 +33,7 @@ internal fun getAttackAnimation(weapon: Item?, style: Int): Int {
     //otherwise
     var other: Array<Int> = unarmed // unarmed
     var index = style
-    if (def.name.contains("warhammer")) {
-        other = arrayOf(400, 401, 401)
-    }
+    if (def.name.contains("warhammer")) other = arrayOf(400, 401, 401)
     if (index > other.size) index = 0
     return other[index]
 }

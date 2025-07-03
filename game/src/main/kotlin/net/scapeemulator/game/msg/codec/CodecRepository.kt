@@ -49,6 +49,7 @@ class CodecRepository(table: LandscapeKeyTable) {
 
         /* encoders */
         bind(RegionChangeEncoder(table))
+        bind(RegionConstructEncoder(table))
         bind(RootInterfaceEncoder)
         bind(OpenInterfaceEncoder)// 155 sendInterface
         bind(CloseInterfaceEncoder)

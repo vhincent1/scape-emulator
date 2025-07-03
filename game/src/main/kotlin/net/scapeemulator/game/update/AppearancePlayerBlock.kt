@@ -7,13 +7,14 @@ import net.scapeemulator.game.net.game.DataType
 import net.scapeemulator.game.net.game.GameFrameBuilder
 import net.scapeemulator.util.Base37Utils
 
-class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
+class AppearancePlayerBlock(val player: Player) : PlayerBlock(0x4) {
     private val username: String = player.username
     private val appearance: Appearance = player.appearance
     private val equipment: Inventory = Inventory(player.equipment)
     private val stance: Int = player.stance
     private val combat: Int = player.skillSet.combatLevel
     private val skill: Int = player.skillSet.totalLevel
+    private val skull: Int = player.settings.skullIcon
 
     override fun encode(message: PlayerUpdateMessage, builder: GameFrameBuilder) {
         val gender = appearance.gender
@@ -28,7 +29,7 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
 		 */
         val flags = gender.ordinal
         propertiesBuilder.put(DataType.BYTE, flags)
-        propertiesBuilder.put(DataType.BYTE, -1) // pk/skull icon
+        propertiesBuilder.put(DataType.BYTE, skull) // pk/skull icon
         propertiesBuilder.put(DataType.BYTE, -1) // prayer icon
 
         var item = equipment.get(Equipment.HEAD)
@@ -125,13 +126,8 @@ class AppearancePlayerBlock(player: Player) : PlayerBlock(0x4) {
         } else {
             propertiesBuilder.put(DataType.BYTE, 0)
         }
-
-        Colour.values().forEach { value ->
-            propertiesBuilder.put(DataType.BYTE, appearance.getColor(value))
-        }
-
+        Colour.entries.forEach { propertiesBuilder.put(DataType.BYTE, appearance.getColor(it)) }
         propertiesBuilder.put(DataType.SHORT, stance) // todo: weapon stance
-
         propertiesBuilder.put(DataType.LONG, Base37Utils.encodeBase37(username))
         propertiesBuilder.put(DataType.BYTE, combat) //combat level
         if ((flags and 0x4) != 0) {

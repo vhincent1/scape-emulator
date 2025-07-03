@@ -4,6 +4,10 @@ import net.scapeemulator.game.msg.ConfigMessage
 import net.scapeemulator.game.msg.ScriptMessage
 
 class PlayerSettings(val player: Player) {
+    var skullIcon = -1
+        set(value) {
+            if (value <= 7) field = value
+        }
     var weaponClass: WeaponClass? = null
     var attackStyle = 0
         set(value) {
@@ -91,37 +95,22 @@ class PlayerSettings(val player: Player) {
         refreshSpecialBar()
     }
 
-    private fun refreshRunning() {
-        player.send(ConfigMessage(173, if (running) 1 else 0))
-    }
-
-    private fun refreshAttackStyle() {
-        player.send(ConfigMessage(43, attackStyle))
-    }
-
-    private fun refreshAutoRetaliating() {
-        player.send(ConfigMessage(172, if (autoRetaliating) 0 else 1))
-    }
-
-    private fun refreshTwoButtonMouse() {
-        player.send(ConfigMessage(170, if (twoButtonMouse) 0 else 1))
-    }
-
-    private fun refreshChatFancy() {
-        player.send(ConfigMessage(171, if (chatFancy) 0 else 1))
-    }
-
+    private fun refreshRunning() = player.send(ConfigMessage(173, if (running) 1 else 0))
+    private fun refreshAttackStyle() = player.send(ConfigMessage(43, attackStyle))
+    private fun refreshAutoRetaliating() = player.send(ConfigMessage(172, if (autoRetaliating) 0 else 1))
+    private fun refreshTwoButtonMouse() = player.send(ConfigMessage(170, if (twoButtonMouse) 0 else 1))
+    private fun refreshChatFancy() = player.send(ConfigMessage(171, if (chatFancy) 0 else 1))
     private fun refreshPrivateChatSplit() {
         player.send(ConfigMessage(287, if (privateChatSplit) 1 else 0))
-        if (privateChatSplit) {
-            player.send(ScriptMessage(83, "")) // TODO check (Xeno uses type of s but blank params array?)
-        }
+        if (privateChatSplit) player.send(
+            ScriptMessage(
+                83,
+                ""
+            )
+        ) // TODO check (Xeno uses type of s but blank params array?)
     }
 
-    private fun refreshAcceptingAid() {
-        player.send(ConfigMessage(427, if (acceptingAid) 1 else 0))
-    }
-
+    private fun refreshAcceptingAid() = player.send(ConfigMessage(427, if (acceptingAid) 1 else 0))
     fun refreshSpecialBar() {
         player.send(ConfigMessage(300, specialEnergy * 10))
         player.send(ConfigMessage(301, if (specialToggled) 1 else 0))

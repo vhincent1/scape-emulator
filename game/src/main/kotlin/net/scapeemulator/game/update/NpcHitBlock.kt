@@ -9,8 +9,7 @@ import net.scapeemulator.game.net.game.GameFrameBuilder
 
 class NpcHitBlock(val npc: Npc) : NpcBlock(0x40) {
     override fun encode(message: NpcUpdateMessage, builder: GameFrameBuilder) {
-        val hit = npc.primaryHit
-        if (hit == null) return
+        val hit = npc.primaryHit ?: return
         val hp = npc.skillSet.getCurrentLevel(Skill.HITPOINTS)
         val maxHp = npc.skillSet.getMaximumLevel(Skill.HITPOINTS)
         var ratio = (hp * 255) / maxHp

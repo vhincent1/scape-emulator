@@ -42,34 +42,25 @@ class Path
      * Adds a Position onto the queue.
      * @param p The Position to add.
      */
-    fun addFirst(p: Position) {
-        points.addFirst(p)
-    }
+    fun addFirst(p: Position) = points.addFirst(p)
 
     /**
      * Adds a position onto the queue.
      * @param p The position to add.
      */
-    fun addLast(p: Position) {
-        points.addLast(p)
-    }
+    fun addLast(p: Position) = points.addLast(p)
 
     /**
      * Peeks at the next tile in the path.
      * @return The next tile.
      */
-    fun peek(): Position {
-        return points.peek()
-    }
+    fun peek(): Position = points.peek()
 
     /**
      * Polls a position from the path.
      * @return The polled position.
      */
-    fun poll(): Position {
-        return points.poll()
-    }
-
+    fun poll(): Position = points.poll()
     val isEmpty: Boolean
         /**
          * Gets if the path is empty.

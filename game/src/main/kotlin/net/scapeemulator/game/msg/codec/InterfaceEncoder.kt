@@ -32,7 +32,7 @@ internal val CloseInterfaceEncoder = MessageEncoder(InterfaceCloseMessage::class
     return@MessageEncoder builder.toGameFrame()
 }
 
-internal val VisibleInterfaceEncoder = MessageEncoder(InterfaceVisibleMessage::class) { alloc, message ->
+internal val VisibleInterfaceEncoder = MessageEncoder(InterfaceConfigMessage::class) { alloc, message ->
     val builder = GameFrameBuilder(alloc, 21)
     builder.put(DataType.BYTE, DataTransformation.NEGATE, if (message.isVisible) 0 else 1)
     builder.put(DataType.SHORT, 0)

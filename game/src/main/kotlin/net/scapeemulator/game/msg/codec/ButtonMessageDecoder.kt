@@ -38,12 +38,10 @@ internal val ExtendedButtonMessageDecoder = MessageDecoder(155) { frame ->
     val button = reader.getSigned(DataType.INT).toInt() //data
     val id = (button shr 16) and 0xFFFF //component
     val slot = button and 0xFFFF //buttonId
-    val parameter = reader.getUnsigned(DataType.SHORT).toInt()
-
 //        data = buffer.getInt()
 //        slot = buffer.getShort()
 //        componentId = (data shr 16) and 0xFFFF
 //        buttonId = data and 0xFFFF
-    return@MessageDecoder ExtendedButtonMessage(id, slot, parameter)
+    return@MessageDecoder ExtendedButtonMessage(id, slot)
 
 }
